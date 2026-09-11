@@ -27,5 +27,6 @@ jobs:
         mkdir -p dist
         cp -r index.html pages assets README.md dist/
 
-    - name: Deploy to CloudBase Static Hosting
-      run: tcb hosting deploy ./dist /skl-2026 -e ${{ secrets.TCB_ENV_TEST_DEV }}
+    # 应用部署：每次部署生成版本记录（控制台可查、可回滚），默认忽略 .git / node_modules
+    - name: Deploy app to CloudBase
+      run: tcb app deploy --force --yes -e ${{ secrets.TCB_ENV_TEST_DEV }}
