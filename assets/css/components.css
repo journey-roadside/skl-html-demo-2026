@@ -32,7 +32,7 @@
 .btn-primary:hover {
   background: var(--primary-hover);
   border-color: var(--primary-hover);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--shadow-card);
 }
 
 .btn-outline {
@@ -622,7 +622,7 @@
   margin-top: 46px;
   padding-top: 22px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.66);
   font-size: 12px;
 }
 
@@ -743,5 +743,44 @@
 @media (max-width: 575.98px) {
   .footer-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ============ Skeleton 加载占位 ============ */
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.65),
+    transparent
+  );
+  animation: skeleton-sweep 1.4s var(--ease-smooth) infinite;
+}
+
+@keyframes skeleton-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-line {
+  height: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
   }
 }

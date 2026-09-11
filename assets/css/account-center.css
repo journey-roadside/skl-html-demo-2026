@@ -528,7 +528,7 @@
 .site-footer.union-footer {
   padding: 56px 0 32px;
   background: var(--foreground);
-  color: #fafafa;
+  color: var(--primary-foreground);
 }
 
 .union-footer .footer-main {
@@ -551,7 +551,7 @@
 }
 
 .union-footer .footer-meta {
-  color: rgba(255, 255, 255, 0.46);
+  color: rgba(255, 255, 255, 0.66);
   font-size: 13px;
   line-height: 1.8;
 }
@@ -562,7 +562,7 @@
 
 .union-footer .footer-col h3 {
   margin-bottom: 12px;
-  color: #e8edf4;
+  color: var(--primary-foreground);
   font-size: 14px;
   font-weight: 600;
 }
@@ -581,7 +581,7 @@
 .union-footer .footer-bottom {
   margin-top: 0;
   padding-top: 24px;
-  color: rgba(255, 255, 255, 0.46);
+  color: rgba(255, 255, 255, 0.66);
   font-size: 12px;
 }
 

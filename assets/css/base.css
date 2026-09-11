@@ -57,6 +57,11 @@ button {
   cursor: pointer;
 }
 
+button:not(:disabled):active,
+.btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
 h1,
 h2,
 h3,

@@ -208,7 +208,7 @@
   place-items: center;
   border: 1.5px solid var(--border-strong);
   border-radius: 50%;
-  color: #fff;
+  color: var(--accent-foreground);
   content: "";
   font-size: 11px;
   font-weight: 700;
@@ -1519,4 +1519,29 @@
   .feedback-type-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ============ 生成中的骨架消息 ============ */
+
+.skeleton-message .message-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-message .skeleton-line {
+  width: 88%;
+}
+
+.skeleton-message .skeleton-line:nth-child(1) {
+  width: 34%;
+  height: 14px;
+}
+
+.skeleton-message .skeleton-line:nth-child(3) {
+  width: 72%;
+}
+
+.skeleton-message .skeleton-line:nth-child(4) {
+  width: 52%;
 }

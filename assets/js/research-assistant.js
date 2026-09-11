@@ -147,6 +147,38 @@
     if (scroll) scroll.scrollTop = scroll.scrollHeight;
   }
 
+  function createSkeletonMessage() {
+    const { thread } = getElements();
+    if (!thread) return null;
+    const article = document.createElement("article");
+    article.className = "message message-ai skeleton-message";
+    article.setAttribute("aria-busy", "true");
+    article.setAttribute("aria-label", "正在生成回答");
+    article.innerHTML = `
+      <div class="message-author">
+        <span class="message-author-mark">智</span>
+        <span>社科研究助手</span>
+      </div>
+      <div class="message-body">
+        <div class="skeleton skeleton-line"></div>
+        <div class="skeleton skeleton-line"></div>
+        <div class="skeleton skeleton-line"></div>
+        <div class="skeleton skeleton-line"></div>
+      </div>
+    `;
+    thread.append(article);
+    const scroll = document.querySelector(".chat-scroll");
+    if (scroll) scroll.scrollTop = scroll.scrollHeight;
+    return article;
+  }
+
+  function removeSkeletonMessage() {
+    if (state.skeletonMessage) {
+      state.skeletonMessage.remove();
+      state.skeletonMessage = null;
+    }
+  }
+
   function sendMessage() {
     const { textarea, sendButton, stopButton } = getElements();
     if (!textarea || state.sending) return;
@@ -179,8 +211,10 @@
     state.sending = true;
     if (sendButton) sendButton.hidden = true;
     if (stopButton) stopButton.hidden = false;
+    state.skeletonMessage = createSkeletonMessage();
 
     window.setTimeout(() => {
+      removeSkeletonMessage();
       createMessage(
         "ai",
         "已结合当前对话和资料范围完成初步梳理。该结果会保留来源边界，并标记需要进一步核验的政策条款与数据口径。",
@@ -195,6 +229,7 @@
   function stopGeneration() {
     if (!state.sending) return;
     state.sending = false;
+    removeSkeletonMessage();
     const { sendButton, stopButton } = getElements();
     if (sendButton) sendButton.hidden = false;
     if (stopButton) stopButton.hidden = true;

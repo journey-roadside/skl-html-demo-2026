@@ -1,5 +1,5 @@
 .literature-reader-page {
-  background: #f7f5f3;
+  background: var(--surface-hover);
 }
 
 .reader-workspace {
@@ -10,7 +10,7 @@
   gap: 12px;
   padding: 12px;
   overflow: hidden;
-  background: #f7f5f3;
+  background: var(--surface-hover);
 }
 
 .reader-library-panel,
@@ -145,8 +145,8 @@
   height: 30px;
   place-items: center;
   border-radius: var(--radius-sm);
-  background: #f1edf8;
-  color: #6d4eb8;
+  background: var(--accent-soft);
+  color: var(--accent-active);
 }
 
 .reader-document-icon .icon {
@@ -218,8 +218,8 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: var(--radius-sm);
-  background: #f1edf8;
-  color: #6d4eb8;
+  background: var(--accent-soft);
+  color: var(--accent-active);
 }
 
 .reader-paper-mark .icon {
@@ -300,7 +300,7 @@
   overflow-y: auto;
   padding: 36px 52px 64px;
   background: #fff;
-  color: #32373d;
+  color: var(--foreground);
   font-family: "Songti SC", SimSun, serif;
   font-size: 16px;
   line-height: 1.95;
@@ -576,7 +576,7 @@
   grid-template-columns: 132px minmax(500px, 1fr) 240px;
   gap: 10px;
   padding: 10px;
-  background: #ecebea;
+  background: var(--surface);
 }
 
 .reader-library-panel {
@@ -665,7 +665,7 @@
 .reader-page-preview-lines i {
   height: 2px;
   border-radius: 999px;
-  background: #e5e1dd;
+  background: var(--border-strong);
 }
 
 .reader-page-preview-lines i:nth-child(2),
@@ -696,7 +696,7 @@
 .reader-paper-panel {
   position: relative;
   border: 0;
-  background: #dedddb;
+  background: var(--surface);
 }
 
 .reader-paper-head {
@@ -1076,7 +1076,7 @@
   padding: 26px 24px;
   overflow: hidden;
   border-radius: var(--radius-sm);
-  background: #f2efeb;
+  background: var(--surface-hover);
 }
 
 .reader-example-preview::before {
@@ -1094,7 +1094,7 @@
   width: 76%;
   height: 5px;
   border-radius: 999px;
-  background: #d9d5d0;
+  background: var(--border-strong);
 }
 
 .reader-example-preview i:nth-child(2n) {
@@ -1102,15 +1102,15 @@
 }
 
 .reader-example-preview.is-policy {
-  background: #edf5ef;
+  background: var(--success-soft);
 }
 
 .reader-example-preview.is-method {
-  background: #edf2f8;
+  background: var(--surface);
 }
 
 .reader-example-preview.is-data {
-  background: #f8f1e8;
+  background: var(--warning-soft);
 }
 
 .reader-my-library {

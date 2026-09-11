@@ -10,7 +10,7 @@
   gap: 12px;
   padding: 12px;
   overflow: hidden;
-  background: #f7f5f3;
+  background: var(--surface-hover);
 }
 
 .review-mobile-nav {
@@ -239,7 +239,7 @@
 }
 
 .review-queue-state.is-low {
-  color: #18864b;
+  color: var(--success);
 }
 
 .review-queue-state.is-medium {
@@ -247,11 +247,11 @@
 }
 
 .review-queue-state.is-high {
-  color: #dc2626;
+  color: var(--destructive);
 }
 
 .review-queue-state.is-processing {
-  color: #2563eb;
+  color: var(--warning);
 }
 
 .review-queue-state.is-processing::before {
@@ -349,7 +349,7 @@
 
 .review-risk-badge.is-low {
   background: var(--success-soft);
-  color: #18864b;
+  color: var(--success);
 }
 
 .review-risk-badge.is-medium {
@@ -359,7 +359,7 @@
 
 .review-risk-badge.is-high {
   background: var(--destructive-soft);
-  color: #dc2626;
+  color: var(--destructive);
 }
 
 .review-document-actions {
@@ -408,7 +408,7 @@
 }
 
 .review-score-card.is-truth .review-score-head strong {
-  color: #18864b;
+  color: var(--success);
 }
 
 .review-score-card.is-value .review-score-head strong {
@@ -416,7 +416,7 @@
 }
 
 .review-score-card.is-ethics .review-score-head strong {
-  color: #dc2626;
+  color: var(--destructive);
 }
 
 .review-score-track {
@@ -435,7 +435,7 @@
 }
 
 .review-score-card.is-truth .review-score-track {
-  color: #18864b;
+  color: var(--success);
 }
 
 .review-score-card.is-value .review-score-track {
@@ -443,7 +443,7 @@
 }
 
 .review-score-card.is-ethics .review-score-track {
-  color: #dc2626;
+  color: var(--destructive);
 }
 
 .review-score-card p {
@@ -545,7 +545,7 @@
 
 .review-finding-icon.is-pass {
   background: var(--success-soft);
-  color: #18864b;
+  color: var(--success);
 }
 
 .review-finding-icon.is-warn {
@@ -555,7 +555,7 @@
 
 .review-finding-icon.is-fail {
   background: var(--destructive-soft);
-  color: #dc2626;
+  color: var(--destructive);
 }
 
 .review-finding-copy h3 {
@@ -578,7 +578,7 @@
 
 .review-finding-level.is-pass {
   background: var(--success-soft);
-  color: #18864b;
+  color: var(--success);
 }
 
 .review-finding-level.is-warn {
@@ -588,14 +588,14 @@
 
 .review-finding-level.is-fail {
   background: var(--destructive-soft);
-  color: #dc2626;
+  color: var(--destructive);
 }
 
 .review-report-status {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: #18864b;
+  color: var(--success);
   font-size: 10px;
 }
 
@@ -676,15 +676,15 @@
 }
 
 .review-risk-row i.is-high {
-  background: #dc2626;
+  background: var(--destructive);
 }
 
 .review-risk-row i.is-medium {
-  background: #d97706;
+  background: var(--warning);
 }
 
 .review-risk-row i.is-low {
-  background: #18864b;
+  background: var(--success);
 }
 
 .review-risk-row strong {
@@ -707,7 +707,7 @@
 .review-report-outline .icon {
   width: 14px;
   height: 14px;
-  color: #18864b;
+  color: var(--success);
 }
 
 .review-report-actions {
@@ -948,7 +948,7 @@
     left: 0;
     width: 100%;
     max-height: 90vh;
-    border-radius: 18px 18px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     transform: translateY(100%);
   }
 
