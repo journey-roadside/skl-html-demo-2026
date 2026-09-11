@@ -1,0 +1,31 @@
+name: Deploy to CloudBase Static Hosting
+
+on:
+  push:
+    branches:
+      - main # 主分支推送时触发（纯静态站，无需 PR 触发）
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 纯静态站：无 package.json，不需要 npm ci / npm run build
+
+    - name: Install CloudBase CLI
+      run: npm install -g @cloudbase/cli
+
+    - name: Login CloudBase CLI
+      run: tcb login --apiKeyId ${{ secrets.TCB_SECRET_ID }} --apiKey ${{ secrets.TCB_SECRET_KEY }}
+
+    # 白名单收集：排除 .git / .github / .gitignore，README 随站点发布
+    - name: Collect site files
+      run: |
+        mkdir -p dist
+        cp -r index.html pages assets README.md dist/
+
+    - name: Deploy to CloudBase Static Hosting
+      run: tcb hosting deploy ./dist /skl-2026 -e ${{ secrets.TCB_ENV_TEST_DEV }}
