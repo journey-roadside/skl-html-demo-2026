@@ -8,6 +8,8 @@
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | V1 | 2026-09-11 | 首版：门户首页 + 社科智研产品门户 + 5 个工作台页面 + 账号中心的文档化说明 |
+| V2 | 2026-09-11 | 评审整改：正文级对比度达 WCAG AA（`--muted-foreground` #646a73、`--accent-active` #a83f14、页脚 rgba 白 .66）；未登记色 58 处收敛至 1；页面令牌统一映射到 `tokens.css`；`--nav-height` 54px；14/18px 越界圆角清零；补全局 `:active` 按下态与按钮阴影令牌化；Hero 增加演示数据声明 |
+| V3 | 2026-09-11 | 新增生成中骨架态（通用 `.skeleton` 组件 + 研究助手发送流程接线，`aria-busy`）；`deep-research.css` 残余 `#fef2f2` 改用 `var(--destructive-soft)`；设计系统 `DESIGN.md` / `globals.css` 同步回写校准值并新增 Destructive Soft；复审 95/100 通过（报告见 `2026/原型设计/设计体系符合度评审-V3.md`） |
 
 ## 快速预览
 
@@ -69,6 +71,7 @@ html-demo/
 - 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`（`assets/js/app-shell.js`）。
 - 快捷键：`Ctrl+J` 新建对话，`Ctrl+K` 搜索历史对话。
 - 未实现的入口统一用 `data-toast="…后续接入"` 点击提示，页面内共约 30 处，代表待接入的真实功能点。
+- 生成中反馈：工作台发送消息后先渲染骨架消息（`components.css` 的 `.skeleton` / `.skeleton-line`，节点带 `aria-busy="true"`），AI 回复到达或点击停止生成时移除；骨架动画在 `prefers-reduced-motion` 下自动停用。
 
 ## 开发约定
 
