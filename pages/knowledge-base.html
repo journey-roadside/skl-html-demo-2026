@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="社科智研知识社区，连接私有知识库、社区共享与官方精选，并支持进入深度研究。">
+  <meta name="theme-color" content="#fcfaf8">
+  <title>知识社区 · 社科智研</title>
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/app-shell.css">
+  <link rel="stylesheet" href="../assets/css/research-assistant.css">
+  <link rel="stylesheet" href="../assets/css/knowledge-base.css">
+</head>
+<body class="app-body knowledge-base-page">
+  <div class="app-shell">
+    <aside class="app-sidebar" data-app-sidebar>
+      <div class="app-sidebar-head">
+        <div class="brand app-brand">
+          <span class="brand-copy">
+            <span class="brand-name">社科智研</span>
+            <span class="brand-en">Social Science Research</span>
+          </span>
+        </div>
+        <button class="app-toolbar-btn" type="button" data-app-sidebar-close aria-label="关闭产品导航">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+
+      <nav class="app-nav" aria-label="产品导航">
+        <a class="app-nav-link" href="./research-assistant.html">
+          <span data-icon="message-square"></span>
+          社科研究助手
+        </a>
+        <a class="app-nav-link is-active" href="./knowledge-base.html">
+          <span data-icon="database"></span>
+          知识社区
+        </a>
+        <a class="app-nav-link" href="./deep-research.html">
+          <span data-icon="search-check"></span>
+          深度研究
+        </a>
+        <a class="app-nav-link" href="./social-review.html">
+          <span data-icon="shield-check"></span>
+          社科智审
+        </a>
+        <a class="app-nav-link" href="./literature-reader.html">
+          <span data-icon="scan-text"></span>
+          文献精读
+        </a>
+      </nav>
+
+      <div class="app-sidebar-divider" aria-hidden="true"></div>
+
+      <section class="app-sidebar-history" data-history-panel aria-label="对话记录">
+        <div class="history-head">
+          <div class="history-action-row">
+            <button class="history-icon-button" type="button" data-new-conversation title="新建对话（Ctrl+J）" aria-label="新建对话" aria-keyshortcuts="Control+J">
+              <span data-icon="plus"></span>
+            </button>
+            <button class="history-icon-button" type="button" data-history-search-toggle title="搜索历史对话（Ctrl+K）" aria-label="搜索历史对话" aria-keyshortcuts="Control+K">
+              <span data-icon="search"></span>
+            </button>
+            <button class="history-icon-button" type="button" data-history-manage title="管理对话" aria-label="管理对话">
+              <span data-icon="list-checks"></span>
+            </button>
+          </div>
+          <div class="history-manage-head" data-history-manage-head hidden>
+            <span data-history-selection-count>已选择 0 个对话</span>
+            <button class="history-icon-button" type="button" data-history-manage-close aria-label="退出管理">
+              <span data-icon="x"></span>
+            </button>
+          </div>
+        </div>
+        <div class="history-list">
+          <div class="history-group history-pinned-group" data-history-pinned-group hidden>
+            <div class="history-group-label">置顶</div>
+          </div>
+          <div class="history-group">
+            <div class="history-group-label">今天</div>
+            <div class="history-row">
+              <button class="history-item" type="button" data-history-item>
+                <span class="history-item-text">基层公共文化服务数字化政策脉络</span>
+              </button>
+              <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="history-row">
+              <button class="history-item" type="button" data-history-item>
+                <span class="history-item-text">区域治理研究框架比较</span>
+              </button>
+              <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+          </div>
+          <div class="history-group">
+            <div class="history-group-label">近7天</div>
+            <div class="history-row">
+              <button class="history-item" type="button" data-history-item>
+                <span class="history-item-text">公共政策分析中的证据分层</span>
+              </button>
+              <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+          </div>
+        </div>
+        <div class="history-manage-actions" data-history-manage-actions hidden>
+          <button type="button" data-history-pin disabled><span data-icon="pin"></span>置顶</button>
+          <button type="button" data-history-delete disabled><span data-icon="trash-2"></span>删除</button>
+        </div>
+      </section>
+
+      <div class="app-sidebar-foot">
+        <div data-guest-actions>
+          <button class="app-nav-link" type="button" data-auth-open>
+            <span data-icon="user-round"></span>
+            登录 / 注册
+          </button>
+        </div>
+        <div class="app-sidebar-user" data-user-chip hidden>
+          <button class="user-chip-trigger" type="button" data-user-menu-trigger aria-expanded="false">
+            <span class="user-avatar">研</span>
+            <span data-sidebar-user-label>未知研究员</span>
+          </button>
+          <div class="user-menu" data-user-menu hidden>
+            <div class="user-menu-profile">
+              <span class="user-avatar">研</span>
+              <span class="user-menu-profile-copy">
+                <strong data-sidebar-user-label>未知研究员</strong>
+                <small>湖北省社会科学界联合会</small>
+              </span>
+            </div>
+            <div class="user-menu-divider" aria-hidden="true"></div>
+            <div class="user-menu-group">
+              <a href="./account-center.html#points" target="_blank" rel="noopener"><span data-icon="coins"></span><span>积分余额</span><span class="user-menu-trailing"><strong>268</strong><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></span></a>
+              <a href="./account-center.html" target="_blank" rel="noopener"><span data-icon="user-round"></span><span>账号中心</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
+              <button type="button" data-settings-open><span data-icon="settings"></span><span>设置</span></button>
+              <button type="button" data-user-menu-toast="帮助与反馈将在后续接入"><span data-icon="message-square"></span><span>帮助与反馈</span></button>
+            </div>
+            <div class="user-menu-divider" aria-hidden="true"></div>
+            <button class="user-menu-logout" type="button" data-auth-logout><span data-icon="log-out"></span><span>退出登录</span></button>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="app-sidebar-mask" data-app-sidebar-mask hidden></div>
+
+    <div class="app-main">
+      <div class="kb-gallery">
+        <button class="app-toolbar-btn kb-gallery-menu" type="button" data-app-sidebar-open aria-label="打开产品导航">
+          <span data-icon="menu"></span>
+        </button>
+
+        <div class="kb-gallery-inner">
+          <div class="kb-gallery-hero">
+            <button class="kb-personal-entry" type="button" data-kb-personal-open hidden>
+              我的知识
+            </button>
+            <header class="kb-gallery-heading">
+              <h1>汇聚知识，让研究持续发生</h1>
+              <p>在私有知识社区中保存资料，从社区共享与官方精选中发现研究线索，并随时进入深度研究。</p>
+            </header>
+
+            <form class="kb-hero-search" data-kb-search-form>
+              <input type="search" placeholder="搜索知识社区" aria-label="搜索知识社区" data-kb-search-input>
+              <button class="kb-hero-submit" type="submit" aria-label="搜索">
+                <span data-icon="search"></span>
+              </button>
+            </form>
+          </div>
+
+          <div class="kb-gallery-filters" data-kb-main-filters data-kb-filter-group="main" role="tablist" aria-label="知识社区分类">
+            <button class="is-active" type="button" data-kb-gallery-filter="community-shared" role="tab" aria-selected="true">社区共享</button>
+            <button type="button" data-kb-gallery-filter="official-featured" role="tab" aria-selected="false">官方精选</button>
+          </div>
+
+          <div class="kb-personal-view" data-kb-personal-view hidden>
+            <div class="kb-personal-heading">
+              <button class="kb-personal-back" type="button" data-kb-personal-back>
+                <span data-icon="chevron-left"></span>
+                返回
+              </button>
+              <div>
+                <h1>我的知识</h1>
+                <p>管理私有知识库与已分享内容</p>
+              </div>
+            </div>
+            <div class="kb-personal-toolbar">
+              <div class="kb-gallery-filters kb-personal-filters" data-kb-filter-group="personal" role="tablist" aria-label="我的知识分类">
+                <button class="is-active" type="button" data-kb-gallery-filter="personal-all" role="tab" aria-selected="true">全部</button>
+                <button type="button" data-kb-gallery-filter="mine" role="tab" aria-selected="false">我的</button>
+                <button type="button" data-kb-gallery-filter="favorite" role="tab" aria-selected="false">收藏</button>
+                <button type="button" data-kb-gallery-filter="shared" role="tab" aria-selected="false">共享</button>
+              </div>
+              <label class="kb-personal-search">
+                <span data-icon="search"></span>
+                <input type="search" placeholder="搜索" aria-label="搜索知识卡片" data-kb-personal-search>
+              </label>
+            </div>
+          </div>
+
+          <div class="kb-gallery-grid" data-kb-gallery-grid>
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="governance" data-kb-name="基层治理研究资料" data-kb-count="126" data-kb-categories="mine recent">
+              <span class="kb-card-cover is-governance">
+                <span class="kb-card-cover-icon"><span data-icon="database"></span></span>
+                <strong>基层治理<br>研究资料</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>基层治理研究资料</strong>
+                  <small>私有</small>
+                </span>
+                <span class="kb-card-meta">126 份资料 · 18.6 万字</span>
+                <span class="kb-card-update">10 分钟前更新</span>
+              </span>
+            </button>
+
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="public-culture" data-kb-name="公共文化政策专题" data-kb-count="84" data-kb-categories="mine recent">
+              <span class="kb-card-cover is-culture">
+                <span class="kb-card-cover-icon"><span data-icon="file-text"></span></span>
+                <strong>公共文化<br>政策专题</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>公共文化政策专题</strong>
+                  <small>私有</small>
+                </span>
+                <span class="kb-card-meta">84 份资料 · 9.4 万字</span>
+                <span class="kb-card-update">今天 09:18 更新</span>
+              </span>
+            </button>
+
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="regional" data-kb-name="区域发展研究库" data-kb-count="172" data-kb-categories="shared">
+              <span class="kb-card-cover is-regional">
+                <span class="kb-card-cover-icon"><span data-icon="share"></span></span>
+                <strong>区域发展<br>研究库</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>区域发展研究库</strong>
+                  <small>共享</small>
+                </span>
+                <span class="kb-card-meta">172 份资料 · 22.1 万字</span>
+                <span class="kb-card-update">昨天 15:30 更新</span>
+              </span>
+            </button>
+
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="hubei-results" data-kb-name="湖北社科成果精选" data-kb-count="358" data-kb-categories="shared recent">
+              <span class="kb-card-cover is-results">
+                <span class="kb-card-cover-icon"><span data-icon="share"></span></span>
+                <strong>湖北社科<br>成果精选</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>湖北社科成果精选</strong>
+                  <small>共享</small>
+                </span>
+                <span class="kb-card-meta">358 份成果 · 31.8 万字</span>
+                <span class="kb-card-update">今天 08:50 更新</span>
+              </span>
+            </button>
+
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="journals" data-kb-name="学术期刊全文库" data-kb-count="1240" data-kb-categories="shared recent">
+              <span class="kb-card-cover is-journals">
+                <span class="kb-card-cover-icon"><span data-icon="share"></span></span>
+                <strong>学术期刊<br>全文库</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>学术期刊全文库</strong>
+                  <small>共享</small>
+                </span>
+                <span class="kb-card-meta">1,240 篇论文 · 86.4 万字</span>
+                <span class="kb-card-update">今天 15:06 更新</span>
+              </span>
+            </button>
+
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="rural-research" data-kb-name="乡村振兴研究资料" data-kb-count="215" data-kb-categories="mine recent">
+              <span class="kb-card-cover is-regional">
+                <span class="kb-card-cover-icon"><span data-icon="database"></span></span>
+                <strong>乡村振兴<br>研究资料</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>乡村振兴研究资料</strong>
+                  <small>私有</small>
+                </span>
+                <span class="kb-card-meta">215 份资料 · 27.3 万字</span>
+                <span class="kb-card-update">昨天 17:12 更新</span>
+              </span>
+            </button>
+
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="digital-governance" data-kb-name="数字治理案例库" data-kb-count="96" data-kb-categories="mine recent">
+              <span class="kb-card-cover is-culture">
+                <span class="kb-card-cover-icon"><span data-icon="file-text"></span></span>
+                <strong>数字治理<br>案例库</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>数字治理案例库</strong>
+                  <small>私有</small>
+                </span>
+                <span class="kb-card-meta">96 份资料 · 12.8 万字</span>
+                <span class="kb-card-update">近7天更新</span>
+              </span>
+            </button>
+
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="yangtze-development" data-kb-name="长江经济带发展研究" data-kb-count="184" data-kb-categories="shared recent">
+              <span class="kb-card-cover is-governance">
+                <span class="kb-card-cover-icon"><span data-icon="share"></span></span>
+                <strong>长江经济带<br>发展研究</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>长江经济带发展研究</strong>
+                  <small>共享</small>
+                </span>
+                <span class="kb-card-meta">184 份资料 · 23.6 万字</span>
+                <span class="kb-card-update">昨天 14:20 更新</span>
+              </span>
+            </button>
+
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="knowledge-graph" data-kb-name="社科成果知识图谱" data-kb-count="78" data-kb-categories="shared recent">
+              <span class="kb-card-cover is-journals">
+                <span class="kb-card-cover-icon"><span data-icon="share"></span></span>
+                <strong>社科成果<br>知识图谱</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>社科成果知识图谱</strong>
+                  <small>共享</small>
+                </span>
+                <span class="kb-card-meta">78 个主题 · 6.4 万实体</span>
+                <span class="kb-card-update">今天 11:32 更新</span>
+              </span>
+            </button>
+
+            <button class="kb-gallery-card" type="button" data-kb-card data-kb-id="young-scholars" data-kb-name="青年学者成果精选" data-kb-count="442" data-kb-categories="shared recent">
+              <span class="kb-card-cover is-results">
+                <span class="kb-card-cover-icon"><span data-icon="share"></span></span>
+                <strong>青年学者<br>成果精选</strong>
+              </span>
+              <span class="kb-card-info">
+                <span class="kb-card-title-line">
+                  <strong>青年学者成果精选</strong>
+                  <small>共享</small>
+                </span>
+                <span class="kb-card-meta">442 份成果 · 38.7 万字</span>
+                <span class="kb-card-update">今天 10:16 更新</span>
+              </span>
+            </button>
+          </div>
+
+          <div class="kb-gallery-empty" data-kb-gallery-empty hidden>
+            <span data-icon="search-check"></span>
+            <strong>没有找到匹配的知识库</strong>
+            <p>调整关键词或分类后再试。</p>
+          </div>
+
+          <nav class="kb-pagination" data-kb-pagination aria-label="我的知识分页" hidden></nav>
+        </div>
+      </div>
+
+      <form class="kb-floating-search" data-kb-search-form data-kb-floating-search aria-hidden="true">
+        <input type="search" placeholder="搜索知识社区" aria-label="搜索知识社区" data-kb-search-input>
+        <button class="kb-hero-submit" type="submit" aria-label="搜索">
+          <span data-icon="search"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="kb-modal-mask" data-kb-modal-mask hidden></div>
+  <section class="kb-modal" data-kb-create-modal role="dialog" aria-modal="true" aria-labelledby="kbCreateTitle" hidden>
+    <div class="kb-modal-head">
+      <div>
+        <h2 id="kbCreateTitle">新建知识库</h2>
+        <p>为一组长期研究资料创建独立空间</p>
+      </div>
+      <button class="kb-modal-close" type="button" data-kb-modal-close aria-label="关闭">
+        <span data-icon="x"></span>
+      </button>
+    </div>
+    <form class="kb-modal-body" data-kb-create-form>
+      <label class="kb-field">
+        <span>知识库名称</span>
+        <input type="text" maxlength="40" placeholder="例如：数字治理专题资料" required data-kb-create-name>
+      </label>
+      <label class="kb-field">
+        <span>用途说明</span>
+        <textarea rows="3" maxlength="160" placeholder="说明资料范围和主要研究主题" data-kb-create-description></textarea>
+      </label>
+      <label class="kb-field">
+        <span>访问范围</span>
+        <select data-kb-create-privacy>
+          <option value="私有">仅自己可见</option>
+          <option value="机构">所有人可见</option>
+        </select>
+      </label>
+      <div class="kb-modal-actions">
+        <button class="btn btn-outline" type="button" data-kb-modal-close>取消</button>
+        <button class="btn btn-primary" type="submit">创建知识库</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="kb-modal kb-card-edit-modal" data-kb-card-edit-modal role="dialog" aria-modal="true" aria-labelledby="kbCardEditTitle" hidden>
+    <div class="kb-modal-head">
+      <div>
+        <h2 id="kbCardEditTitle">编辑知识库</h2>
+        <p>修改知识库名称后保存</p>
+      </div>
+      <button class="kb-modal-close" type="button" data-kb-modal-close aria-label="关闭">
+        <span data-icon="x"></span>
+      </button>
+    </div>
+    <form class="kb-modal-body" data-kb-card-edit-form>
+      <label class="kb-field">
+        <span>知识库名称</span>
+        <input type="text" maxlength="40" required data-kb-card-edit-name>
+      </label>
+      <div class="kb-modal-actions">
+        <button class="btn btn-outline" type="button" data-kb-modal-close>取消</button>
+        <button class="btn btn-primary" type="submit">保存修改</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="kb-modal kb-card-delete-modal" data-kb-card-delete-modal role="alertdialog" aria-modal="true" aria-labelledby="kbCardDeleteTitle" hidden>
+    <div class="kb-modal-head">
+      <div>
+        <h2 id="kbCardDeleteTitle">删除知识库</h2>
+        <p data-kb-card-delete-description></p>
+      </div>
+      <button class="kb-modal-close" type="button" data-kb-modal-close aria-label="关闭">
+        <span data-icon="x"></span>
+      </button>
+    </div>
+    <div class="kb-card-delete-body">
+      <p>删除后，该知识库及相关资料将无法恢复。</p>
+    </div>
+    <div class="kb-modal-actions kb-card-delete-actions">
+      <button class="btn btn-outline" type="button" data-kb-modal-close>取消</button>
+      <button class="btn btn-primary danger" type="button" data-kb-card-delete-confirm>删除</button>
+    </div>
+  </section>
+
+  <script src="../assets/js/icons.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/auth.js" defer></script>
+  <script src="../assets/js/app-shell.js" defer></script>
+  <script src="../assets/js/research-assistant.js" defer></script>
+  <script src="../assets/js/knowledge-base.js" defer></script>
+</body>
+</html>

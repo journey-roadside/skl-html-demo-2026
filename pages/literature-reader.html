@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="社科智研文献精读，支持长文阅读、段落总结翻译解释和个人笔记。">
+  <meta name="theme-color" content="#fcfaf8">
+  <title>文献精读 · 社科智研</title>
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/app-shell.css">
+  <link rel="stylesheet" href="../assets/css/research-assistant.css">
+  <link rel="stylesheet" href="../assets/css/literature-reader.css">
+</head>
+<body class="app-body literature-reader-page">
+  <div class="app-shell">
+    <aside class="app-sidebar" data-app-sidebar>
+      <div class="app-sidebar-head">
+        <div class="brand app-brand">
+          <span class="brand-copy">
+            <span class="brand-name">社科智研</span>
+            <span class="brand-en">Social Science Research</span>
+          </span>
+        </div>
+        <button class="app-toolbar-btn" type="button" data-app-sidebar-close aria-label="关闭产品导航">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+
+      <nav class="app-nav" aria-label="产品导航">
+        <a class="app-nav-link" href="./research-assistant.html">
+          <span data-icon="message-square"></span>
+          社科研究助手
+        </a>
+        <a class="app-nav-link" href="./knowledge-base.html">
+          <span data-icon="database"></span>
+          知识社区
+        </a>
+        <a class="app-nav-link" href="./deep-research.html">
+          <span data-icon="search-check"></span>
+          深度研究
+        </a>
+        <a class="app-nav-link" href="./social-review.html">
+          <span data-icon="shield-check"></span>
+          社科智审
+        </a>
+        <a class="app-nav-link is-active" href="./literature-reader.html">
+          <span data-icon="scan-text"></span>
+          文献精读
+        </a>
+      </nav>
+
+      <div class="app-sidebar-divider" aria-hidden="true"></div>
+
+      <section class="app-sidebar-history" data-history-panel aria-label="对话记录">
+        <div class="history-head">
+          <div class="history-action-row">
+            <button class="history-icon-button" type="button" data-new-conversation title="新建对话（Ctrl+J）" aria-label="新建对话" aria-keyshortcuts="Control+J">
+              <span data-icon="plus"></span>
+            </button>
+            <button class="history-icon-button" type="button" data-history-search-toggle title="搜索历史对话（Ctrl+K）" aria-label="搜索历史对话" aria-keyshortcuts="Control+K">
+              <span data-icon="search"></span>
+            </button>
+            <button class="history-icon-button" type="button" data-history-manage title="管理对话" aria-label="管理对话">
+              <span data-icon="list-checks"></span>
+            </button>
+          </div>
+          <div class="history-manage-head" data-history-manage-head hidden>
+            <span data-history-selection-count>已选择 0 个对话</span>
+            <button class="history-icon-button" type="button" data-history-manage-close aria-label="退出管理">
+              <span data-icon="x"></span>
+            </button>
+          </div>
+        </div>
+        <div class="history-list">
+          <div class="history-group history-pinned-group" data-history-pinned-group hidden>
+            <div class="history-group-label">置顶</div>
+          </div>
+          <div class="history-group">
+            <div class="history-group-label">今天</div>
+            <div class="history-row">
+              <button class="history-item" type="button" data-history-item>
+                <span class="history-item-text">基层公共文化服务数字化政策脉络</span>
+              </button>
+              <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+          </div>
+          <div class="history-group">
+            <div class="history-group-label">近7天</div>
+            <div class="history-row">
+              <button class="history-item" type="button" data-history-item>
+                <span class="history-item-text">公共政策分析中的证据分层</span>
+              </button>
+              <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+          </div>
+        </div>
+        <div class="history-manage-actions" data-history-manage-actions hidden>
+          <button type="button" data-history-pin disabled><span data-icon="pin"></span>置顶</button>
+          <button type="button" data-history-delete disabled><span data-icon="trash-2"></span>删除</button>
+        </div>
+      </section>
+
+      <div class="app-sidebar-foot">
+        <div data-guest-actions>
+          <button class="app-nav-link" type="button" data-auth-open>
+            <span data-icon="user-round"></span>
+            登录 / 注册
+          </button>
+        </div>
+        <div class="app-sidebar-user" data-user-chip hidden>
+          <button class="user-chip-trigger" type="button" data-user-menu-trigger aria-expanded="false">
+            <span class="user-avatar">研</span>
+            <span data-sidebar-user-label>未知研究员</span>
+          </button>
+          <div class="user-menu" data-user-menu hidden>
+            <div class="user-menu-profile">
+              <span class="user-avatar">研</span>
+              <span class="user-menu-profile-copy">
+                <strong data-sidebar-user-label>未知研究员</strong>
+                <small>湖北省社会科学界联合会</small>
+              </span>
+            </div>
+            <div class="user-menu-divider" aria-hidden="true"></div>
+            <div class="user-menu-group">
+              <a href="./account-center.html#points" target="_blank" rel="noopener"><span data-icon="coins"></span><span>积分余额</span><span class="user-menu-trailing"><strong>268</strong><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></span></a>
+              <a href="./account-center.html" target="_blank" rel="noopener"><span data-icon="user-round"></span><span>账号中心</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
+              <button type="button" data-settings-open><span data-icon="settings"></span><span>设置</span></button>
+              <button type="button" data-user-menu-toast="帮助与反馈将在后续接入"><span data-icon="message-square"></span><span>帮助与反馈</span></button>
+            </div>
+            <div class="user-menu-divider" aria-hidden="true"></div>
+            <button class="user-menu-logout" type="button" data-auth-logout><span data-icon="log-out"></span><span>退出登录</span></button>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="app-sidebar-mask" data-app-sidebar-mask hidden></div>
+
+    <div class="app-main">
+      <header class="app-topbar reader-topbar" data-reader-topbar hidden>
+        <button class="app-toolbar-btn" type="button" data-reader-back aria-label="返回">
+          <span data-icon="chevron-left"></span>
+        </button>
+        <div class="app-topbar-actions">
+          <input type="file" hidden accept=".pdf,.doc,.docx,.txt,.md,.epub" data-reader-file>
+        </div>
+      </header>
+
+      <section class="reader-library-home" data-reader-main-view>
+        <div class="reader-library-hero">
+          <button class="reader-my-entry" type="button" data-reader-my-open hidden>
+            我的文献
+          </button>
+          <header class="reader-library-heading">
+            <h1>汇聚文献，让研究持续发生</h1>
+            <p>搜索、收藏精读文献，让阅读过程沉淀为可复用的研究依据。</p>
+          </header>
+
+          <form class="reader-library-search" data-reader-library-search-form>
+            <div class="reader-add-menu" data-reader-add-menu>
+              <button type="button" data-reader-add-trigger aria-label="添加文献" aria-haspopup="menu" aria-expanded="false">
+                <span data-icon="plus"></span>
+              </button>
+              <div class="reader-add-menu-list" data-reader-add-menu-list role="menu" hidden>
+                <button type="button" role="menuitem" data-reader-add-item="local" data-reader-upload>本地文件</button>
+                <button type="button" role="menuitem" data-reader-add-item="knowledge">知识库</button>
+              </div>
+            </div>
+            <input type="search" placeholder="搜索文献库" aria-label="搜索文献库" data-reader-library-search>
+            <button class="reader-library-submit" type="submit" aria-label="搜索">
+              <span data-icon="search"></span>
+            </button>
+          </form>
+        </div>
+
+        <section class="reader-example-section" aria-labelledby="readerExampleTitle">
+          <h2 id="readerExampleTitle">文献精读案例</h2>
+          <div class="reader-example-grid" data-reader-example-grid>
+            <button type="button" data-reader-example data-reader-example-name="政策文本精读">
+              <span class="reader-example-preview is-policy"><i></i><i></i><i></i><i></i><i></i></span>
+              <span>政策文本精读</span>
+            </button>
+            <button type="button" data-reader-example data-reader-example-name="研究方法精读">
+              <span class="reader-example-preview is-method"><i></i><i></i><i></i><i></i><i></i></span>
+              <span>研究方法精读</span>
+            </button>
+            <button type="button" data-reader-example data-reader-example-name="数据报告精读">
+              <span class="reader-example-preview is-data"><i></i><i></i><i></i><i></i><i></i></span>
+              <span>数据报告精读</span>
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <section class="reader-library-home reader-my-library" data-reader-my-view hidden>
+        <div class="reader-my-heading">
+          <button class="reader-my-back" type="button" data-reader-my-back><span data-icon="chevron-left"></span>返回</button>
+          <div>
+            <h1>我的文献</h1>
+            <p>管理私有文献、收藏和共享内容</p>
+          </div>
+        </div>
+
+        <div class="reader-my-toolbar">
+          <div class="reader-my-filters" data-reader-my-filter-group role="tablist" aria-label="我的文献分类">
+            <button class="is-active" type="button" data-reader-my-filter="all" role="tab" aria-selected="true">全部</button>
+            <button type="button" data-reader-my-filter="mine" role="tab" aria-selected="false">我的</button>
+            <button type="button" data-reader-my-filter="favorite" role="tab" aria-selected="false">收藏</button>
+            <button type="button" data-reader-my-filter="shared" role="tab" aria-selected="false">共享</button>
+          </div>
+          <label class="reader-my-search">
+            <span data-icon="search"></span>
+            <input type="search" placeholder="搜索" aria-label="搜索我的文献" data-reader-my-search>
+          </label>
+        </div>
+
+        <div class="reader-my-grid" data-reader-my-grid></div>
+        <nav class="reader-my-pagination" data-reader-my-pagination aria-label="我的文献分页" hidden></nav>
+      </section>
+
+      <div class="reader-workspace" data-reader-detail-view hidden>
+        <aside class="reader-library-panel" aria-label="文献列表">
+          <div class="reader-page-rail-head">
+            <span>页面</span>
+            <strong><span data-reader-page-current>1</span> / <span data-reader-page-total>8</span></strong>
+          </div>
+          <div class="reader-document-list" data-reader-document-list></div>
+        </aside>
+
+        <section class="reader-paper-panel" aria-labelledby="readerDocumentTitle">
+          <header class="reader-paper-head">
+            <div class="reader-paper-title">
+              <span class="reader-paper-mark"><span data-icon="scan-text"></span></span>
+              <div>
+                <h1 id="readerDocumentTitle" data-reader-document-title>基层公共文化服务数字化建设研究</h1>
+                <p data-reader-document-meta>湖北省社会科学院 · 2025 · 18,640 字</p>
+              </div>
+            </div>
+            <div class="reader-paper-actions">
+              <span class="reader-progress-label"><strong data-reader-progress>35%</strong> 已读</span>
+              <button class="reader-icon-button" type="button" data-reader-bookmark aria-label="收藏文献">
+                <span data-icon="star"></span>
+              </button>
+              <button class="reader-icon-button" type="button" data-reader-download aria-label="下载文献">
+                <span data-icon="download"></span>
+              </button>
+            </div>
+          </header>
+
+          <article class="reader-paper-body" data-reader-paper>
+            <p class="reader-abstract" data-reader-paragraph>
+              <strong>摘要：</strong>公共文化服务数字化建设是推动基层公共文化服务提质增效的重要路径。本文以湖北省为例，分析基础设施、平台服务与基层治理之间的协同关系，并讨论数字化转型过程中的区域差异与实施条件。
+            </p>
+            <h2 data-reader-paragraph>一、研究背景与问题提出</h2>
+            <p data-reader-paragraph>
+              随着公共文化服务体系建设持续推进，基层文化设施的覆盖范围和基本服务能力不断提升。与此同时，服务供给仍面临资源分散、数据标准不一和跨部门协同不足等问题。数字技术为服务资源整合、需求识别和精准供给提供了新的可能，但技术应用并不自动等同于服务效能提升。
+            </p>
+            <p data-reader-paragraph>
+              现有研究主要从数字化基础设施、平台建设和公众参与三个角度讨论公共文化服务转型。部分研究强调技术投入对服务效率的促进作用，也有研究指出，如果缺乏稳定的数据治理机制，数字化平台可能形成新的信息孤岛。
+            </p>
+            <h2 data-reader-paragraph>二、政策演进与阶段特征</h2>
+            <p data-reader-paragraph>
+              从政策演进看，基层公共文化服务数字化大体经历基础支撑、服务融合和协同治理三个阶段。早期政策侧重网络联通和终端设备配置，此后逐步转向跨部门资源整合、线上线下服务融合和公众参与机制建设。
+            </p>
+            <p data-reader-paragraph>
+              当前阶段更强调数据标准、平台协同与基层治理责任衔接。数字化不再只是文化部门的专项任务，而逐渐成为跨层级、跨部门共同推进的治理议题。政策目标也从设施覆盖率逐步扩展到服务效能和公众满意度。
+            </p>
+            <h2 data-reader-paragraph>三、区域差异与关键条件</h2>
+            <p data-reader-paragraph>
+              不同地区在财政投入、技术能力和人才储备方面存在差异，数字化建设进度和服务效果也因此呈现不均衡特征。县域和乡镇层级更容易受到专业人员和运维能力不足的约束。
+            </p>
+            <p data-reader-paragraph>
+              推动公共文化服务数字化，需要同时关注技术条件、组织能力和制度保障。单纯增加平台数量或设备投入，未必能够形成稳定、可持续的服务能力。
+            </p>
+            <h2 data-reader-paragraph>四、结论与建议</h2>
+            <p data-reader-paragraph>
+              公共文化服务数字化建设应从设施导向转向服务导向，以数据标准、业务协同和用户需求为基础，逐步形成可持续的基层公共文化服务模式。
+            </p>
+          </article>
+
+          <div class="reader-selection-toolbar" data-reader-selection-toolbar role="toolbar" aria-label="选中文本工具栏" hidden>
+            <button type="button" data-reader-selection-action="总结"><span data-icon="file-text"></span>总结</button>
+            <button type="button" data-reader-selection-action="翻译"><span data-icon="globe"></span>翻译</button>
+            <button type="button" data-reader-selection-action="解读"><span data-icon="brain"></span>解读</button>
+            <button type="button" data-reader-selection-action="去提问"><span data-icon="message-square"></span>去提问</button>
+            <button type="button" data-reader-selection-action="记笔记"><span data-icon="pencil"></span>记笔记</button>
+            <span class="reader-toolbar-divider" aria-hidden="true"></span>
+            <button class="reader-format-button" type="button" data-reader-selection-format="highlight" aria-label="高亮"><span data-icon="star"></span></button>
+            <button class="reader-format-button" type="button" data-reader-selection-format="underline" aria-label="下划线"><u>U</u></button>
+            <button class="reader-format-button" type="button" data-reader-selection-format="copy" aria-label="复制"><span data-icon="copy"></span></button>
+          </div>
+
+          <footer class="reader-page-controls" aria-label="阅读控制">
+            <div class="reader-page-nav">
+              <button type="button" data-reader-page-prev aria-label="上一页"><span data-icon="chevron-left"></span></button>
+              <span><strong data-reader-current-page>1</strong> / <span data-reader-total-pages>8</span></span>
+              <button type="button" data-reader-page-next aria-label="下一页"><span data-icon="chevron-right"></span></button>
+            </div>
+            <button type="button" data-reader-fit-width>适合宽度</button>
+            <div class="reader-zoom-controls">
+              <button type="button" data-reader-zoom-out aria-label="缩小">−</button>
+              <span data-reader-zoom-value>100%</span>
+              <button type="button" data-reader-zoom-in aria-label="放大">＋</button>
+            </div>
+          </footer>
+        </section>
+
+        <aside class="reader-assistant-panel" aria-label="精读助手与笔记">
+          <div hidden>
+            <div class="reader-assistant-head">
+              <span class="reader-assistant-mark"><span data-icon="sparkles"></span></span>
+              <div>
+                <h2>精读助手</h2>
+                <p>对选中内容总结、翻译或解释</p>
+              </div>
+            </div>
+            <div class="reader-assistant-body">
+              <div class="reader-tool-grid">
+                <button type="button" data-reader-tool="summary">
+                  <span data-icon="file-text"></span>
+                  总结
+                </button>
+                <button type="button" data-reader-tool="translate">
+                  <span data-icon="globe"></span>
+                  翻译
+                </button>
+                <button type="button" data-reader-tool="explain">
+                  <span data-icon="brain"></span>
+                  解释
+                </button>
+              </div>
+
+              <article class="reader-ai-result" data-reader-ai-result>
+                <span>精读结果</span>
+                <p>选择正文段落或文字后，使用上方工具生成段落总结、翻译或概念解释。</p>
+              </article>
+
+              <section class="reader-note-section">
+                <div class="reader-note-head">
+                  <div>
+                    <h3>个人笔记</h3>
+                    <p><span data-reader-note-count>2</span> 条笔记</p>
+                  </div>
+                  <button class="reader-icon-button" type="button" data-reader-note-add aria-label="添加笔记">
+                    <span data-icon="plus"></span>
+                  </button>
+                </div>
+                <div class="reader-note-editor" data-reader-note-editor hidden>
+                  <textarea rows="3" placeholder="记录你在这一段中的判断、疑问或延伸想法" data-reader-note-input></textarea>
+                  <div>
+                    <button class="btn btn-outline btn-sm" type="button" data-reader-note-cancel>取消</button>
+                    <button class="btn btn-primary btn-sm" type="button" data-reader-note-save>保存笔记</button>
+                  </div>
+                </div>
+                <div class="reader-note-list" data-reader-note-list>
+                  <article class="reader-note">
+                    <p>这里提出数字化平台可能形成新的信息孤岛，可以进一步对照基层平台的实际使用情况。</p>
+                    <span>第 2 段 · 今天 14:06</span>
+                  </article>
+                  <article class="reader-note">
+                    <p>三个阶段划分适合作为政策脉络分析的框架。</p>
+                    <span>第 4 段 · 昨天 17:24</span>
+                  </article>
+                </div>
+              </section>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/icons.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/auth.js" defer></script>
+  <script src="../assets/js/app-shell.js" defer></script>
+  <script src="../assets/js/research-assistant.js" defer></script>
+  <script src="../assets/js/literature-reader.js" defer></script>
+</body>
+</html>

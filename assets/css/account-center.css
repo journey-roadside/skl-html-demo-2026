@@ -1,0 +1,608 @@
+.account-page {
+  min-height: calc(100vh - var(--nav-height));
+  padding-top: var(--nav-height);
+  background-color: var(--background);
+  background-image: url("../img/grid-pattern.svg");
+  background-position: center top;
+}
+
+.account-site-header .header-actions {
+  margin-left: auto;
+}
+
+.account-member-section {
+  padding: 54px 0 90px;
+}
+
+.account-member-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.account-sidebar {
+  position: sticky;
+  top: calc(var(--nav-height) + 24px);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-card);
+}
+
+.account-sidebar-profile {
+  padding: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.account-sidebar-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.account-user-tag {
+  margin-top: 14px;
+}
+
+.account-avatar-large {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--foreground);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.account-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.account-phone {
+  margin-top: 2px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.account-nav {
+  display: grid;
+  gap: 3px;
+  padding: 10px;
+}
+
+.account-nav-button {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 11px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-align: left;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.account-nav-button:hover,
+.account-nav-button.is-active {
+  background: var(--accent-soft);
+  color: var(--accent-active);
+}
+
+.account-nav-button .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.account-content {
+  min-width: 0;
+}
+
+.account-content-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.account-content-head h1 {
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1.25;
+}
+
+.account-content-head p {
+  margin-top: 7px;
+  color: var(--text-secondary);
+}
+
+.account-panel {
+  display: grid;
+  gap: 20px;
+}
+
+.account-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.account-stat {
+  min-height: 132px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+.account-stat-label {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.account-stat-value {
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.account-stat-note {
+  margin-top: 8px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.account-block {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+.account-block-head {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.account-block-head h2,
+.account-block-head h3 {
+  font-size: 16px;
+}
+
+.account-block-head p {
+  margin-top: 3px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.account-block-body {
+  padding: 22px;
+}
+
+.activity-list {
+  display: grid;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-row:first-child {
+  padding-top: 0;
+}
+
+.activity-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.activity-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-secondary);
+}
+
+.activity-icon .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.activity-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.activity-meta {
+  margin-top: 2px;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-grid .field-wide {
+  grid-column: 1 / -1;
+}
+
+.account-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.security-list,
+.setting-list,
+.message-list {
+  display: grid;
+}
+
+.security-row,
+.setting-row,
+.message-row {
+  display: grid;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.security-row {
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+}
+
+.setting-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.message-row {
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+}
+
+.security-row:first-child,
+.setting-row:first-child,
+.message-row:first-child {
+  padding-top: 0;
+}
+
+.security-row:last-child,
+.setting-row:last-child,
+.message-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.security-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-secondary);
+}
+
+.security-row h3,
+.setting-row h3,
+.message-row h3 {
+  font-size: 14px;
+}
+
+.security-row p,
+.setting-row p,
+.message-row p {
+  margin-top: 3px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.message-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.message-row.is-read .message-dot {
+  background: var(--border-strong);
+}
+
+.points-summary {
+  display: grid;
+  grid-template-columns: 0.6fr 1.4fr;
+  gap: 20px;
+}
+
+.points-balance {
+  display: grid;
+  align-content: center;
+  min-height: 170px;
+  padding: 26px;
+  border-radius: var(--radius-lg);
+  background: var(--accent-soft);
+}
+
+.points-balance span {
+  color: var(--accent-active);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.points-balance strong {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 42px;
+  line-height: 1;
+}
+
+.account-rule-copy {
+  margin-top: 0;
+  font-size: 14px;
+}
+
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.record-table th,
+.record-table td {
+  padding: 13px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.record-table th {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.record-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.switch {
+  position: relative;
+  display: inline-flex;
+  width: 42px;
+  height: 24px;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.switch-track {
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--border-strong);
+  transition: background var(--duration-default) var(--ease-out);
+}
+
+.switch-track::after {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: 3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(31, 35, 41, 0.2);
+  content: "";
+  transition: transform var(--duration-default) var(--ease-out);
+}
+
+.switch input:checked + .switch-track {
+  background: var(--accent);
+}
+
+.switch input:checked + .switch-track::after {
+  transform: translateX(18px);
+}
+
+@media (max-width: 1199.98px) {
+  .account-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 899.98px) {
+  .account-member-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .account-sidebar {
+    position: static;
+  }
+
+  .account-sidebar-profile {
+    display: none;
+  }
+
+  .account-nav {
+    display: flex;
+    overflow-x: auto;
+    padding: 8px;
+    scrollbar-width: none;
+  }
+
+  .account-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .account-nav-button {
+    flex: 0 0 auto;
+  }
+
+}
+
+@media (max-width: 767.98px) {
+  .account-member-section {
+    padding: 34px 0 66px;
+  }
+
+  .form-grid,
+  .points-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .account-content-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .account-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-block-head {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-block: 16px;
+  }
+
+  .security-row,
+  .setting-row,
+  .message-row {
+    align-items: flex-start;
+  }
+
+  .security-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .security-row .btn {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .record-table {
+    min-width: 560px;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+}
+
+/* Keep the account footer visually identical to the union homepage footer. */
+.site-footer.union-footer {
+  padding: 56px 0 32px;
+  background: var(--foreground);
+  color: #fafafa;
+}
+
+.union-footer .footer-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 36px;
+}
+
+.union-footer .footer-brand .brand-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.union-footer .footer-slogan {
+  margin: 14px 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.union-footer .footer-meta {
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.union-footer .footer-col {
+  text-align: right;
+}
+
+.union-footer .footer-col h3 {
+  margin-bottom: 12px;
+  color: #e8edf4;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.union-footer .footer-col a {
+  display: block;
+  padding: 5px 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+}
+
+.union-footer .footer-col a:hover {
+  color: #fff;
+}
+
+.union-footer .footer-bottom {
+  margin-top: 0;
+  padding-top: 24px;
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 12px;
+}
+
+@media (max-width: 1199.98px) {
+  .union-footer .footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .union-footer .footer-main {
+    grid-template-columns: 1fr;
+  }
+
+  .union-footer .footer-col {
+    text-align: left;
+  }
+
+  .union-footer .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
