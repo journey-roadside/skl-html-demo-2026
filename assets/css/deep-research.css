@@ -1351,3 +1351,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* 窗口高度不足 936px 时收紧顶部留白，让首屏内容恰好铺满，避免出现内部滚动条。
+   636px = 标题到上传区（576px）+ 底部留白（60px），即除顶部留白外的固定内容高度。 */
+@media (min-width: 768px) and (max-height: 935.98px) {
+  .intake-content {
+    padding-top: clamp(48px, calc(100vh - 636px), 300px);
+  }
+}
