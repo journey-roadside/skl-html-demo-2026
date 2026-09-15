@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="社科智研我的知识，集中管理个人研究资料和收藏内容。">
+  <meta name="theme-color" content="#fcfaf8">
+  <title>我的知识 · 社科智研</title>
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/app-shell.css">
+  <link rel="stylesheet" href="../assets/css/research-assistant.css">
+  <link rel="stylesheet" href="../assets/css/v4.css">
+  <link rel="stylesheet" href="../assets/css/my-knowledge.css">
+</head>
+<body class="app-body knowledge-page">
+  <div class="app-shell">
+    <aside class="app-sidebar" data-app-sidebar>
+      <div class="app-sidebar-head">
+        <div class="brand app-brand">
+          <span class="brand-copy">
+            <span class="brand-name">社科智研</span>
+            <span class="brand-en">SOCIAL SCIENCE RESEARCH</span>
+          </span>
+        </div>
+        <div class="app-sidebar-head-actions">
+          <button class="app-sidebar-control" type="button" data-history-search-toggle title="搜索历史记录（Ctrl+J）" aria-label="搜索历史记录，快捷键 Ctrl+J">
+            <span data-icon="search"></span>
+          </button>
+          <button class="app-sidebar-control app-sidebar-collapse" type="button" data-sidebar-collapse title="收起侧边栏（Ctrl+B）" aria-label="收起侧边栏，快捷键 Ctrl+B" aria-expanded="true">
+            <span data-icon="panel-right"></span>
+          </button>
+          <a class="app-sidebar-control sidebar-new-chat" href="../index.html" title="新建会话（Ctrl+K）" aria-label="新建会话，快捷键 Ctrl+K">
+            <span data-icon="plus"></span>
+          </a>
+        </div>
+        <button class="app-toolbar-btn" type="button" data-app-sidebar-close aria-label="关闭产品导航">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+
+      <nav class="app-nav" aria-label="产品导航">
+        <a class="app-nav-link app-nav-new is-active" href="../index.html">
+          <span data-icon="plus"></span>
+          新建会话
+          <span class="app-nav-shortcut">Ctrl K</span>
+        </a>
+        <a class="app-nav-link app-nav-knowledge is-active" href="./my-knowledge.html" data-auth-only hidden>
+          <span data-icon="database"></span>
+          我的知识
+        </a>
+        <a class="app-nav-link" href="./shared-community.html">
+          <span data-icon="book-open"></span>
+          共享社区
+        </a>
+        <a class="app-nav-link" href="./social-review.html">
+          <span data-icon="shield-check"></span>
+          社科智审
+        </a>
+      </nav>
+
+      <div class="app-sidebar-divider" aria-hidden="true"></div>
+
+      <div class="sidebar-scroll-region" data-sidebar-scroll-region>
+        <section class="sidebar-research" aria-labelledby="deepResearchTitle">
+          <div class="sidebar-section-head">
+            <h2 id="deepResearchTitle">深度研究</h2>
+            <button class="sidebar-section-more" type="button" data-nav-toast="新建研究项目" title="新建研究项目" aria-label="新建研究项目">
+              <span data-icon="plus"></span>
+            </button>
+          </div>
+          <div class="research-list">
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>基层公共文化服务数字化研究</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>区域社科成果知识图谱</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>数字政府公共服务协同机制</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>基层文化空间参与式治理</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>区域社科数据资源整合路径</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+          </div>
+          <button class="research-expand" type="button" data-research-expand>查看全部</button>
+        </section>
+
+        <section class="app-sidebar-history" data-history-panel aria-label="对话记录">
+          <div class="history-head">
+            <div class="sidebar-section-head">
+              <h2>对话记录</h2>
+              <button class="sidebar-section-more" type="button" data-history-manage title="管理对话" aria-label="管理对话">
+                <span data-icon="list-checks"></span>
+              </button>
+            </div>
+            <div class="history-manage-head" data-history-manage-head hidden>
+              <span data-history-selection-count>已选择 0 个对话</span>
+              <button class="history-icon-button" type="button" data-history-manage-close aria-label="退出管理">
+                <span data-icon="x"></span>
+              </button>
+            </div>
+          </div>
+          <div class="history-list">
+            <div class="history-group history-pinned-group" data-history-pinned-group>
+              <div class="history-group-label">置顶</div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">基层公共文化服务效能评估</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+            </div>
+            <div class="history-group">
+              <div class="history-group-label">今天</div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">基层公共文化服务数字化政策脉络</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">区域治理研究框架比较</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+            </div>
+            <div class="history-group">
+              <div class="history-group-label">近 7 天</div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">公共政策分析中的证据分层</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+            </div>
+          </div>
+          <div class="history-manage-actions" data-history-manage-actions hidden>
+            <button type="button" data-history-pin disabled><span data-icon="pin"></span>置顶</button>
+            <button type="button" data-history-delete disabled><span data-icon="trash-2"></span>删除</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="app-sidebar-foot">
+        <div class="app-sidebar-user" data-user-chip>
+          <button class="user-chip-trigger" type="button" data-user-menu-trigger aria-expanded="false">
+            <span class="user-avatar">研</span>
+            <span data-sidebar-user-label>未知研究员</span>
+          </button>
+          <div class="user-menu" data-user-menu hidden>
+            <div class="user-menu-profile" data-auth-only>
+              <span class="user-avatar">研</span>
+              <span class="user-menu-profile-copy">
+                <strong data-sidebar-user-label>未知研究员</strong>
+                <small>湖北省社会科学界联合会</small>
+              </span>
+            </div>
+            <div class="user-menu-divider" data-auth-only aria-hidden="true"></div>
+            <div class="user-menu-group" data-guest-only>
+              <button type="button" data-auth-login><span data-icon="user-round"></span><span>登录 / 注册</span></button>
+            </div>
+            <div class="user-menu-divider" data-guest-only aria-hidden="true"></div>
+            <div class="user-menu-group">
+              <a href="./account-center.html#points" target="_blank" rel="noopener" data-auth-only><span data-icon="coins"></span><span>积分余额</span><span class="user-menu-trailing"><strong>268</strong><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></span></a>
+              <a href="./account-center.html" target="_blank" rel="noopener" data-auth-only><span data-icon="user-round"></span><span>账号中心</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
+              <a href="../index.html?settings=1"><span data-icon="settings"></span><span>设置</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
+            </div>
+            <div class="user-menu-divider" aria-hidden="true"></div>
+            <div class="user-menu-group">
+              <button type="button" data-user-menu-toast="关于我们页面后续接入"><span data-icon="info"></span><span>关于我们</span></button>
+              <button type="button" data-user-menu-toast="帮助中心将在后续接入"><span data-icon="circle-help"></span><span>帮助中心</span></button>
+              <button type="button" data-feedback-open><span data-icon="message-square"></span><span>问题反馈</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="app-sidebar-mask" data-app-sidebar-mask hidden></div>
+
+    <div class="app-main">
+      <main class="knowledge-workspace" data-knowledge-workspace>
+        <div class="knowledge-scroll" data-knowledge-scroll>
+          <div class="knowledge-content">
+            <header class="knowledge-header">
+              <button class="app-toolbar-btn knowledge-mobile-menu" type="button" data-app-sidebar-open aria-label="打开产品导航">
+                <span data-icon="menu"></span>
+              </button>
+              <div class="knowledge-heading">
+                <h1>我的知识</h1>
+                <p>集中管理你的研究资料和收藏内容，随时继续研究。</p>
+              </div>
+              <div class="knowledge-header-actions">
+                <label class="knowledge-search">
+                  <span data-icon="search"></span>
+                  <input type="search" placeholder="搜索文件、资料或关键词" aria-label="搜索文件、资料或关键词" data-knowledge-search>
+                </label>
+                <button class="btn btn-outline" type="button" data-knowledge-upload-open>
+                  <span data-icon="upload"></span>
+                  上传文件
+                </button>
+              </div>
+            </header>
+
+            <section class="knowledge-stats" aria-label="知识资源概览">
+              <article><span>全部文件</span><strong data-stat-files>842</strong><small>个人研究资料</small></article>
+              <article><span>我的文件</span><strong data-stat-own-files>826</strong><small>个人上传与创建</small></article>
+              <article><span>收藏</span><strong data-stat-favorites>68</strong><small>已收藏文件</small></article>
+              <article><span>社区共享</span><strong data-stat-shared>24</strong><small>已共享文件</small></article>
+            </section>
+
+            <section class="knowledge-list-section">
+              <div class="knowledge-toolbar">
+                <div class="knowledge-tabs" role="tablist" aria-label="我的知识分类" data-knowledge-tabs>
+                  <button class="is-active" type="button" role="tab" aria-selected="true" data-knowledge-filter="all">全部</button>
+                  <button type="button" role="tab" aria-selected="false" data-knowledge-filter="mine">我的文件</button>
+                  <button type="button" role="tab" aria-selected="false" data-knowledge-filter="favorite">我的收藏</button>
+                  <button type="button" role="tab" aria-selected="false" data-knowledge-filter="community">我的共享</button>
+                </div>
+                <div class="knowledge-toolbar-actions">
+                  <span class="knowledge-sort-wrap" data-knowledge-type-filter>
+                    <button class="knowledge-select-button" type="button" data-knowledge-type-trigger aria-haspopup="listbox" aria-expanded="false">
+                      <span data-knowledge-type-label>全部格式</span>
+                      <span data-icon="chevron-down"></span>
+                    </button>
+                    <span class="knowledge-sort-list" data-knowledge-type-list role="listbox" hidden>
+                      <button class="is-selected" type="button" role="option" aria-selected="true" data-knowledge-type-value="all">全部格式</button>
+                      <button type="button" role="option" aria-selected="false" data-knowledge-type-value="PDF">PDF</button>
+                      <button type="button" role="option" aria-selected="false" data-knowledge-type-value="DOCX">DOCX</button>
+                      <button type="button" role="option" aria-selected="false" data-knowledge-type-value="MD">Markdown</button>
+                      <button type="button" role="option" aria-selected="false" data-knowledge-type-value="TXT">TXT</button>
+                    </span>
+                  </span>
+                  <span class="knowledge-sort-wrap" data-knowledge-sort-menu>
+                    <button class="knowledge-select-button" type="button" data-knowledge-sort-trigger aria-haspopup="listbox" aria-expanded="false">
+                      <span data-knowledge-sort-label>最近更新</span>
+                      <span data-icon="chevron-down"></span>
+                    </button>
+                    <span class="knowledge-sort-list" data-knowledge-sort-list role="listbox" hidden>
+                      <button class="is-selected" type="button" role="option" aria-selected="true" data-knowledge-sort-value="recent">最近更新</button>
+                      <button type="button" role="option" aria-selected="false" data-knowledge-sort-value="created">上传时间</button>
+                      <button type="button" role="option" aria-selected="false" data-knowledge-sort-value="name">名称</button>
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="knowledge-grid" data-knowledge-grid>
+                <article class="knowledge-card" data-knowledge-card data-id="file-policy" data-name="公共文化服务高质量发展政策汇编.pdf" data-type="PDF" data-size="2.4 MB" data-favorite="false" data-shared="private" data-status="normal" data-updated="今天 09:18 更新">
+                  <button class="knowledge-card-main" type="button" data-knowledge-open>
+                    <span class="knowledge-card-copy">
+                      <span class="knowledge-card-title"><strong>公共文化服务高质量发展政策汇编.pdf</strong></span>
+                      <span class="knowledge-card-description">PDF · 政策文件</span>
+                      <span class="knowledge-card-meta">2.4 MB · 仅自己可见</span>
+                      <span class="knowledge-card-updated">今天 09:18 更新</span>
+                    </span>
+                  </button>
+                  <button class="knowledge-card-more" type="button" data-knowledge-card-menu aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+                </article>
+
+                <article class="knowledge-card" data-knowledge-card data-id="file-survey" data-name="基层公共文化设施运营情况调查.docx" data-type="DOCX" data-size="1.1 MB" data-favorite="false" data-shared="private" data-status="parsing" data-updated="今天 08:42 更新">
+                  <button class="knowledge-card-main" type="button" data-knowledge-open>
+                    <span class="knowledge-card-copy">
+                      <span class="knowledge-card-title"><strong>基层公共文化设施运营情况调查.docx</strong></span>
+                      <span class="knowledge-card-description">DOCX · 调查报告</span>
+                      <span class="knowledge-card-meta">1.1 MB · 仅自己可见</span>
+                      <span class="knowledge-card-updated">今天 08:42 更新</span>
+                    </span>
+                  </button>
+                  <button class="knowledge-card-more" type="button" data-knowledge-card-menu aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+                </article>
+
+                <article class="knowledge-card" data-knowledge-card data-id="file-evaluation" data-name="区域公共文化服务效能评估研究.pdf" data-type="PDF" data-size="3.8 MB" data-favorite="false" data-shared="community" data-shared-time="昨天 15:30" data-status="normal" data-updated="昨天 15:30 更新">
+                  <button class="knowledge-card-main" type="button" data-knowledge-open>
+                    <span class="knowledge-card-copy">
+                      <span class="knowledge-card-title"><strong>区域公共文化服务效能评估研究.pdf</strong><small class="knowledge-shared-tag">社区共享</small></span>
+                      <span class="knowledge-card-description">PDF · 学术论文</span>
+                      <span class="knowledge-card-meta">3.8 MB · 已共享至社区</span>
+                      <span class="knowledge-card-updated">昨天 15:30 更新</span>
+                    </span>
+                  </button>
+                  <button class="knowledge-card-more" type="button" data-knowledge-card-menu aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+                </article>
+
+                <article class="knowledge-card" data-knowledge-card data-id="file-case" data-name="基层文化空间数字化案例汇编.md" data-type="MD" data-size="860 KB" data-favorite="true" data-favorite-time="今天 08:30" data-shared="private" data-status="normal" data-updated="今天 08:50 更新">
+                  <button class="knowledge-card-main" type="button" data-knowledge-open>
+                    <span class="knowledge-card-copy">
+                      <span class="knowledge-card-title"><strong>基层文化空间数字化案例汇编.md</strong></span>
+                      <span class="knowledge-card-description">MD · 案例材料</span>
+                      <span class="knowledge-card-meta">860 KB · 已收藏</span>
+                      <span class="knowledge-card-updated">今天 08:50 更新</span>
+                    </span>
+                  </button>
+                  <button class="knowledge-card-more" type="button" data-knowledge-card-menu aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+                </article>
+
+                <article class="knowledge-card" data-knowledge-card data-id="file-interview" data-name="公共文化服务公众满意度访谈记录.docx" data-type="DOCX" data-size="520 KB" data-favorite="false" data-shared="private" data-status="partial" data-updated="昨天 17:12 更新">
+                  <button class="knowledge-card-main" type="button" data-knowledge-open>
+                    <span class="knowledge-card-copy">
+                      <span class="knowledge-card-title"><strong>公共文化服务公众满意度访谈记录.docx</strong></span>
+                      <span class="knowledge-card-description">DOCX · 访谈材料</span>
+                      <span class="knowledge-card-meta">520 KB · 仅自己可见</span>
+                      <span class="knowledge-card-updated">昨天 17:12 更新</span>
+                    </span>
+                  </button>
+                  <button class="knowledge-card-more" type="button" data-knowledge-card-menu aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+                </article>
+
+                <article class="knowledge-card" data-knowledge-card data-id="file-map" data-name="基层公共文化服务设施现状调研.md" data-type="MD" data-size="1.6 MB" data-favorite="false" data-shared="private" data-status="normal" data-updated="近 7 天更新">
+                  <button class="knowledge-card-main" type="button" data-knowledge-open>
+                    <span class="knowledge-card-copy">
+                      <span class="knowledge-card-title"><strong>基层公共文化服务设施现状调研.md</strong></span>
+                      <span class="knowledge-card-description">MD · 调研资料</span>
+                      <span class="knowledge-card-meta">1.6 MB · 仅自己可见</span>
+                      <span class="knowledge-card-updated">近 7 天更新</span>
+                    </span>
+                  </button>
+                  <button class="knowledge-card-more" type="button" data-knowledge-card-menu aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+                </article>
+              </div>
+
+              <nav class="knowledge-pagination" data-knowledge-pagination aria-label="文件分页" hidden></nav>
+
+              <div class="knowledge-empty" data-knowledge-empty hidden>
+                <span class="knowledge-empty-icon"><span data-icon="database"></span></span>
+                <h2>还没有研究资料</h2>
+                <p>上传第一个文件后，可以用于检索、问答、研究和审查。</p>
+                <div>
+                  <button class="btn btn-primary" type="button" data-knowledge-upload-open>上传文件</button>
+                </div>
+              </div>
+
+              <div class="knowledge-error" data-knowledge-error hidden>
+                <span class="knowledge-empty-icon"><span data-icon="circle-help"></span></span>
+                <h2>文件加载失败</h2>
+                <p>请检查网络连接后重试，已上传的文件不会丢失。</p>
+                <button class="btn btn-outline" type="button" data-knowledge-retry>重新加载</button>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="knowledge-modal-mask" data-knowledge-modal-mask hidden></div>
+
+  <section class="knowledge-modal knowledge-upload-modal" data-knowledge-upload-modal role="dialog" aria-modal="true" aria-labelledby="knowledgeUploadTitle" hidden>
+    <div class="knowledge-modal-head">
+      <div>
+        <h2 id="knowledgeUploadTitle">上传文件</h2>
+        <p>支持 PDF、TXT、Markdown 和 DOC/DOCX</p>
+      </div>
+      <button class="knowledge-modal-close" type="button" data-knowledge-modal-close aria-label="关闭"><span data-icon="x"></span></button>
+    </div>
+    <form class="knowledge-form" data-knowledge-upload-form>
+      <div class="knowledge-dropzone" data-knowledge-dropzone>
+        <input type="file" multiple accept=".pdf,.txt,.md,.doc,.docx" data-knowledge-file-input>
+        <span data-icon="upload"></span>
+        <strong>拖拽文件到这里，或点击选择本地文件</strong>
+        <small>上传后将自动解析并建立索引</small>
+      </div>
+      <div class="knowledge-upload-list" data-knowledge-upload-list>
+        <p>暂未选择文件</p>
+      </div>
+      <div class="knowledge-modal-actions">
+        <button class="btn btn-outline" type="button" data-knowledge-modal-close>取消</button>
+        <button class="btn btn-primary" type="submit">开始上传</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="knowledge-modal knowledge-edit-modal" data-knowledge-edit-modal role="dialog" aria-modal="true" aria-labelledby="knowledgeEditTitle" hidden>
+    <div class="knowledge-modal-head">
+      <div>
+        <h2 id="knowledgeEditTitle">重命名文件</h2>
+        <p>仅修改文件名称，原文件格式会自动保留</p>
+      </div>
+      <button class="knowledge-modal-close" type="button" data-knowledge-modal-close aria-label="关闭"><span data-icon="x"></span></button>
+    </div>
+    <form class="knowledge-form" data-knowledge-edit-form>
+      <label class="knowledge-field">
+        <span>文件名称</span>
+        <input type="text" maxlength="40" required data-knowledge-edit-name>
+      </label>
+      <div class="knowledge-modal-actions">
+        <button class="btn btn-outline" type="button" data-knowledge-modal-close>取消</button>
+        <button class="btn btn-primary" type="submit">保存修改</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="knowledge-modal knowledge-delete-modal" data-knowledge-delete-modal role="alertdialog" aria-modal="true" aria-labelledby="knowledgeDeleteTitle" hidden>
+    <div class="knowledge-modal-head">
+      <div>
+        <h2 id="knowledgeDeleteTitle">删除文件</h2>
+        <p data-knowledge-delete-description>删除后无法恢复。</p>
+      </div>
+      <button class="knowledge-modal-close" type="button" data-knowledge-modal-close aria-label="关闭"><span data-icon="x"></span></button>
+    </div>
+    <div class="knowledge-delete-body">文件及其解析记录将被移除，删除后无法恢复。</div>
+    <div class="knowledge-modal-actions">
+      <button class="btn btn-outline" type="button" data-knowledge-modal-close>取消</button>
+      <button class="btn btn-primary" type="button" data-knowledge-delete-confirm>确认删除</button>
+    </div>
+  </section>
+
+  <section class="knowledge-modal knowledge-confirm-modal" data-knowledge-confirm-modal role="alertdialog" aria-modal="true" aria-labelledby="knowledgeConfirmTitle" hidden>
+    <div class="knowledge-modal-head">
+      <div>
+        <h2 id="knowledgeConfirmTitle" data-knowledge-confirm-title>确认操作</h2>
+        <p data-knowledge-confirm-description></p>
+      </div>
+      <button class="knowledge-modal-close" type="button" data-knowledge-modal-close aria-label="关闭"><span data-icon="x"></span></button>
+    </div>
+    <div class="knowledge-confirm-body" data-knowledge-confirm-message></div>
+    <div class="knowledge-modal-actions">
+      <button class="btn btn-outline" type="button" data-knowledge-modal-close>取消</button>
+      <button class="btn btn-primary" type="button" data-knowledge-confirm-submit>确认</button>
+    </div>
+  </section>
+
+  <section class="knowledge-modal knowledge-share-review-modal" data-knowledge-share-review-modal role="dialog" aria-modal="true" aria-labelledby="knowledgeShareReviewTitle" hidden>
+    <div class="knowledge-modal-head">
+      <div>
+        <h2 id="knowledgeShareReviewTitle">提交共享审核</h2>
+        <p>选择文件所属分类后提交，审核通过后将在共享社区公开。</p>
+      </div>
+      <button class="knowledge-modal-close" type="button" data-knowledge-modal-close aria-label="关闭"><span data-icon="x"></span></button>
+    </div>
+    <div class="knowledge-form">
+      <div class="knowledge-share-file">
+        <span data-icon="file-text"></span>
+        <strong data-knowledge-share-file-name></strong>
+      </div>
+      <section class="knowledge-field">
+        <span>分类标签</span>
+        <div class="knowledge-multi-select" data-knowledge-tag-select>
+          <button class="knowledge-multi-trigger" type="button" data-knowledge-tag-trigger aria-haspopup="listbox" aria-expanded="false">
+            <span data-knowledge-tag-label>请选择分类标签</span>
+            <span data-icon="chevron-down"></span>
+          </button>
+          <div class="knowledge-tag-options" data-knowledge-tag-options role="listbox" aria-multiselectable="true" hidden>
+            <label><input type="checkbox" value="政策研究" data-knowledge-share-tag><span>政策研究</span></label>
+            <label><input type="checkbox" value="基层治理" data-knowledge-share-tag><span>基层治理</span></label>
+            <label><input type="checkbox" value="区域发展" data-knowledge-share-tag><span>区域发展</span></label>
+            <label><input type="checkbox" value="文化传播" data-knowledge-share-tag><span>文化传播</span></label>
+            <label><input type="checkbox" value="社会治理" data-knowledge-share-tag><span>社会治理</span></label>
+            <label><input type="checkbox" value="成果案例" data-knowledge-share-tag><span>成果案例</span></label>
+          </div>
+        </div>
+      </section>
+      <div class="knowledge-custom-tag">
+        <input type="text" maxlength="20" placeholder="添加自定义分类标签" data-knowledge-custom-tag-input>
+        <button class="btn btn-outline" type="button" data-knowledge-add-tag>添加标签</button>
+      </div>
+      <div class="knowledge-custom-tag-list" data-knowledge-custom-tag-list hidden></div>
+      <p class="knowledge-review-note">提交后文件进入官方审核流程，审核期间不会在共享社区公开展示。</p>
+      <div class="knowledge-modal-actions">
+        <button class="btn btn-outline" type="button" data-knowledge-modal-close>取消</button>
+        <button class="btn btn-primary" type="button" data-knowledge-share-submit>提交审核</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="research-modal-mask" data-research-modal-mask hidden></div>
+  <section class="research-modal" data-research-modal role="dialog" aria-modal="true" aria-labelledby="researchModalTitle" hidden>
+    <div class="research-modal-head">
+      <div>
+        <h2 id="researchModalTitle" data-research-modal-title>编辑项目标题</h2>
+        <p data-research-modal-description></p>
+      </div>
+      <button class="research-modal-close" type="button" data-research-modal-close aria-label="关闭">
+        <span data-icon="x"></span>
+      </button>
+    </div>
+    <div class="research-modal-body">
+      <label class="research-modal-field" data-research-modal-field hidden>
+        <input type="text" data-research-modal-input maxlength="60" aria-label="项目标题">
+      </label>
+      <p class="research-modal-message" data-research-modal-message hidden></p>
+    </div>
+    <div class="research-modal-actions">
+      <button class="research-modal-cancel" type="button" data-research-modal-close>取消</button>
+      <button class="research-modal-confirm" type="button" data-research-modal-confirm>保存</button>
+    </div>
+  </section>
+
+  <script src="../assets/js/icons.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/auth.js" defer></script>
+  <script src="../assets/js/app-shell.js" defer></script>
+  <script src="../assets/js/research-assistant.js" defer></script>
+  <script src="../assets/js/v4.js" defer></script>
+  <script src="../assets/js/my-knowledge.js" defer></script>
+</body>
+</html>
+

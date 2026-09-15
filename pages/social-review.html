@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="社科智审，面向社科研究成果提供真实性、价值导向和 AI 伦理审查。">
+  <meta name="description" content="社科智研社科智审，提交研究文件并查看真实性、价值导向与 AI 伦理风险报告。">
   <meta name="theme-color" content="#fcfaf8">
   <title>社科智审 · 社科智研</title>
   <link rel="stylesheet" href="../assets/css/tokens.css">
@@ -11,17 +11,29 @@
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="../assets/css/app-shell.css">
   <link rel="stylesheet" href="../assets/css/research-assistant.css">
+  <link rel="stylesheet" href="../assets/css/v4.css">
   <link rel="stylesheet" href="../assets/css/social-review.css">
 </head>
-<body class="app-body social-review-page">
+<body class="app-body knowledge-page social-review-page">
   <div class="app-shell">
     <aside class="app-sidebar" data-app-sidebar>
       <div class="app-sidebar-head">
         <div class="brand app-brand">
           <span class="brand-copy">
             <span class="brand-name">社科智研</span>
-            <span class="brand-en">Social Science Research</span>
+            <span class="brand-en">SOCIAL SCIENCE RESEARCH</span>
           </span>
+        </div>
+        <div class="app-sidebar-head-actions">
+          <button class="app-sidebar-control" type="button" data-history-search-toggle title="搜索历史记录（Ctrl+J）" aria-label="搜索历史记录，快捷键 Ctrl+J">
+            <span data-icon="search"></span>
+          </button>
+          <button class="app-sidebar-control app-sidebar-collapse" type="button" data-sidebar-collapse title="收起侧边栏（Ctrl+B）" aria-label="收起侧边栏，快捷键 Ctrl+B" aria-expanded="true">
+            <span data-icon="panel-right"></span>
+          </button>
+          <a class="app-sidebar-control sidebar-new-chat" href="../index.html" title="新建会话（Ctrl+K）" aria-label="新建会话，快捷键 Ctrl+K">
+            <span data-icon="plus"></span>
+          </a>
         </div>
         <button class="app-toolbar-btn" type="button" data-app-sidebar-close aria-label="关闭产品导航">
           <span data-icon="x"></span>
@@ -29,108 +41,118 @@
       </div>
 
       <nav class="app-nav" aria-label="产品导航">
-        <a class="app-nav-link" href="./research-assistant.html">
-          <span data-icon="message-square"></span>
-          社科研究助手
+        <a class="app-nav-link app-nav-new is-active" href="../index.html">
+          <span data-icon="plus"></span>
+          新建会话
+          <span class="app-nav-shortcut">Ctrl K</span>
         </a>
-        <a class="app-nav-link" href="./knowledge-base.html">
+        <a class="app-nav-link app-nav-knowledge" href="./my-knowledge.html" data-auth-only hidden>
           <span data-icon="database"></span>
-          知识社区
+          我的知识
         </a>
-        <a class="app-nav-link" href="./deep-research.html">
-          <span data-icon="search-check"></span>
-          深度研究
+        <a class="app-nav-link app-nav-knowledge" href="./shared-community.html">
+          <span data-icon="book-open"></span>
+          共享社区
         </a>
-        <a class="app-nav-link is-active" href="./social-review.html">
+        <a class="app-nav-link app-nav-knowledge is-active" href="./social-review.html">
           <span data-icon="shield-check"></span>
           社科智审
-        </a>
-        <a class="app-nav-link" href="./literature-reader.html">
-          <span data-icon="scan-text"></span>
-          文献精读
         </a>
       </nav>
 
       <div class="app-sidebar-divider" aria-hidden="true"></div>
 
-      <section class="app-sidebar-history" data-history-panel aria-label="对话记录">
-        <div class="history-head">
-          <div class="history-action-row">
-            <button class="history-icon-button" type="button" data-new-conversation title="新建对话（Ctrl+J）" aria-label="新建对话" aria-keyshortcuts="Control+J">
+      <div class="sidebar-scroll-region" data-sidebar-scroll-region>
+        <section class="sidebar-research" aria-labelledby="deepResearchTitle">
+          <div class="sidebar-section-head">
+            <h2 id="deepResearchTitle">深度研究</h2>
+            <button class="sidebar-section-more" type="button" data-nav-toast="新建研究项目" title="新建研究项目" aria-label="新建研究项目">
               <span data-icon="plus"></span>
             </button>
-            <button class="history-icon-button" type="button" data-history-search-toggle title="搜索历史对话（Ctrl+K）" aria-label="搜索历史对话" aria-keyshortcuts="Control+K">
-              <span data-icon="search"></span>
-            </button>
-            <button class="history-icon-button" type="button" data-history-manage title="管理对话" aria-label="管理对话">
-              <span data-icon="list-checks"></span>
-            </button>
           </div>
-          <div class="history-manage-head" data-history-manage-head hidden>
-            <span data-history-selection-count>已选择 0 个对话</span>
-            <button class="history-icon-button" type="button" data-history-manage-close aria-label="退出管理">
-              <span data-icon="x"></span>
-            </button>
-          </div>
-        </div>
-        <div class="history-list">
-          <div class="history-group history-pinned-group" data-history-pinned-group hidden>
-            <div class="history-group-label">置顶</div>
-          </div>
-          <div class="history-group">
-            <div class="history-group-label">今天</div>
-            <div class="history-row">
-              <button class="history-item" type="button" data-history-item>
-                <span class="history-item-text">基层公共文化服务数字化政策脉络</span>
-              </button>
-              <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+          <div class="research-list">
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>基层公共文化服务数字化研究</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>区域社科成果知识图谱</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>数字政府公共服务协同机制</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
             </div>
           </div>
-          <div class="history-group">
-            <div class="history-group-label">近7天</div>
-            <div class="history-row">
-              <button class="history-item" type="button" data-history-item>
-                <span class="history-item-text">公共政策分析中的证据分层</span>
+          <button class="research-expand" type="button" data-research-expand>查看全部</button>
+        </section>
+
+        <section class="app-sidebar-history" data-history-panel aria-label="对话记录">
+          <div class="history-head">
+            <div class="sidebar-section-head">
+              <h2>对话记录</h2>
+              <button class="sidebar-section-more" type="button" data-history-manage title="管理对话" aria-label="管理对话">
+                <span data-icon="list-checks"></span>
               </button>
-              <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="history-manage-head" data-history-manage-head hidden>
+              <span data-history-selection-count>已选择 0 个对话</span>
+              <button class="history-icon-button" type="button" data-history-manage-close aria-label="退出管理"><span data-icon="x"></span></button>
             </div>
           </div>
-        </div>
-        <div class="history-manage-actions" data-history-manage-actions hidden>
-          <button type="button" data-history-pin disabled><span data-icon="pin"></span>置顶</button>
-          <button type="button" data-history-delete disabled><span data-icon="trash-2"></span>删除</button>
-        </div>
-      </section>
+          <div class="history-list">
+            <div class="history-group history-pinned-group" data-history-pinned-group>
+              <div class="history-group-label">置顶</div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">基层公共文化服务效能评估</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+            </div>
+            <div class="history-group">
+              <div class="history-group-label">今天</div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">基层公共文化服务数字化政策脉络</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">区域治理研究框架比较</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <div class="app-sidebar-foot">
-        <div data-guest-actions>
-          <button class="app-nav-link" type="button" data-auth-open>
-            <span data-icon="user-round"></span>
-            登录 / 注册
-          </button>
-        </div>
-        <div class="app-sidebar-user" data-user-chip hidden>
+        <div class="app-sidebar-user" data-user-chip>
           <button class="user-chip-trigger" type="button" data-user-menu-trigger aria-expanded="false">
             <span class="user-avatar">研</span>
             <span data-sidebar-user-label>未知研究员</span>
           </button>
           <div class="user-menu" data-user-menu hidden>
-            <div class="user-menu-profile">
+            <div class="user-menu-profile" data-auth-only>
               <span class="user-avatar">研</span>
               <span class="user-menu-profile-copy">
                 <strong data-sidebar-user-label>未知研究员</strong>
                 <small>湖北省社会科学界联合会</small>
               </span>
             </div>
-            <div class="user-menu-divider" aria-hidden="true"></div>
+            <div class="user-menu-divider" data-auth-only aria-hidden="true"></div>
+            <div class="user-menu-group" data-guest-only>
+              <button type="button" data-auth-login><span data-icon="user-round"></span><span>登录 / 注册</span></button>
+            </div>
+            <div class="user-menu-divider" data-guest-only aria-hidden="true"></div>
             <div class="user-menu-group">
-              <a href="./account-center.html#points" target="_blank" rel="noopener"><span data-icon="coins"></span><span>积分余额</span><span class="user-menu-trailing"><strong>268</strong><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></span></a>
-              <a href="./account-center.html" target="_blank" rel="noopener"><span data-icon="user-round"></span><span>账号中心</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
-              <button type="button" data-settings-open><span data-icon="settings"></span><span>设置</span></button>
-              <button type="button" data-user-menu-toast="帮助与反馈将在后续接入"><span data-icon="message-square"></span><span>帮助与反馈</span></button>
+              <a href="./account-center.html#points" target="_blank" rel="noopener" data-auth-only><span data-icon="coins"></span><span>积分余额</span><span class="user-menu-trailing"><strong>268</strong><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></span></a>
+              <a href="./account-center.html" target="_blank" rel="noopener" data-auth-only><span data-icon="user-round"></span><span>账号中心</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
+              <a href="../index.html?settings=1"><span data-icon="settings"></span><span>设置</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
             </div>
             <div class="user-menu-divider" aria-hidden="true"></div>
-            <button class="user-menu-logout" type="button" data-auth-logout><span data-icon="log-out"></span><span>退出登录</span></button>
+            <div class="user-menu-group">
+              <button type="button" data-user-menu-toast="关于我们页面后续接入"><span data-icon="info"></span><span>关于我们</span></button>
+              <button type="button" data-user-menu-toast="帮助中心将在后续接入"><span data-icon="circle-help"></span><span>帮助中心</span></button>
+              <button type="button" data-feedback-open><span data-icon="message-square"></span><span>问题反馈</span></button>
+            </div>
           </div>
         </div>
       </div>
@@ -138,215 +160,284 @@
     <div class="app-sidebar-mask" data-app-sidebar-mask hidden></div>
 
     <div class="app-main">
-      <div class="review-workspace">
-        <aside class="review-queue-panel" aria-label="审查任务列表">
-          <div class="review-panel-heading">
-            <button class="app-toolbar-btn review-mobile-nav" type="button" data-app-sidebar-open aria-label="打开产品导航">
-              <span data-icon="menu"></span>
-            </button>
-            <div>
-              <h2>审查任务</h2>
-              <p><span data-review-queue-count>5</span> 项任务</p>
-            </div>
-            <button class="review-icon-button" type="button" data-review-create-open aria-label="新建审查">
-              <span data-icon="plus"></span>
-            </button>
-          </div>
-          <label class="review-search">
-            <span data-icon="search"></span>
-            <input type="search" placeholder="搜索审查任务" data-review-queue-search>
-          </label>
-          <div class="review-queue-list" data-review-queue></div>
-          <div class="review-queue-summary">
-            <span>今日已完成</span>
-            <strong>6 项</strong>
-          </div>
-        </aside>
+      <main class="review-workspace">
+        <div class="review-scroll" data-review-scroll>
+          <section class="review-home" data-review-home-view>
+            <header class="review-home-head">
+              <button class="app-toolbar-btn review-mobile-menu" type="button" data-app-sidebar-open aria-label="打开产品导航">
+                <span data-icon="menu"></span>
+              </button>
+              <button class="review-task-trigger" type="button" data-review-task-open aria-haspopup="dialog">
+                <span data-icon="clipboard-check"></span>
+                分析任务
+                <span class="review-task-count">3</span>
+              </button>
+            </header>
 
-        <div class="review-combined-panel">
-          <section class="review-main-panel" aria-labelledby="reviewDocumentTitle">
-          <header class="review-document-head">
-            <div class="review-document-title">
-              <span class="review-document-mark"><span data-icon="shield-check"></span></span>
-              <div>
-                <div class="review-title-line">
-                  <h1 id="reviewDocumentTitle" data-review-document-title>基层公共文化服务数字化研究报告</h1>
-                  <span class="review-risk-badge is-medium" data-review-risk-badge>中风险</span>
+            <section class="review-hero">
+              <h2>让研究结论，经得起复核</h2>
+              <p>从事实来源到价值边界，从数据授权到 AI 伦理，智能识别风险、梳理依据，辅助形成可追溯的分析结论。</p>
+            </section>
+
+            <section class="review-intake-card" aria-labelledby="reviewIntakeTitle">
+              <div class="review-intake-composer" data-review-upload-zone>
+                <button class="review-composer-upload" type="button" data-review-upload-trigger aria-label="上传本地文件" title="上传本地文件">
+                  <span data-icon="plus"></span>
+                </button>
+                <input type="search" placeholder="搜索我的知识，或上传本地文件" aria-label="搜索我的知识，或上传本地文件" data-review-search>
+                <button class="review-composer-submit" type="button" data-review-submit disabled>提交</button>
+                <input type="file" accept=".pdf,.docx,.txt,.md,.xlsx,.pptx" data-review-local-file hidden>
+              </div>
+
+              <div class="review-suggestions" data-review-suggestions hidden>
+                <div class="review-suggestions-head">
+                  <span>我的知识</span>
+                  <small>可直接选择文件，或将文件拖入上方区域</small>
                 </div>
-                <p data-review-document-meta>18,640 字 · 今天 14:32 完成审查</p>
+                <div class="review-file-options" data-review-file-options>
+                  <button class="review-file-option" type="button" data-review-file data-name="基层公共文化服务数字化研究报告.pdf" data-type="PDF" data-size="3.2 MB" data-updated="今天 09:20">
+                    <span class="review-file-icon" data-icon="file-text"></span>
+                    <span class="review-file-copy"><strong>基层公共文化服务数字化研究报告.pdf</strong><small>PDF · 3.2 MB · 今天 09:20</small></span>
+                    <span class="review-file-select">选择</span>
+                  </button>
+                  <button class="review-file-option" type="button" data-review-file data-name="政策文本分析资料.docx" data-type="DOCX" data-size="2.1 MB" data-updated="昨天 16:40">
+                    <span class="review-file-icon" data-icon="file-word"></span>
+                    <span class="review-file-copy"><strong>政策文本分析资料.docx</strong><small>DOCX · 2.1 MB · 昨天 16:40</small></span>
+                    <span class="review-file-select">选择</span>
+                  </button>
+                </div>
+                <p class="review-file-empty" data-review-file-empty hidden>没有找到匹配文件</p>
               </div>
-            </div>
-            <div class="review-document-actions">
-              <button class="review-icon-button" type="button" data-review-refresh aria-label="重新审查">
-                <span data-icon="rotate-cw"></span>
-              </button>
-              <button class="review-icon-button" type="button" data-review-more aria-label="更多操作">
-                <span data-icon="ellipsis"></span>
-              </button>
-            </div>
-          </header>
 
-          <div class="review-score-grid">
-            <article class="review-score-card is-truth">
-              <div class="review-score-head">
-                <span><span data-icon="search-check"></span>真实性审查</span>
-                <strong data-review-score="truth">82</strong>
+              <div class="review-uploaded-file" data-review-uploaded-file hidden>
+                <span class="review-file-icon" data-icon="file-text"></span>
+                <span><strong data-review-uploaded-name></strong><small data-review-uploaded-meta></small></span>
+                <button type="button" data-review-upload-remove aria-label="移除文件"><span data-icon="x"></span></button>
               </div>
-              <div class="review-score-track"><span style="width: 82%"></span></div>
-              <p data-review-summary="truth">整体可信，个别数据需要补充原始出处。</p>
-            </article>
-            <article class="review-score-card is-value">
-              <div class="review-score-head">
-                <span><span data-icon="shield-check"></span>价值导向</span>
-                <strong data-review-score="value">68</strong>
-              </div>
-              <div class="review-score-track"><span style="width: 68%"></span></div>
-              <p data-review-summary="value">方向基本正确，区域差异表述需避免绝对化。</p>
-            </article>
-            <article class="review-score-card is-ethics">
-              <div class="review-score-head">
-                <span><span data-icon="brain"></span>AI 伦理</span>
-                <strong data-review-score="ethics">45</strong>
-              </div>
-              <div class="review-score-track"><span style="width: 45%"></span></div>
-              <p data-review-summary="ethics">建议补充数据来源、用户信息处理与模型使用说明。</p>
-            </article>
-          </div>
 
-          <div class="review-result-head">
-            <div class="review-tabs" role="tablist" aria-label="审查维度">
-              <button class="is-active" type="button" data-review-tab="all" role="tab" aria-selected="true">全部风险项</button>
-              <button type="button" data-review-tab="truth" role="tab" aria-selected="false">真实性</button>
-              <button type="button" data-review-tab="value" role="tab" aria-selected="false">价值导向</button>
-              <button type="button" data-review-tab="ethics" role="tab" aria-selected="false">AI 伦理</button>
-            </div>
-            <span class="review-result-count"><strong data-review-finding-count>6</strong> 项结果</span>
-          </div>
-          <div class="review-finding-list" data-review-findings></div>
+              <div class="review-selection" data-review-selection hidden>
+                <span class="review-selection-icon" data-icon="file-check-2"></span>
+                <span><small>待分析文件</small><strong data-review-selected-name></strong></span>
+                <button type="button" data-review-selection-clear>取消选择</button>
+              </div>
+
+              <div class="review-intake-actions">
+                <p>AI 分析结果仅供参考，重要内容需人工复核。</p>
+              </div>
+            </section>
+
+            <section class="review-guidance" aria-label="分析说明">
+              <article>
+                <span data-icon="scan-search"></span>
+                <div><strong>真实性核验</strong><p>检查事实出处、引用关系与时间信息。</p></div>
+              </article>
+              <article>
+                <span data-icon="scale"></span>
+                <div><strong>价值导向分析</strong><p>识别结论边界、表达尺度与潜在偏差。</p></div>
+              </article>
+              <article>
+                <span data-icon="bot"></span>
+                <div><strong>AI 伦理检查</strong><p>关注数据授权、生成痕迹与责任边界。</p></div>
+              </article>
+            </section>
           </section>
 
-          <aside class="review-report-panel">
-          <div class="review-report-head">
-            <div>
-              <h2>审查报告</h2>
-              <p>结论、依据与风险项汇总</p>
-            </div>
-            <span class="review-report-status"><span></span>已生成</span>
-          </div>
-          <div class="review-report-body">
-            <section class="review-conclusion">
-              <span>综合结论</span>
-              <strong data-review-conclusion>建议修改后发布</strong>
-              <p data-review-conclusion-copy>内容整体可信，但存在 2 项中度风险，建议补充证据来源并调整绝对化表达。</p>
+          <section class="review-analysis" data-review-analysis-view hidden>
+            <header class="review-analysis-head">
+              <div class="review-analysis-head-main">
+                <button class="review-back" type="button" data-review-back>
+                  <span data-icon="chevron-left"></span>
+                  返回
+                </button>
+                <div class="review-analysis-task">
+                  <div class="review-analysis-title-row">
+                    <h1 data-review-task-title>基层公共文化服务数字化研究报告</h1>
+                  </div>
+                </div>
+              </div>
+              <div class="review-analysis-actions" data-review-analysis-actions hidden>
+                <button class="btn btn-outline" type="button" data-review-retry><span data-icon="refresh-cw"></span>重新分析</button>
+                <div class="review-download-wrap">
+                  <button class="btn btn-outline review-download-trigger" type="button" data-review-download-trigger aria-haspopup="menu" aria-expanded="false">
+                    <span data-icon="download"></span>下载报告<span data-icon="chevron-down"></span>
+                  </button>
+                  <div class="review-download-menu" data-review-download-menu role="menu" hidden>
+                    <button type="button" role="menuitem" data-review-download="PDF">PDF</button>
+                    <button type="button" role="menuitem" data-review-download="DOCX">DOCX</button>
+                    <button type="button" role="menuitem" data-review-download="MD">Markdown</button>
+                  </div>
+                </div>
+              </div>
+            </header>
+
+            <section class="review-progress-card">
+              <div class="review-section-head">
+                <div><h2>分析中</h2></div>
+                <span class="review-progress-copy" data-review-progress-copy>准备开始</span>
+              </div>
+              <ol class="review-stage-list">
+                <li data-review-stage="parse"><span class="review-stage-marker">1</span><span><strong>文件解析</strong><small data-review-stage-status>等待中</small></span></li>
+                <li data-review-stage="source"><span class="review-stage-marker">2</span><span><strong>事实与来源比对</strong><small data-review-stage-status>等待中</small></span></li>
+                <li data-review-stage="value"><span class="review-stage-marker">3</span><span><strong>价值导向分析</strong><small data-review-stage-status>等待中</small></span></li>
+                <li data-review-stage="ethics"><span class="review-stage-marker">4</span><span><strong>AI 伦理检查</strong><small data-review-stage-status>等待中</small></span></li>
+                <li data-review-stage="risks"><span class="review-stage-marker">5</span><span><strong>风险整理</strong><small data-review-stage-status>等待中</small></span></li>
+                <li data-review-stage="report"><span class="review-stage-marker">6</span><span><strong>报告生成</strong><small data-review-stage-status>等待中</small></span></li>
+              </ol>
+              <div class="review-log" aria-live="polite">
+                <div class="review-log-head"><span data-icon="terminal"></span><strong>分析日志</strong></div>
+                <ol data-review-log-list></ol>
+              </div>
             </section>
-            <section class="review-report-section">
-              <h3>风险分布</h3>
-              <div class="review-risk-row"><span><i class="is-high"></i>高风险</span><strong data-review-risk-count="high">1</strong></div>
-              <div class="review-risk-row"><span><i class="is-medium"></i>中风险</span><strong data-review-risk-count="medium">3</strong></div>
-              <div class="review-risk-row"><span><i class="is-low"></i>低风险</span><strong data-review-risk-count="low">2</strong></div>
+
+            <section class="review-failed" data-review-failed hidden>
+              <span data-icon="circle-alert"></span>
+              <div><strong>分析未完成</strong><p data-review-failed-reason>文件解析阶段出现异常，请重新提交。</p></div>
+              <button class="btn btn-outline" type="button" data-review-retry>重新分析</button>
             </section>
-            <section class="review-report-section">
-              <h3>报告内容</h3>
-              <ul class="review-report-outline">
-                <li><span data-icon="check"></span>审查范围与依据</li>
-                <li><span data-icon="check"></span>风险项逐条说明</li>
-                <li><span data-icon="check"></span>修改建议与复核清单</li>
-              </ul>
+
+            <section class="review-report" data-review-report hidden>
+              <div class="review-section-head">
+                <div><h2>分析报告</h2></div>
+                <div class="review-report-head-right">
+                  <span class="review-report-note"><span data-icon="info"></span>AI 分析结果仅供参考，重要内容需人工复核。</span>
+                  <span class="review-status-pill is-complete">已完成</span>
+                </div>
+              </div>
+
+              <article class="review-report-summary">
+                <div>
+                  <span class="review-risk-level is-medium">中风险</span>
+                  <h3>报告结论</h3>
+                  <p>文件整体结构与主题表达完整，但部分时间信息缺少出处，个别结论超出参考资料范围，AI 生成痕迹与数据授权边界需进一步确认。</p>
+                </div>
+                <dl>
+                  <div><dt>分析范围</dt><dd>全文 18,642 字</dd></div>
+                  <div><dt>识别引用</dt><dd>12 处</dd></div>
+                  <div><dt>生成时间</dt><dd>2026-09-16 14:32</dd></div>
+                </dl>
+              </article>
+
+              <div class="review-score-grid">
+                <article><span>真实性</span><strong>82</strong><small>需核验 2 项</small></article>
+                <article><span>价值导向</span><strong>68</strong><small>建议修改 3 处</small></article>
+                <article><span>AI 伦理</span><strong>45</strong><small>重点关注 4 项</small></article>
+              </div>
+
+              <div class="review-risk-filter" role="tablist" aria-label="风险项筛选">
+                <button class="is-active" type="button" data-review-risk-filter="all">全部风险项</button>
+                <button type="button" data-review-risk-filter="truth">真实性</button>
+                <button type="button" data-review-risk-filter="value">价值导向</button>
+                <button type="button" data-review-risk-filter="ethics">AI 伦理</button>
+              </div>
+
+              <div class="review-risk-list" data-review-risk-list>
+                <article class="review-risk-item" data-risk-category="truth">
+                  <div class="review-risk-item-head">
+                    <span class="review-risk-level is-high">高风险</span>
+                    <h3>时间信息缺少出处</h3>
+                    <span>真实性</span>
+                  </div>
+                  <blockquote>“截至 2025 年底，全省公共文化数字资源服务覆盖率已达到 96%。”</blockquote>
+                  <dl>
+                    <div><dt>风险说明</dt><dd>统计时间和数据来源未在正文或注释中明确标注。</dd></div>
+                    <div><dt>判断依据</dt><dd>引用段落未匹配到可核验的公开来源，数据口径无法确认。</dd></div>
+                    <div><dt>修改建议</dt><dd>补充统计来源、调查机构和发布时间，并说明统计口径。</dd></div>
+                    <div><dt>原文位置</dt><dd>第 8 页，第 3 段</dd></div>
+                  </dl>
+                </article>
+                <article class="review-risk-item" data-risk-category="value">
+                  <div class="review-risk-item-head">
+                    <span class="review-risk-level is-medium">中风险</span>
+                    <h3>结论表述超出资料范围</h3>
+                    <span>价值导向</span>
+                  </div>
+                  <blockquote>“该模式能够从根本上解决基层公共文化服务供给不足的问题。”</blockquote>
+                  <dl>
+                    <div><dt>风险说明</dt><dd>结论使用绝对化表达，超出案例材料能够支持的范围。</dd></div>
+                    <div><dt>判断依据</dt><dd>现有资料仅覆盖局部地区实践，不足以证明普遍效果。</dd></div>
+                    <div><dt>修改建议</dt><dd>调整为阶段性、条件性结论，并补充适用边界。</dd></div>
+                    <div><dt>原文位置</dt><dd>第 12 页，第 1 段</dd></div>
+                  </dl>
+                </article>
+                <article class="review-risk-item" data-risk-category="ethics">
+                  <div class="review-risk-item-head">
+                    <span class="review-risk-level is-high">高风险</span>
+                    <h3>数据授权说明不完整</h3>
+                    <span>AI 伦理</span>
+                  </div>
+                  <blockquote>“本文使用调研问卷及访谈记录完成分析。”</blockquote>
+                  <dl>
+                    <div><dt>风险说明</dt><dd>未说明受访者知情同意、匿名化及数据使用授权情况。</dd></div>
+                    <div><dt>判断依据</dt><dd>文件包含访谈分析，但缺少伦理审查和数据管理说明。</dd></div>
+                    <div><dt>修改建议</dt><dd>补充伦理审查编号、匿名化处理和授权范围说明。</dd></div>
+                    <div><dt>原文位置</dt><dd>研究方法，第 4 段</dd></div>
+                  </dl>
+                </article>
+                <article class="review-risk-item" data-risk-category="ethics">
+                  <div class="review-risk-item-head">
+                    <span class="review-risk-level is-low">低风险</span>
+                    <h3>引用来源需人工确认</h3>
+                    <span>AI 伦理</span>
+                  </div>
+                  <blockquote>“相关政策梳理参考了多份研究报告和公开材料。”</blockquote>
+                  <dl>
+                    <div><dt>风险说明</dt><dd>概括性引用未列出具体文件名，追溯性不足。</dd></div>
+                    <div><dt>判断依据</dt><dd>引用信息不足以自动匹配来源，需要人工复核。</dd></div>
+                    <div><dt>修改建议</dt><dd>补充参考资料清单，并统一引用格式。</dd></div>
+                    <div><dt>原文位置</dt><dd>参考文献，第 2 项</dd></div>
+                  </dl>
+                </article>
+              </div>
+
             </section>
-          </div>
-          <div class="review-report-actions">
-            <button class="btn btn-outline btn-sm" type="button" data-review-share>
-              <span data-icon="share"></span>
-              分享
-            </button>
-            <button class="btn btn-primary btn-sm" type="button" data-review-export>
-              <span data-icon="download"></span>
-              导出报告
-            </button>
-          </div>
-          </aside>
+          </section>
         </div>
-      </div>
+      </main>
     </div>
   </div>
 
-  <div class="review-modal-mask" data-review-modal-mask hidden></div>
-  <section class="review-modal" data-review-create-modal role="dialog" aria-modal="true" aria-labelledby="reviewCreateTitle" hidden>
-    <div class="review-modal-head">
-      <div>
-        <h2 id="reviewCreateTitle">新建审查</h2>
-        <p>提交研究内容并选择审查范围</p>
-      </div>
-      <button class="review-modal-close" type="button" data-review-modal-close aria-label="关闭">
-        <span data-icon="x"></span>
+  <aside class="review-task-drawer" data-review-task-drawer role="dialog" aria-modal="false" aria-hidden="true" aria-labelledby="reviewTaskDrawerTitle">
+    <header class="review-drawer-head">
+      <div><h2 id="reviewTaskDrawerTitle">分析任务</h2><p>查看分析进度与历史报告</p></div>
+      <button type="button" data-review-task-close aria-label="关闭分析任务"><span data-icon="x"></span></button>
+    </header>
+    <label class="review-drawer-search">
+      <span data-icon="search"></span>
+      <input type="search" placeholder="搜索分析任务" aria-label="搜索分析任务" data-review-task-search>
+    </label>
+    <div class="review-task-filters" role="tablist" aria-label="分析任务状态">
+      <button class="is-active" type="button" data-review-task-filter="all">全部</button>
+      <button type="button" data-review-task-filter="reviewing">分析中</button>
+      <button type="button" data-review-task-filter="completed">已完成</button>
+      <button type="button" data-review-task-filter="failed">失败</button>
+    </div>
+    <div class="review-task-list" data-review-task-list>
+      <button class="review-task-item" type="button" data-review-history-task data-task-state="reviewing" data-task-name="区域社科成果知识图谱建设路径">
+        <span class="review-task-item-icon"><span data-icon="loader-circle"></span></span>
+        <span class="review-task-item-copy"><strong>区域社科成果知识图谱建设路径</strong><small>我的知识 · 今天 14:06</small></span>
+        <span class="review-task-item-state is-reviewing">分析中</span>
+      </button>
+      <button class="review-task-item" type="button" data-review-history-task data-task-state="completed" data-task-name="基层公共文化服务数字化研究报告">
+        <span class="review-task-item-icon"><span data-icon="file-check-2"></span></span>
+        <span class="review-task-item-copy"><strong>基层公共文化服务数字化研究报告</strong><small>我的知识 · 2026-09-15 16:20</small></span>
+        <span class="review-task-item-state is-complete">已完成</span>
+      </button>
+      <button class="review-task-item" type="button" data-review-history-task data-task-state="failed" data-task-name="数字政府公共服务协同机制分析">
+        <span class="review-task-item-icon"><span data-icon="circle-alert"></span></span>
+        <span class="review-task-item-copy"><strong>数字政府公共服务协同机制分析</strong><small>本地上传 · 2026-09-14 10:30</small></span>
+        <span class="review-task-item-state is-failed">失败</span>
       </button>
     </div>
-    <form class="review-modal-body" data-review-create-form>
-      <label class="review-field">
-        <span>审查名称</span>
-        <input type="text" maxlength="60" placeholder="例如：基层治理研究报告" required data-review-create-name>
-      </label>
-      <label class="review-field">
-        <span>待审查内容</span>
-        <textarea rows="6" maxlength="3000" placeholder="粘贴需要审查的研究内容" required data-review-create-content></textarea>
-      </label>
-      <button class="review-upload-button" type="button" data-review-upload>
-        <span data-icon="upload"></span>
-        从文件导入
-      </button>
-      <div class="review-modal-actions">
-        <button class="btn btn-outline" type="button" data-review-modal-close>取消</button>
-        <button class="btn btn-primary" type="submit">开始审查</button>
-      </div>
-    </form>
-  </section>
-
-  <section class="review-modal review-edit-modal" data-review-edit-modal role="dialog" aria-modal="true" aria-labelledby="reviewEditTitle" hidden>
-    <div class="review-modal-head">
-      <div>
-        <h2 id="reviewEditTitle">编辑审查任务</h2>
-        <p>修改任务名称后保存</p>
-      </div>
-      <button class="review-modal-close" type="button" data-review-modal-close aria-label="关闭">
-        <span data-icon="x"></span>
-      </button>
-    </div>
-    <form class="review-modal-body" data-review-edit-form>
-      <label class="review-field">
-        <span>任务名称</span>
-        <input type="text" maxlength="60" required data-review-edit-name>
-      </label>
-      <div class="review-modal-actions">
-        <button class="btn btn-outline" type="button" data-review-modal-close>取消</button>
-        <button class="btn btn-primary" type="submit">保存修改</button>
-      </div>
-    </form>
-  </section>
-
-  <section class="review-modal review-delete-modal" data-review-delete-modal role="alertdialog" aria-modal="true" aria-labelledby="reviewDeleteTitle" hidden>
-    <div class="review-modal-head">
-      <div>
-        <h2 id="reviewDeleteTitle">删除审查任务</h2>
-        <p data-review-delete-description></p>
-      </div>
-      <button class="review-modal-close" type="button" data-review-modal-close aria-label="关闭">
-        <span data-icon="x"></span>
-      </button>
-    </div>
-    <div class="review-delete-body">
-      <p>删除后，该任务的审查结果和报告将无法恢复。</p>
-    </div>
-    <div class="review-modal-actions review-delete-actions">
-      <button class="btn btn-outline" type="button" data-review-modal-close>取消</button>
-      <button class="btn btn-primary danger" type="button" data-review-delete-confirm>删除</button>
-    </div>
-  </section>
+    <div class="review-task-empty" data-review-task-empty hidden>还没有分析任务</div>
+  </aside>
 
   <script src="../assets/js/icons.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
   <script src="../assets/js/auth.js" defer></script>
   <script src="../assets/js/app-shell.js" defer></script>
   <script src="../assets/js/research-assistant.js" defer></script>
+  <script src="../assets/js/v4.js" defer></script>
   <script src="../assets/js/social-review.js" defer></script>
 </body>
 </html>
+

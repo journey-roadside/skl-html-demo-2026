@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="社科智研深度研究空间，先添加来源，再进入研究对话与产出工作区。">
+  <meta name="description" content="社科智研深度研究，汇集多类来源并完成检索、证据提取、观点归纳与成果生成。">
   <meta name="theme-color" content="#fcfaf8">
   <title>深度研究 · 社科智研</title>
   <link rel="stylesheet" href="../assets/css/tokens.css">
@@ -11,373 +11,337 @@
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="../assets/css/app-shell.css">
   <link rel="stylesheet" href="../assets/css/research-assistant.css">
+  <link rel="stylesheet" href="../assets/css/v4.css">
   <link rel="stylesheet" href="../assets/css/deep-research.css">
 </head>
-<body class="app-body deep-research-page">
-  <main class="research-flow">
-    <section class="source-intake-view" data-source-intake-view>
-      <aside class="app-sidebar" data-app-sidebar>
-        <div class="app-sidebar-head">
-          <div class="brand app-brand">
-            <span class="brand-copy">
-              <span class="brand-name">社科智研</span>
-              <span class="brand-en">Social Science Research</span>
-            </span>
-          </div>
-          <button class="app-toolbar-btn" type="button" data-app-sidebar-close aria-label="关闭产品导航">
-            <span data-icon="x"></span>
-          </button>
+<body class="app-body research-page">
+  <div class="app-shell">
+    <aside class="app-sidebar" data-app-sidebar>
+      <div class="app-sidebar-head">
+        <div class="brand app-brand">
+          <span class="brand-copy">
+            <span class="brand-name">社科智研</span>
+            <span class="brand-en">SOCIAL SCIENCE RESEARCH</span>
+          </span>
         </div>
+        <div class="app-sidebar-head-actions">
+          <button class="app-sidebar-control" type="button" data-history-search-toggle title="搜索历史记录（Ctrl+J）" aria-label="搜索历史记录，快捷键 Ctrl+J">
+            <span data-icon="search"></span>
+          </button>
+          <button class="app-sidebar-control app-sidebar-collapse" type="button" data-sidebar-collapse title="收起侧边栏（Ctrl+B）" aria-label="收起侧边栏，快捷键 Ctrl+B" aria-expanded="true">
+            <span data-icon="panel-right"></span>
+          </button>
+          <a class="app-sidebar-control sidebar-new-chat" href="../index.html" title="新建会话（Ctrl+K）" aria-label="新建会话，快捷键 Ctrl+K">
+            <span data-icon="plus"></span>
+          </a>
+        </div>
+        <button class="app-toolbar-btn" type="button" data-app-sidebar-close aria-label="关闭产品导航">
+          <span data-icon="x"></span>
+        </button>
+      </div>
 
-        <nav class="app-nav" aria-label="产品导航">
-          <a class="app-nav-link" href="./research-assistant.html">
-            <span data-icon="message-square"></span>
-            社科研究助手
-          </a>
-          <a class="app-nav-link" href="./knowledge-base.html">
-            <span data-icon="database"></span>
-            知识社区
-          </a>
-          <a class="app-nav-link is-active" href="./deep-research.html">
-            <span data-icon="search-check"></span>
-            深度研究
-          </a>
-          <a class="app-nav-link" href="./social-review.html">
-            <span data-icon="shield-check"></span>
-            社科智审
-          </a>
-          <a class="app-nav-link" href="./literature-reader.html">
-            <span data-icon="scan-text"></span>
-            文献精读
-          </a>
-        </nav>
+      <nav class="app-nav" aria-label="产品导航">
+        <a class="app-nav-link app-nav-new is-active" href="../index.html">
+          <span data-icon="plus"></span>
+          新建会话
+          <span class="app-nav-shortcut">Ctrl K</span>
+        </a>
+        <a class="app-nav-link app-nav-knowledge" href="./my-knowledge.html" data-auth-only hidden>
+          <span data-icon="database"></span>
+          我的知识
+        </a>
+        <a class="app-nav-link app-nav-knowledge" href="./shared-community.html">
+          <span data-icon="book-open"></span>
+          共享社区
+        </a>
+        <a class="app-nav-link app-nav-knowledge" href="./social-review.html">
+          <span data-icon="shield-check"></span>
+          社科智审
+        </a>
+        <a class="app-nav-link app-nav-knowledge is-active" href="./deep-research.html">
+          <span data-icon="workflow"></span>
+          深度研究
+        </a>
+      </nav>
 
-        <div class="app-sidebar-divider" aria-hidden="true"></div>
+      <div class="app-sidebar-divider" aria-hidden="true"></div>
+
+      <div class="sidebar-scroll-region" data-sidebar-scroll-region>
+        <section class="sidebar-research" aria-labelledby="deepResearchTitle">
+          <div class="sidebar-section-head">
+            <h2 id="deepResearchTitle">研究任务</h2>
+            <button class="sidebar-section-more" type="button" data-deep-research-home title="新建研究" aria-label="新建研究">
+              <span data-icon="plus"></span>
+            </button>
+          </div>
+          <div class="research-list">
+            <div class="research-row">
+              <button class="research-item is-active" type="button" data-research-task data-task-mode="reviewing"><span class="research-item-copy"><strong>基层公共文化服务数字化区域差异</strong></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-task data-task-mode="completed"><span class="research-item-copy"><strong>区域社科成果知识图谱建设路径</strong></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-task data-task-mode="completed"><span class="research-item-copy"><strong>数字政府公共服务协同机制</strong></span></button>
+            </div>
+          </div>
+        </section>
 
         <section class="app-sidebar-history" data-history-panel aria-label="对话记录">
           <div class="history-head">
-            <div class="history-action-row">
-              <button class="history-icon-button" type="button" data-new-conversation title="新建对话（Ctrl+J）" aria-label="新建对话" aria-keyshortcuts="Control+J">
-                <span data-icon="plus"></span>
-              </button>
-              <button class="history-icon-button" type="button" data-history-search-toggle title="搜索历史对话（Ctrl+K）" aria-label="搜索历史对话" aria-keyshortcuts="Control+K">
-                <span data-icon="search"></span>
-              </button>
-              <button class="history-icon-button" type="button" data-history-manage title="管理对话" aria-label="管理对话">
-                <span data-icon="list-checks"></span>
-              </button>
-            </div>
-            <div class="history-manage-head" data-history-manage-head hidden>
-              <span data-history-selection-count>已选择 0 个对话</span>
-              <button class="history-icon-button" type="button" data-history-manage-close aria-label="退出管理">
-                <span data-icon="x"></span>
-              </button>
-            </div>
+            <div class="sidebar-section-head"><h2>对话记录</h2></div>
           </div>
           <div class="history-list">
-            <div class="history-group history-pinned-group" data-history-pinned-group hidden>
-              <div class="history-group-label">置顶</div>
-            </div>
             <div class="history-group">
               <div class="history-group-label">今天</div>
               <div class="history-row">
-                <button class="history-item is-active" type="button" data-history-item>
-                  <span class="history-item-text">基层公共文化服务数字化政策脉络</span>
-                </button>
-                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">基层公共文化服务数字化政策脉络</span></button>
               </div>
               <div class="history-row">
-                <button class="history-item" type="button" data-history-item>
-                  <span class="history-item-text">区域治理研究框架比较</span>
-                </button>
-                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">区域治理研究框架比较</span></button>
               </div>
             </div>
-            <div class="history-group">
-              <div class="history-group-label">近7天</div>
-              <div class="history-row">
-                <button class="history-item" type="button" data-history-item>
-                  <span class="history-item-text">公共政策分析中的证据分层</span>
-                </button>
-                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
-              </div>
-              <div class="history-row">
-                <button class="history-item" type="button" data-history-item>
-                  <span class="history-item-text">社科成果知识图谱建设思路</span>
-                </button>
-                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
-              </div>
-            </div>
-            <div class="history-group">
-              <div class="history-group-label">更早</div>
-              <div class="history-row">
-                <button class="history-item" type="button" data-history-item>
-                  <span class="history-item-text">理论宣讲内容的数智化表达</span>
-                </button>
-                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
-              </div>
-            </div>
-          </div>
-          <div class="history-manage-actions" data-history-manage-actions hidden>
-            <button type="button" data-history-pin disabled><span data-icon="pin"></span>置顶</button>
-            <button type="button" data-history-delete disabled><span data-icon="trash-2"></span>删除</button>
           </div>
         </section>
+      </div>
 
-        <div class="app-sidebar-foot">
-          <div data-guest-actions>
-            <button class="app-nav-link" type="button" data-auth-open>
-              <span data-icon="user-round"></span>
-              登录 / 注册
-            </button>
-          </div>
-          <div class="app-sidebar-user" data-user-chip hidden>
-            <button class="user-chip-trigger" type="button" data-user-menu-trigger aria-expanded="false">
+      <div class="app-sidebar-foot">
+        <div class="app-sidebar-user" data-user-chip>
+          <button class="user-chip-trigger" type="button" data-user-menu-trigger aria-expanded="false">
+            <span class="user-avatar">研</span>
+            <span data-sidebar-user-label>未知研究员</span>
+          </button>
+          <div class="user-menu" data-user-menu hidden>
+            <div class="user-menu-profile" data-auth-only>
               <span class="user-avatar">研</span>
-              <span data-sidebar-user-label>未知研究员</span>
-            </button>
-            <div class="user-menu" data-user-menu hidden>
-              <div class="user-menu-profile">
-                <span class="user-avatar">研</span>
-                <span class="user-menu-profile-copy">
-                  <strong data-sidebar-user-label>未知研究员</strong>
-                  <small>湖北省社会科学界联合会</small>
-                </span>
-              </div>
-              <div class="user-menu-divider" aria-hidden="true"></div>
-              <div class="user-menu-group">
-                <a href="./account-center.html#points" target="_blank" rel="noopener"><span data-icon="coins"></span><span>积分余额</span><span class="user-menu-trailing"><strong>268</strong><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></span></a>
-                <a href="./account-center.html" target="_blank" rel="noopener"><span data-icon="user-round"></span><span>账号中心</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
-                <button type="button" data-settings-open><span data-icon="settings"></span><span>设置</span></button>
-                <button type="button" data-user-menu-toast="帮助与反馈将在后续接入"><span data-icon="message-square"></span><span>帮助与反馈</span></button>
-              </div>
-              <div class="user-menu-divider" aria-hidden="true"></div>
-              <button class="user-menu-logout" type="button" data-auth-logout><span data-icon="log-out"></span><span>退出登录</span></button>
+              <span class="user-menu-profile-copy">
+                <strong data-sidebar-user-label>未知研究员</strong>
+                <small>湖北省社会科学界联合会</small>
+              </span>
+            </div>
+            <div class="user-menu-divider" data-auth-only aria-hidden="true"></div>
+            <div class="user-menu-group" data-guest-only>
+              <button type="button" data-auth-login><span data-icon="user-round"></span><span>登录 / 注册</span></button>
+            </div>
+            <div class="user-menu-divider" data-guest-only aria-hidden="true"></div>
+            <div class="user-menu-group">
+              <a href="./account-center.html#points" target="_blank" rel="noopener" data-auth-only><span data-icon="coins"></span><span>积分余额</span><span class="user-menu-trailing"><strong>268</strong><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></span></a>
+              <a href="./account-center.html" target="_blank" rel="noopener" data-auth-only><span data-icon="user-round"></span><span>账号中心</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
+              <a href="../index.html?settings=1"><span data-icon="settings"></span><span>设置</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
             </div>
           </div>
         </div>
-      </aside>
-      <div class="app-sidebar-mask" data-app-sidebar-mask hidden></div>
+      </div>
+    </aside>
+    <div class="app-sidebar-mask" data-app-sidebar-mask hidden></div>
 
-      <div class="intake-main">
-        <div class="intake-content">
-          <h1 class="intake-title">先汇集资料，再展开研究</h1>
-          <p class="intake-copy">您可在下方搜索学术库资源以添加到研究空间，或上传已有资料</p>
+    <div class="app-main">
+      <main class="deep-research-workspace">
+        <section class="deep-research-home" data-deep-research-home-view>
+          <header class="deep-research-home-head">
+            <button class="app-toolbar-btn deep-research-mobile-menu" type="button" data-app-sidebar-open aria-label="打开产品导航">
+              <span data-icon="menu"></span>
+            </button>
+            <button class="deep-research-task-trigger" type="button" data-deep-research-task-toggle>
+              <span data-icon="history"></span>
+              研究任务
+              <span>3</span>
+            </button>
+          </header>
 
-          <form class="source-search-box" data-source-search-form>
-            <div class="source-search-main">
-              <span data-icon="search"></span>
-              <input type="text" placeholder="搜索并添加研究数据" data-source-search-input>
+          <section class="deep-research-hero">
+            <h1>先汇集资料，再展开研究</h1>
+            <p>选择我的知识、共享社区文件或上传本地资料，系统将基于来源完成梳理、比较和成果生成。</p>
+          </section>
+
+          <section class="deep-research-intake">
+            <label class="deep-research-topic">
+              <span>研究主题</span>
+              <textarea rows="2" placeholder="输入研究主题，例如：基层公共文化服务数字化建设的区域差异" data-research-topic>基层公共文化服务数字化的区域差异研究</textarea>
+            </label>
+
+            <div class="deep-research-source-actions">
+              <button type="button" data-research-add-source="knowledge"><span data-icon="database"></span><span><strong>我的知识</strong><small>选择已有文件</small></span></button>
+              <button type="button" data-research-add-source="community"><span data-icon="book-open"></span><span><strong>共享社区</strong><small>添加社区资料</small></span></button>
+              <button type="button" data-research-add-source="upload"><span data-icon="upload"></span><span><strong>本地上传</strong><small>PDF、DOCX、TXT</small></span></button>
+              <button type="button" data-research-add-source="text"><span data-icon="file-text"></span><span><strong>文本粘贴</strong><small>粘贴研究材料</small></span></button>
+              <input type="file" hidden multiple accept=".pdf,.doc,.docx,.txt,.md,.xlsx,.pptx" data-research-file-input>
             </div>
-            <div class="source-search-foot">
-              <div class="source-add-menu" data-source-add-menu>
-                <button class="source-search-option source-search-add" type="button" data-source-menu-trigger aria-label="添加来源" aria-haspopup="menu" aria-expanded="false">
-                  <span data-icon="plus"></span>
+
+            <div class="deep-research-selected">
+              <div class="deep-research-selected-head">
+                <div><strong>已选来源</strong><span data-research-source-count>2 个来源</span></div>
+                <button type="button" data-research-source-clear>清空全部</button>
+              </div>
+              <div class="deep-research-source-list" data-deep-research-source-list>
+                <article class="deep-research-source-item" data-research-source data-source-title="基层公共文化服务数字化研究报告.pdf">
+                  <span class="deep-research-source-icon" data-icon="file-text"></span>
+                  <span><strong>基层公共文化服务数字化研究报告.pdf</strong><small>我的知识 · 已解析 · 3.2 MB</small></span>
+                  <button type="button" data-research-source-remove aria-label="移除来源"><span data-icon="x"></span></button>
+                </article>
+                <article class="deep-research-source-item" data-research-source data-source-title="区域公共文化服务效能评估资料汇编.pdf">
+                  <span class="deep-research-source-icon" data-icon="file-text"></span>
+                  <span><strong>区域公共文化服务效能评估资料汇编.pdf</strong><small>共享社区 · 已解析 · 2.7 MB</small></span>
+                  <button type="button" data-research-source-remove aria-label="移除来源"><span data-icon="x"></span></button>
+                </article>
+              </div>
+            </div>
+
+            <div class="deep-research-output-target">
+              <span>输出目标</span>
+              <div role="radiogroup" aria-label="输出目标">
+                <button class="is-active" type="button" data-research-output-target="report"><span data-icon="file-text"></span>研究报告</button>
+                <button type="button" data-research-output-target="mindmap"><span data-icon="git-fork"></span>思维导图</button>
+                <button type="button" data-research-output-target="presentation"><span data-icon="presentation"></span>演示文档</button>
+              </div>
+            </div>
+
+            <div class="deep-research-intake-foot">
+              <p>研究结果将保留来源编号；无法确认的内容会标记“待人工核验”。</p>
+              <button class="btn btn-primary" type="button" data-research-start>开始研究</button>
+            </div>
+          </section>
+        </section>
+
+        <section class="deep-research-studio" data-deep-research-studio hidden>
+          <header class="deep-research-studio-head">
+            <div class="deep-research-studio-main">
+              <button class="deep-research-back" type="button" data-deep-research-back>
+                <span data-icon="chevron-left"></span>返回
+              </button>
+              <div>
+                <h1 data-deep-research-title>基层公共文化服务数字化的区域差异研究</h1>
+                <p><span data-deep-research-status>研究准备中</span> · <span data-deep-research-source-count>2 个来源</span></p>
+              </div>
+            </div>
+            <div class="deep-research-studio-actions">
+              <button class="btn btn-outline" type="button" data-research-pause><span data-icon="pause"></span>暂停</button>
+              <button class="btn btn-outline" type="button" data-research-save><span data-icon="database"></span>保存研究</button>
+            </div>
+          </header>
+
+          <div class="deep-research-grid">
+            <aside class="research-source-panel">
+              <div class="research-panel-head">
+                <div><h2>来源</h2><p data-deep-research-source-count>2 个来源</p></div>
+                <button type="button" data-research-panel-add aria-label="添加来源"><span data-icon="plus"></span></button>
+              </div>
+              <div class="research-source-summary">
+                <article><strong>2</strong><span>已解析来源</span></article>
+                <article><strong>5</strong><span>引用段落</span></article>
+              </div>
+              <div class="research-source-list" data-research-panel-source-list>
+                <button class="is-active" type="button" data-research-citation-source="1">
+                  <span class="research-citation-number">1</span>
+                  <span><strong>基层公共文化服务数字化研究报告.pdf</strong><small>我的知识 · 引用 3 次</small></span>
                 </button>
-                <div class="source-add-menu-list" data-source-menu-list role="menu" hidden>
-                  <button type="button" role="menuitem" data-source-menu-item="文献">文献</button>
-                  <button type="button" role="menuitem" data-source-menu-item="知识库" data-source-option="知识库">知识库</button>
+                <button type="button" data-research-citation-source="2">
+                  <span class="research-citation-number">2</span>
+                  <span><strong>区域公共文化服务效能评估资料汇编.pdf</strong><small>共享社区 · 引用 2 次</small></span>
+                </button>
+              </div>
+              <p class="research-source-note">来源仅用于当前研究空间，不会自动公开。</p>
+            </aside>
+
+            <section class="research-process-panel">
+              <div class="research-progress-card">
+                <div class="research-panel-head">
+                  <div><h2>研究过程</h2><p data-research-progress-copy>准备开始</p></div>
+                  <span class="research-stage-count" data-research-stage-count>0 / 6</span>
+                </div>
+                <ol class="research-stage-list">
+                  <li data-research-stage="parse"><span>1</span><strong>资料解析</strong><small data-research-stage-status>等待中</small></li>
+                  <li data-research-stage="retrieve"><span>2</span><strong>来源检索</strong><small data-research-stage-status>等待中</small></li>
+                  <li data-research-stage="evidence"><span>3</span><strong>证据提取</strong><small data-research-stage-status>等待中</small></li>
+                  <li data-research-stage="synthesis"><span>4</span><strong>观点归纳</strong><small data-research-stage-status>等待中</small></li>
+                  <li data-research-stage="verify"><span>5</span><strong>交叉验证</strong><small data-research-stage-status>等待中</small></li>
+                  <li data-research-stage="generate"><span>6</span><strong>成果生成</strong><small data-research-stage-status>等待中</small></li>
+                </ol>
+                <div class="research-process-metrics">
+                  <article><span>已处理来源</span><strong data-research-metric-sources>0 / 2</strong></article>
+                  <article><span>已提取证据</span><strong data-research-metric-evidence>0</strong></article>
+                  <article><span>待人工核验</span><strong data-research-metric-verify>0</strong></article>
+                </div>
+                <div class="research-log" aria-live="polite">
+                  <div class="research-log-head"><span data-icon="terminal"></span><strong>分析日志</strong></div>
+                  <ol data-research-log-list></ol>
                 </div>
               </div>
-              <button class="source-search-submit" type="submit" aria-label="搜索来源">
-                <span data-icon="send"></span>
-              </button>
-            </div>
-          </form>
 
-          <div class="intake-divider"><span>或</span></div>
-
-          <div class="upload-zone" data-upload-zone tabindex="0">
-            <span class="upload-zone-icon"><span data-icon="upload"></span></span>
-            <h1>点击或者拖动上传</h1>
-            <p>支持的文件类型：PDF、txt、Markdown、docx、doc、png、jpg、epub、mobi、pptx</p>
-            <div class="upload-actions">
-              <button class="upload-action" type="button" data-upload-trigger>
-                <span data-icon="upload"></span>
-                本地上传
-              </button>
-              <button class="upload-action" type="button" data-source-demo="文本粘贴资料">
-                <span data-icon="file-text"></span>
-                文本粘贴
-              </button>
-            </div>
-            <input type="file" data-intake-file hidden multiple>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="deep-research-workspace" data-studio-view hidden>
-      <header class="research-studio-topbar">
-        <div class="research-studio-name">
-          <button class="app-toolbar-btn" type="button" data-studio-back aria-label="返回来源采集页">
-            <span data-icon="chevron-left"></span>
-          </button>
-          <div class="chat-title-line">
-            <h1 data-studio-title data-chat-title>未命名知识库</h1>
-            <button class="chat-title-edit" type="button" data-chat-title-edit aria-label="修改研究空间名称">
-              <span data-icon="pencil"></span>
-            </button>
-            <input class="chat-title-input" type="text" value="未命名知识库" data-chat-title-input hidden>
-          </div>
-        </div>
-          <div class="research-studio-actions">
-          <button class="btn btn-primary btn-sm" type="button" data-research-action="已存为知识库">
-            存为知识库
-          </button>
-          <button class="btn btn-ghost btn-sm" type="button" data-research-action="分享链接已复制">
-            <span data-icon="share"></span>
-            分享
-          </button>
-          <button class="app-toolbar-btn" type="button" data-research-action="删除当前研究" aria-label="删除当前研究">
-            <span data-icon="trash-2"></span>
-          </button>
-        </div>
-      </header>
-
-      <div class="research-studio-grid">
-        <section class="studio-panel studio-source-panel" aria-labelledby="sourcePanelTitle">
-          <div class="studio-panel-head">
-            <div>
-              <h2 id="sourcePanelTitle">来源</h2>
-              <p data-studio-source-count>0 个来源</p>
-            </div>
-          </div>
-          <div class="source-panel-body">
-            <p class="source-intro">研究助手会根据你关注的资料范围，整理研究线索、政策脉络和待核验事项。</p>
-            <button class="btn btn-outline source-config-button" type="button" data-source-modal-open>继续添加来源</button>
-            <div class="studio-source-list" data-studio-source-list>
-              <div class="studio-source-empty">
-                <strong>已添加的来源会显示在此处</strong>
-                <p>支持 PDF、Word、网页、文本和其他研究资料。</p>
+              <div class="research-chat">
+                <div class="research-message is-user">
+                  <span>我</span>
+                  <div><p>请比较不同区域公共文化服务数字化的主要差异，并列出证据来源。</p></div>
+                </div>
+                <div class="research-message is-ai">
+                  <span>研</span>
+                  <div>
+                    <p>区域差异主要体现在财政投入、技术能力、人才储备与基层运营机制四个方面<span class="research-citation" data-research-citation-source="1">[1]</span><span class="research-citation" data-research-citation-source="2">[2]</span>。</p>
+                    <p>现有资料支持“投入能力影响建设进度”的判断；关于服务效能差异的量化关系仍需补充统计口径，标记为<span class="research-verify">待人工核验</span>。</p>
+                  </div>
+                </div>
+                <div class="research-message is-ai is-hidden" data-research-chat-answer hidden>
+                  <span>研</span>
+                  <div><p data-research-chat-answer-text></p></div>
+                </div>
+                <form class="research-chat-composer" data-research-chat-form>
+                  <textarea rows="2" placeholder="继续追问，或要求调整研究方向..." data-research-chat-input></textarea>
+                  <button type="submit" aria-label="发送"><span data-icon="send"></span></button>
+                </form>
               </div>
-            </div>
+            </section>
+
+            <aside class="research-output-panel">
+              <div class="research-panel-head">
+                <div><h2>研究产出</h2><p>生成结构化研究成果</p></div>
+              </div>
+              <div class="research-output-tabs" role="tablist" aria-label="研究成果类型">
+                <button class="is-active" type="button" data-research-output-view="report">研究报告</button>
+                <button type="button" data-research-output-view="mindmap">思维导图</button>
+                <button type="button" data-research-output-view="presentation">演示文档</button>
+              </div>
+              <div class="research-output-preview" data-research-output-preview>
+                <article class="research-report-preview" data-research-output-content="report">
+                  <span>研究报告 · 生成中</span>
+                  <h3>基层公共文化服务数字化的区域差异研究</h3>
+                  <p>研究摘要：数字化转型效果受到资源基础、组织能力和制度环境共同影响，区域间呈现明显差异。</p>
+                  <ul>
+                    <li>核心发现 1：财政与技术能力是建设进度的主要条件。</li>
+                    <li>核心发现 2：基层运营能力影响平台服务持续性。</li>
+                    <li>待核验：效能差异缺乏统一量化口径。</li>
+                  </ul>
+                </article>
+                <article class="research-mindmap-preview" data-research-output-content="mindmap" hidden>
+                  <span>思维导图预览</span>
+                  <div><strong>区域差异</strong><ul><li>财政投入</li><li>技术能力</li><li>人才储备</li><li>运营机制</li></ul></div>
+                </article>
+                <article class="research-presentation-preview" data-research-output-content="presentation" hidden>
+                  <span>演示文档预览</span>
+                  <h3>区域公共文化服务数字化比较</h3>
+                  <p>01 政策背景 · 02 区域差异 · 03 关键条件 · 04 研究建议</p>
+                </article>
+              </div>
+              <div class="research-output-actions">
+                <button class="btn btn-outline" type="button" data-research-generate>生成成果</button>
+                <button class="btn btn-outline" type="button" data-research-download><span data-icon="download"></span>下载</button>
+                <button class="btn btn-outline" type="button" data-research-save><span data-icon="database"></span>保存到我的知识</button>
+                <button class="btn btn-outline" type="button" data-research-audit><span data-icon="shield-check"></span>发起社科智审</button>
+                <button class="btn btn-outline" type="button" data-research-reader><span data-icon="scan-text"></span>精读工具打开</button>
+              </div>
+            </aside>
           </div>
         </section>
-
-        <section class="studio-panel studio-chat-panel" aria-labelledby="chatPanelTitle">
-          <div class="studio-panel-head">
-            <div>
-              <h2 id="chatPanelTitle">对话</h2>
-              <p>围绕当前研究问题持续追问</p>
-            </div>
-            <button class="app-toolbar-btn" type="button" data-research-action="研究记忆功能将在后续接入">
-              <span data-icon="history"></span>
-              记忆
-            </button>
-          </div>
-          <div class="studio-chat-body">
-            <div class="studio-welcome" data-studio-welcome>
-              <div class="studio-welcome-mark"><span data-icon="search-check"></span></div>
-              <h1>欢迎来到深度研究空间</h1>
-              <p>你可以让深度研究助手跨资料梳理政策脉络、比较区域差异、验证研究判断，并将结果整理为报告、思维导图或演示文档。</p>
-              <div class="studio-prompt-grid">
-                <button class="studio-prompt" type="button" data-studio-prompt="梳理基层公共文化服务数字化的政策脉络">梳理政策脉络</button>
-                <button class="studio-prompt" type="button" data-studio-prompt="比较不同区域公共文化服务数字化的发展差异">比较区域差异</button>
-                <button class="studio-prompt" type="button" data-studio-prompt="提取当前资料中的争议问题与待核验事项">提取争议问题</button>
-              </div>
-            </div>
-            <div class="studio-chat-thread" data-studio-thread></div>
-          </div>
-          <div class="studio-composer-wrap">
-            <div class="studio-composer">
-              <textarea rows="1" placeholder="与深度研究助手对话或提出问题..." data-studio-input></textarea>
-              <div class="studio-composer-foot">
-                <span class="studio-source-count" data-studio-source-count>0 个来源</span>
-                <button class="composer-send" type="button" data-studio-send aria-label="发送">
-                  <span data-icon="send"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="studio-panel studio-output-panel" aria-labelledby="outputPanelTitle">
-          <div class="studio-panel-head">
-            <div>
-              <h2 id="outputPanelTitle">研究产出</h2>
-              <p>将研究结果整理为结构化内容</p>
-            </div>
-          </div>
-          <div class="studio-output-body">
-            <div class="output-type-grid">
-              <button class="output-type" type="button" data-output-type="report" data-output-label="研究报告">
-                <span data-icon="file-text"></span><span>报告</span>
-              </button>
-              <button class="output-type" type="button" data-output-type="mindmap" data-output-label="思维导图">
-                <span data-icon="git-fork"></span><span>思维导图</span>
-              </button>
-              <button class="output-type" type="button" data-output-type="presentation" data-output-label="演示文档">
-                <span data-icon="presentation"></span><span>演示文档</span>
-              </button>
-              <button class="output-type" type="button" data-output-type="ethics" data-output-label="伦理审查">
-                <span data-icon="shield-check"></span><span>伦理审查</span>
-              </button>
-            </div>
-            <div class="output-empty">
-              <strong>研究产出将保存在此处</strong>
-              <p>添加来源并追问后，即可创建报告、思维导图、演示文档或伦理审查结果。</p>
-            </div>
-          </div>
-        </section>
-      </div>
-    </section>
-  </main>
-
-  <div class="source-modal-mask" data-source-modal-mask hidden></div>
-  <section class="source-modal" data-source-modal role="dialog" aria-modal="true" aria-labelledby="sourceModalTitle" hidden>
-    <div class="source-modal-head">
-      <div>
-        <h2 id="sourceModalTitle">添加研究来源</h2>
-        <p>搜索学术库资源，或上传已有资料</p>
-      </div>
-      <button class="source-modal-close" type="button" data-source-modal-close aria-label="关闭">
-        <span data-icon="x"></span>
-      </button>
+      </main>
     </div>
-    <div class="source-modal-body">
-      <form class="source-search-box" data-source-modal-form>
-        <div class="source-search-main">
-          <span data-icon="search"></span>
-          <input type="text" placeholder="搜索并添加研究数据" data-source-modal-input>
-        </div>
-        <div class="source-search-foot">
-          <button class="source-search-option" type="button" data-source-option="知识库">
-            <span data-icon="database"></span>
-            <span data-knowledge-label>知识库</span>
-          </button>
-          <button class="source-search-submit" type="submit" aria-label="搜索来源">
-            <span data-icon="send"></span>
-          </button>
-        </div>
-      </form>
-
-      <div class="intake-divider"><span>或</span></div>
-
-      <div class="upload-zone source-modal-upload-zone" data-source-modal-upload-zone tabindex="0">
-        <span class="upload-zone-icon"><span data-icon="upload"></span></span>
-        <h1>点击或者拖动上传</h1>
-        <p>支持的文件类型：PDF、txt、Markdown、docx、doc、png、jpg、epub、mobi、pptx</p>
-        <div class="upload-actions">
-          <button class="upload-action" type="button" data-source-modal-upload-trigger>
-            <span data-icon="upload"></span>
-            本地上传
-          </button>
-          <button class="upload-action" type="button" data-source-modal-demo="文本粘贴资料">
-            <span data-icon="file-text"></span>
-            文本粘贴
-          </button>
-        </div>
-        <input type="file" data-source-modal-file hidden multiple>
-      </div>
-    </div>
-  </section>
+  </div>
 
   <script src="../assets/js/icons.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
   <script src="../assets/js/auth.js" defer></script>
   <script src="../assets/js/app-shell.js" defer></script>
   <script src="../assets/js/research-assistant.js" defer></script>
+  <script src="../assets/js/v4.js" defer></script>
   <script src="../assets/js/deep-research.js" defer></script>
 </body>
 </html>
+

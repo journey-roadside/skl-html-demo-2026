@@ -44,8 +44,6 @@
   function initUserMenu() {
     const trigger = document.querySelector("[data-user-menu-trigger]");
     const menu = document.querySelector("[data-user-menu]");
-    const messagePanel = document.querySelector("[data-message-center]");
-    const messageTrigger = document.querySelector("[data-message-center-open]");
     if (!trigger || !menu) return;
 
     const setOpen = (open) => {
@@ -55,13 +53,7 @@
 
     trigger.addEventListener("click", (event) => {
       event.stopPropagation();
-      const nextOpen = menu.hidden;
-      setOpen(nextOpen);
-      if (nextOpen && messagePanel) {
-        messagePanel.hidden = true;
-        messageTrigger?.setAttribute("aria-expanded", "false");
-        messageTrigger?.classList.remove("is-active");
-      }
+      setOpen(menu.hidden);
     });
 
     document.addEventListener("click", (event) => {

@@ -70,7 +70,7 @@
         </label>
         <label class="auth-checkbox">
           <input type="checkbox" data-auth-agreement>
-          <span>我已阅读并同意<button class="auth-legal-link" type="button" data-auth-legal-toast="用户协议链接后续接入">用户协议</button>和<button class="auth-legal-link" type="button" data-auth-legal-toast="隐私政策链接后续接入">隐私政策</button></span>
+          <span>我已阅读并同意用户协议和隐私政策</span>
         </label>
         <button class="btn btn-primary auth-submit" type="submit">登录</button>
         <p class="auth-hint">演示环境：输入任意 11 位手机号即可登录</p>
@@ -79,14 +79,6 @@
 
     document.body.append(mask, modal);
     window.SKIcons.hydrate(modal);
-
-    modal.querySelectorAll("[data-auth-legal-toast]").forEach((button) => {
-      button.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        window.SKApp.showToast(button.dataset.authLegalToast);
-      });
-    });
   }
 
   function setMode(mode) {

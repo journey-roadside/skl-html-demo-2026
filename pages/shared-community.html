@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="社科智研共享社区，浏览和收藏联盟成员共享的单个研究文件。">
+  <meta name="theme-color" content="#fcfaf8">
+  <title>共享社区 · 社科智研</title>
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/app-shell.css">
+  <link rel="stylesheet" href="../assets/css/research-assistant.css">
+  <link rel="stylesheet" href="../assets/css/v4.css">
+  <link rel="stylesheet" href="../assets/css/my-knowledge.css">
+  <link rel="stylesheet" href="../assets/css/shared-community.css">
+</head>
+<body class="app-body knowledge-page shared-community-page">
+  <div class="app-shell">
+    <aside class="app-sidebar" data-app-sidebar>
+      <div class="app-sidebar-head">
+        <div class="brand app-brand">
+          <span class="brand-copy">
+            <span class="brand-name">社科智研</span>
+            <span class="brand-en">SOCIAL SCIENCE RESEARCH</span>
+          </span>
+        </div>
+        <div class="app-sidebar-head-actions">
+          <button class="app-sidebar-control" type="button" data-history-search-toggle title="搜索历史记录（Ctrl+J）" aria-label="搜索历史记录，快捷键 Ctrl+J">
+            <span data-icon="search"></span>
+          </button>
+          <button class="app-sidebar-control app-sidebar-collapse" type="button" data-sidebar-collapse title="收起侧边栏（Ctrl+B）" aria-label="收起侧边栏，快捷键 Ctrl+B" aria-expanded="true">
+            <span data-icon="panel-right"></span>
+          </button>
+          <a class="app-sidebar-control sidebar-new-chat" href="../index.html" title="新建会话（Ctrl+K）" aria-label="新建会话，快捷键 Ctrl+K">
+            <span data-icon="plus"></span>
+          </a>
+        </div>
+        <button class="app-toolbar-btn" type="button" data-app-sidebar-close aria-label="关闭产品导航">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+
+      <nav class="app-nav" aria-label="产品导航">
+        <a class="app-nav-link app-nav-new is-active" href="../index.html">
+          <span data-icon="plus"></span>
+          新建会话
+          <span class="app-nav-shortcut">Ctrl K</span>
+        </a>
+        <a class="app-nav-link app-nav-knowledge" href="./my-knowledge.html" data-auth-only hidden>
+          <span data-icon="database"></span>
+          我的知识
+        </a>
+        <a class="app-nav-link app-nav-knowledge is-active" href="./shared-community.html">
+          <span data-icon="book-open"></span>
+          共享社区
+        </a>
+        <a class="app-nav-link" href="./social-review.html">
+          <span data-icon="shield-check"></span>
+          社科智审
+        </a>
+      </nav>
+
+      <div class="app-sidebar-divider" aria-hidden="true"></div>
+
+      <div class="sidebar-scroll-region" data-sidebar-scroll-region>
+        <section class="sidebar-research" aria-labelledby="deepResearchTitle">
+          <div class="sidebar-section-head">
+            <h2 id="deepResearchTitle">深度研究</h2>
+            <button class="sidebar-section-more" type="button" data-nav-toast="新建研究项目" title="新建研究项目" aria-label="新建研究项目">
+              <span data-icon="plus"></span>
+            </button>
+          </div>
+          <div class="research-list">
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>基层公共文化服务数字化研究</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>区域社科成果知识图谱</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>数字政府公共服务协同机制</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>基层文化空间参与式治理</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>区域社科数据资源整合路径</strong></span></button>
+              <button class="history-more" type="button" data-research-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+            </div>
+          </div>
+          <button class="research-expand" type="button" data-research-expand>查看全部</button>
+        </section>
+
+        <section class="app-sidebar-history" data-history-panel aria-label="对话记录">
+          <div class="history-head">
+            <div class="sidebar-section-head">
+              <h2>对话记录</h2>
+              <button class="sidebar-section-more" type="button" data-history-manage title="管理对话" aria-label="管理对话">
+                <span data-icon="list-checks"></span>
+              </button>
+            </div>
+            <div class="history-manage-head" data-history-manage-head hidden>
+              <span data-history-selection-count>已选择 0 个对话</span>
+              <button class="history-icon-button" type="button" data-history-manage-close aria-label="退出管理"><span data-icon="x"></span></button>
+            </div>
+          </div>
+          <div class="history-list">
+            <div class="history-group history-pinned-group" data-history-pinned-group>
+              <div class="history-group-label">置顶</div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">基层公共文化服务效能评估</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+            </div>
+            <div class="history-group">
+              <div class="history-group-label">今天</div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">基层公共文化服务数字化政策脉络</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">区域治理研究框架比较</span></button>
+                <button class="history-more" type="button" data-history-more aria-label="更多操作"><span data-icon="ellipsis"></span></button>
+              </div>
+            </div>
+          </div>
+          <div class="history-manage-actions" data-history-manage-actions hidden>
+            <button type="button" data-history-pin disabled><span data-icon="pin"></span>置顶</button>
+            <button type="button" data-history-delete disabled><span data-icon="trash-2"></span>删除</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="app-sidebar-foot">
+        <div class="app-sidebar-user" data-user-chip>
+          <button class="user-chip-trigger" type="button" data-user-menu-trigger aria-expanded="false">
+            <span class="user-avatar">研</span>
+            <span data-sidebar-user-label>未知研究员</span>
+          </button>
+          <div class="user-menu" data-user-menu hidden>
+            <div class="user-menu-profile" data-auth-only>
+              <span class="user-avatar">研</span>
+              <span class="user-menu-profile-copy">
+                <strong data-sidebar-user-label>未知研究员</strong>
+                <small>湖北省社会科学界联合会</small>
+              </span>
+            </div>
+            <div class="user-menu-divider" data-auth-only aria-hidden="true"></div>
+            <div class="user-menu-group" data-guest-only>
+              <button type="button" data-auth-login><span data-icon="user-round"></span><span>登录 / 注册</span></button>
+            </div>
+            <div class="user-menu-divider" data-guest-only aria-hidden="true"></div>
+            <div class="user-menu-group">
+              <a href="./account-center.html#points" target="_blank" rel="noopener" data-auth-only><span data-icon="coins"></span><span>积分余额</span><span class="user-menu-trailing"><strong>268</strong><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></span></a>
+              <a href="./account-center.html" target="_blank" rel="noopener" data-auth-only><span data-icon="user-round"></span><span>账号中心</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
+              <a href="../index.html?settings=1"><span data-icon="settings"></span><span>设置</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
+            </div>
+            <div class="user-menu-divider" aria-hidden="true"></div>
+            <div class="user-menu-group">
+              <button type="button" data-user-menu-toast="关于我们页面后续接入"><span data-icon="info"></span><span>关于我们</span></button>
+              <button type="button" data-user-menu-toast="帮助中心将在后续接入"><span data-icon="circle-help"></span><span>帮助中心</span></button>
+              <button type="button" data-feedback-open><span data-icon="message-square"></span><span>问题反馈</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="app-sidebar-mask" data-app-sidebar-mask hidden></div>
+
+    <div class="app-main">
+      <main class="community-workspace">
+        <div class="community-scroll" data-community-scroll>
+          <div class="community-content">
+            <header class="community-header" data-community-list-header>
+              <button class="app-toolbar-btn community-mobile-menu" type="button" data-app-sidebar-open aria-label="打开产品导航">
+                <span data-icon="menu"></span>
+              </button>
+              <div class="community-heading">
+                <h1>汇聚共享成果，让研究持续发生</h1>
+                <p>发现研究者共享的优质社科文件，从真实成果与实践经验中获取线索与启发，让每一次研究都更进一步。</p>
+              </div>
+              <div class="community-header-actions">
+                <div class="community-search">
+                  <button class="community-search-share" type="button" data-community-share-open data-auth-only hidden aria-label="共享文件">
+                    <span data-icon="plus"></span>
+                  </button>
+                  <input type="search" placeholder="搜索文件名或主题" aria-label="搜索文件名或主题" data-community-search>
+                  <button class="community-search-submit" type="button" data-community-search-submit aria-label="搜索">
+                    <span data-icon="search"></span>
+                  </button>
+                </div>
+              </div>
+            </header>
+
+            <section class="community-toolbar">
+              <div class="community-toolbar-filters">
+                <div class="community-tabs" role="tablist" aria-label="内容范围">
+                  <button class="is-active" type="button" role="tab" aria-selected="true" data-community-channel="community">社区共享</button>
+                  <button type="button" role="tab" aria-selected="false" data-community-channel="featured">官方精选</button>
+                </div>
+                <section class="community-topic-row" aria-label="主题分类">
+                  <button class="is-active" type="button" data-community-topic="all">全部主题</button>
+                  <button type="button" data-community-topic="政策研究">政策研究</button>
+                  <button type="button" data-community-topic="基层治理">基层治理</button>
+                  <button type="button" data-community-topic="区域发展">区域发展</button>
+                  <button type="button" data-community-topic="文化传播">文化传播</button>
+                  <button type="button" data-community-topic="社会治理">社会治理</button>
+                  <button type="button" data-community-topic="成果案例">成果案例</button>
+                </section>
+              </div>
+              <div class="community-toolbar-actions">
+                <span class="community-select-wrap" data-community-sort-menu>
+                  <button class="community-select-button" type="button" data-community-sort-trigger aria-haspopup="listbox" aria-expanded="false">
+                    <span data-community-sort-label>最新共享</span>
+                    <span data-icon="chevron-down"></span>
+                  </button>
+                  <span class="community-select-list" data-community-sort-list role="listbox" hidden>
+                    <button class="is-selected" type="button" role="option" aria-selected="true" data-community-sort-value="latest">最新共享</button>
+                    <button type="button" role="option" aria-selected="false" data-community-sort-value="updated">最近更新</button>
+                    <button type="button" role="option" aria-selected="false" data-community-sort-value="downloads">下载较多</button>
+                  </span>
+                </span>
+                <span class="community-select-wrap" data-community-type-filter>
+                  <button class="community-select-button" type="button" data-community-type-trigger aria-haspopup="listbox" aria-expanded="false">
+                    <span data-community-type-label>全部格式</span>
+                    <span data-icon="chevron-down"></span>
+                  </button>
+                  <span class="community-select-list" data-community-type-list role="listbox" hidden>
+                    <button class="is-selected" type="button" role="option" aria-selected="true" data-community-type-value="all">全部格式</button>
+                    <button type="button" role="option" aria-selected="false" data-community-type-value="PDF">PDF</button>
+                    <button type="button" role="option" aria-selected="false" data-community-type-value="DOCX">DOCX</button>
+                    <button type="button" role="option" aria-selected="false" data-community-type-value="TXT">TXT</button>
+                    <button type="button" role="option" aria-selected="false" data-community-type-value="MD">Markdown</button>
+                  </span>
+                </span>
+              </div>
+            </section>
+
+            <section class="community-grid" data-community-grid>
+              <article class="community-card" data-community-card data-id="community-01" data-name="基层公共文化服务数字化建设的地方实践.pdf" data-type="PDF" data-size="3.2 MB" data-topic="政策研究" data-channel="community" data-featured="false" data-downloads="286" data-time="今天 09:20 共享" data-description="梳理基层公共文化服务数字化建设的地方实践路径与典型做法。">
+                <button class="community-card-main" type="button" data-community-open>
+                  <span class="community-file-mark"><span data-icon="file-text"></span></span>
+                  <span class="community-card-copy">
+                    <span class="community-card-title"><strong>基层公共文化服务数字化建设的地方实践.pdf</strong></span>
+                    <span class="community-card-description">梳理基层公共文化服务数字化建设的地方实践路径与典型做法。</span>
+                    <span class="community-card-tags"><small class="community-file-type">PDF</small><small>政策研究</small></span>
+                    <span class="community-card-meta">今天 09:20 共享</span>
+                    <span class="community-card-footer">下载 286 次</span>
+                  </span>
+                </button>
+              </article>
+
+              <article class="community-card" data-community-card data-id="community-02" data-name="县域社会治理创新的比较研究.docx" data-type="DOCX" data-size="2.1 MB" data-topic="基层治理" data-channel="community" data-featured="false" data-downloads="174" data-time="今天 08:46 共享" data-description="从组织机制、资源整合和公众参与三方面比较县域治理创新案例。">
+                <button class="community-card-main" type="button" data-community-open>
+                  <span class="community-file-mark"><span data-icon="file-word"></span></span>
+                  <span class="community-card-copy">
+                    <span class="community-card-title"><strong>县域社会治理创新的比较研究.docx</strong></span>
+                    <span class="community-card-description">从组织机制、资源整合和公众参与三方面比较县域治理创新案例。</span>
+                    <span class="community-card-tags"><small class="community-file-type">DOCX</small><small>基层治理</small></span>
+                    <span class="community-card-meta">今天 08:46 共享</span>
+                    <span class="community-card-footer">下载 174 次</span>
+                  </span>
+                </button>
+              </article>
+
+              <article class="community-card" data-community-card data-id="community-03" data-name="湖北社科成果知识图谱建设路径.pdf" data-type="PDF" data-size="4.6 MB" data-topic="成果案例" data-channel="featured" data-featured="true" data-downloads="542" data-time="昨天 16:30 共享" data-description="围绕成果实体、主题关系和研究成果转化路径构建知识图谱。">
+                <button class="community-card-main" type="button" data-community-open>
+                  <span class="community-file-mark"><span data-icon="file-text"></span></span>
+                  <span class="community-card-copy">
+                    <span class="community-card-title"><strong>湖北社科成果知识图谱建设路径.pdf</strong><small class="community-featured-tag">官方精选</small></span>
+                    <span class="community-card-description">围绕成果实体、主题关系和研究成果转化路径构建知识图谱。</span>
+                    <span class="community-card-tags"><small class="community-file-type">PDF</small><small>成果案例</small></span>
+                    <span class="community-card-meta">昨天 16:30 共享</span>
+                    <span class="community-card-footer">下载 542 次</span>
+                  </span>
+                </button>
+              </article>
+
+              <article class="community-card" data-community-card data-id="community-04" data-name="数字治理与公共政策协同分析.md" data-type="MD" data-size="1.3 MB" data-topic="区域发展" data-channel="community" data-featured="false" data-downloads="98" data-time="09-15 14:10 共享" data-description="分析数字治理与公共政策协同的主要机制和现实约束。">
+                <button class="community-card-main" type="button" data-community-open>
+                  <span class="community-file-mark"><span data-icon="file-text"></span></span>
+                  <span class="community-card-copy">
+                    <span class="community-card-title"><strong>数字治理与公共政策协同分析.md</strong></span>
+                    <span class="community-card-description">分析数字治理与公共政策协同的主要机制和现实约束。</span>
+                    <span class="community-card-tags"><small class="community-file-type">MD</small><small>区域发展</small></span>
+                    <span class="community-card-meta">09-15 14:10 共享</span>
+                    <span class="community-card-footer">下载 98 次</span>
+                  </span>
+                </button>
+              </article>
+
+              <article class="community-card" data-community-card data-id="community-05" data-name="公共文化空间参与式更新案例.pdf" data-type="PDF" data-size="2.7 MB" data-topic="文化传播" data-channel="community" data-featured="false" data-downloads="132" data-time="09-15 10:25 共享" data-description="以公共文化空间为对象，整理参与式更新和社区协作案例。">
+                <button class="community-card-main" type="button" data-community-open>
+                  <span class="community-file-mark"><span data-icon="file-text"></span></span>
+                  <span class="community-card-copy">
+                    <span class="community-card-title"><strong>公共文化空间参与式更新案例.pdf</strong></span>
+                    <span class="community-card-description">以公共文化空间为对象，整理参与式更新和社区协作案例。</span>
+                    <span class="community-card-tags"><small class="community-file-type">PDF</small><small>文化传播</small></span>
+                    <span class="community-card-meta">09-15 10:25 共享</span>
+                    <span class="community-card-footer">下载 132 次</span>
+                  </span>
+                </button>
+              </article>
+
+              <article class="community-card" data-community-card data-id="community-06" data-name="城乡公共服务均等化政策综述.docx" data-type="DOCX" data-size="1.8 MB" data-topic="政策研究" data-channel="featured" data-featured="true" data-downloads="418" data-time="09-14 17:40 共享" data-description="系统梳理城乡公共服务均等化的政策演进和研究争议。">
+                <button class="community-card-main" type="button" data-community-open>
+                  <span class="community-file-mark"><span data-icon="file-word"></span></span>
+                  <span class="community-card-copy">
+                    <span class="community-card-title"><strong>城乡公共服务均等化政策综述.docx</strong><small class="community-featured-tag">官方精选</small></span>
+                    <span class="community-card-description">系统梳理城乡公共服务均等化的政策演进和研究争议。</span>
+                    <span class="community-card-tags"><small class="community-file-type">DOCX</small><small>政策研究</small></span>
+                    <span class="community-card-meta">09-14 17:40 共享</span>
+                    <span class="community-card-footer">下载 418 次</span>
+                  </span>
+                </button>
+              </article>
+            </section>
+
+            <div class="community-empty" data-community-empty hidden>
+              <span data-icon="search-check"></span>
+              <h2>暂时没有符合条件的共享文件</h2>
+              <p>调整搜索关键词或筛选条件后再试。</p>
+              <button class="btn btn-outline" type="button" data-community-reset>重置筛选</button>
+            </div>
+
+            <button class="community-load-more" type="button" data-community-load-more>加载更多</button>
+          </div>
+        </div>
+
+        <div class="community-floating-search" data-community-floating-search aria-hidden="true">
+          <button class="community-search-share" type="button" data-community-share-open data-auth-only hidden aria-label="共享文件">
+            <span data-icon="plus"></span>
+          </button>
+          <input type="search" placeholder="搜索文件名或主题" aria-label="搜索文件名或主题" data-community-search>
+          <button class="community-search-submit" type="button" data-community-search-submit aria-label="搜索">
+            <span data-icon="search"></span>
+          </button>
+        </div>
+
+        <section class="community-detail" data-community-detail hidden aria-labelledby="communityDetailTitle">
+          <div class="community-detail-head">
+            <button class="knowledge-back" type="button" data-community-detail-back>
+              <span data-icon="chevron-left"></span>返回
+            </button>
+            <div>
+              <h1 id="communityDetailTitle" data-community-detail-title>文件详情</h1>
+              <p data-community-detail-meta></p>
+            </div>
+            <div class="community-detail-actions">
+              <button class="btn btn-outline" type="button" data-community-download><span data-icon="download"></span>下载文件</button>
+              <button class="btn btn-outline" type="button" data-community-detail-favorite><span data-icon="star"></span>收藏到我的知识</button>
+            </div>
+          </div>
+
+          <div class="community-detail-grid">
+            <article class="community-preview">
+              <span class="community-preview-icon"><span data-icon="file-text"></span></span>
+              <strong data-community-preview-name>共享文件</strong>
+              <small data-community-preview-size></small>
+              <p>文件预览区域</p>
+            </article>
+            <article class="community-information">
+              <h2>文件信息</h2>
+              <dl>
+                <div><dt>主题</dt><dd data-community-detail-topic></dd></div>
+                <div><dt>共享时间</dt><dd data-community-detail-time></dd></div>
+                <div><dt>下载次数</dt><dd data-community-detail-downloads></dd></div>
+              </dl>
+              <p class="community-information-description" data-community-detail-description></p>
+            </article>
+          </div>
+
+          <section class="community-related">
+            <h2>相关文件</h2>
+            <div class="community-related-grid" data-community-related></div>
+          </section>
+
+          <div class="community-detail-footer">
+            <button type="button" data-community-action="基于文件提问">基于文件提问</button>
+            <button type="button" data-community-action="发起深度研究">发起深度研究</button>
+            <button type="button" data-community-action="发起社科智审">发起社科智审</button>
+            <button type="button" data-community-action="在精读工具中打开">在精读工具中打开</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="community-modal-mask" data-community-modal-mask hidden></div>
+  <section class="community-modal" data-community-share-modal role="dialog" aria-modal="true" aria-labelledby="communityShareTitle" hidden>
+    <div class="community-modal-head">
+      <div>
+        <h2 id="communityShareTitle">共享文件</h2>
+        <p>一次只能共享一个文件，提交后进入审核</p>
+      </div>
+      <button class="community-modal-close" type="button" data-community-modal-close aria-label="关闭"><span data-icon="x"></span></button>
+    </div>
+    <form class="community-share-form" data-community-share-form>
+      <label class="community-field" data-community-local-upload>
+        <span>选择本地文件</span>
+        <input type="file" accept=".pdf,.txt,.md,.doc,.docx" data-community-share-file>
+      </label>
+      <label class="community-field">
+        <span>文件名</span>
+        <input type="text" maxlength="80" required data-community-share-name>
+      </label>
+      <label class="community-field">
+        <span>简短说明</span>
+        <textarea rows="3" maxlength="180" data-community-share-description></textarea>
+      </label>
+      <div class="community-form-grid">
+        <label class="community-field">
+          <span>主题分类</span>
+          <select data-community-share-topic>
+            <option>政策研究</option>
+            <option>基层治理</option>
+            <option>区域发展</option>
+            <option>文化传播</option>
+            <option>社会治理</option>
+            <option>成果案例</option>
+          </select>
+        </label>
+        <label class="community-field">
+          <span>发布范围</span>
+          <select data-community-share-scope>
+            <option>联盟公开</option>
+          </select>
+        </label>
+      </div>
+      <p class="community-review-note">提交后需经审核，审核通过后才会在共享社区公开。</p>
+      <div class="community-modal-actions">
+        <button class="btn btn-outline" type="button" data-community-modal-close>取消</button>
+        <button class="btn btn-primary" type="submit">提交审核</button>
+      </div>
+    </form>
+  </section>
+
+  <script src="../assets/js/icons.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/auth.js" defer></script>
+  <script src="../assets/js/app-shell.js" defer></script>
+  <script src="../assets/js/research-assistant.js" defer></script>
+  <script src="../assets/js/v4.js" defer></script>
+  <script src="../assets/js/shared-community.js" defer></script>
+</body>
+</html>
+

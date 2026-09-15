@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="社科智研精读工具，围绕单个文件完成阅读、划词、提问和笔记。">
+  <meta name="theme-color" content="#fcfaf8">
+  <title>精读工具 · 社科智研</title>
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/app-shell.css">
+  <link rel="stylesheet" href="../assets/css/research-assistant.css">
+  <link rel="stylesheet" href="../assets/css/v4.css">
+  <link rel="stylesheet" href="../assets/css/reader.css">
+</head>
+<body class="app-body reader-page">
+  <div class="app-shell reader-app-shell">
+    <aside class="app-sidebar" data-app-sidebar>
+      <div class="app-sidebar-head">
+        <div class="brand app-brand">
+          <span class="brand-copy">
+            <span class="brand-name">社科智研</span>
+            <span class="brand-en">SOCIAL SCIENCE RESEARCH</span>
+          </span>
+        </div>
+        <div class="app-sidebar-head-actions">
+          <button class="app-sidebar-control app-sidebar-collapse" type="button" data-sidebar-collapse title="收起侧边栏（Ctrl+B）" aria-label="收起侧边栏，快捷键 Ctrl+B" aria-expanded="true">
+            <span data-icon="panel-right"></span>
+          </button>
+          <a class="app-sidebar-control sidebar-new-chat" href="../index.html" title="新建会话（Ctrl+K）" aria-label="新建会话，快捷键 Ctrl+K">
+            <span data-icon="plus"></span>
+          </a>
+        </div>
+        <button class="app-toolbar-btn" type="button" data-app-sidebar-close aria-label="关闭产品导航">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+
+      <nav class="app-nav" aria-label="产品导航">
+        <a class="app-nav-link app-nav-new is-active" href="../index.html">
+          <span data-icon="plus"></span>
+          新建会话
+          <span class="app-nav-shortcut">Ctrl K</span>
+        </a>
+        <a class="app-nav-link app-nav-knowledge" href="./my-knowledge.html" data-auth-only hidden>
+          <span data-icon="database"></span>
+          我的知识
+        </a>
+        <a class="app-nav-link app-nav-knowledge" href="./shared-community.html">
+          <span data-icon="book-open"></span>
+          共享社区
+        </a>
+        <a class="app-nav-link app-nav-knowledge" href="./social-review.html">
+          <span data-icon="shield-check"></span>
+          社科智审
+        </a>
+        <a class="app-nav-link app-nav-knowledge is-active" href="./reader.html">
+          <span data-icon="scan-text"></span>
+          精读工具
+        </a>
+      </nav>
+
+      <div class="app-sidebar-divider" aria-hidden="true"></div>
+
+      <div class="sidebar-scroll-region" data-sidebar-scroll-region>
+        <section class="sidebar-research" aria-labelledby="deepResearchTitle">
+          <div class="sidebar-section-head">
+            <h2 id="deepResearchTitle">深度研究</h2>
+            <button class="sidebar-section-more" type="button" data-nav-toast="新建研究项目" title="新建研究项目" aria-label="新建研究项目">
+              <span data-icon="plus"></span>
+            </button>
+          </div>
+          <div class="research-list">
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>基层公共文化服务数字化研究</strong></span></button>
+            </div>
+            <div class="research-row">
+              <button class="research-item" type="button" data-research-item><span class="research-item-copy"><strong>区域社科成果知识图谱</strong></span></button>
+            </div>
+          </div>
+          <button class="research-expand" type="button" data-research-expand>查看全部</button>
+        </section>
+
+        <section class="app-sidebar-history" data-history-panel aria-label="对话记录">
+          <div class="history-head">
+            <div class="sidebar-section-head">
+              <h2>对话记录</h2>
+            </div>
+          </div>
+          <div class="history-list">
+            <div class="history-group">
+              <div class="history-group-label">今天</div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">基层公共文化服务数字化政策脉络</span></button>
+              </div>
+              <div class="history-row">
+                <button class="history-item" type="button" data-history-item><span class="history-item-text">区域治理研究框架比较</span></button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="app-sidebar-foot">
+        <div class="app-sidebar-user" data-user-chip>
+          <button class="user-chip-trigger" type="button" data-user-menu-trigger aria-expanded="false">
+            <span class="user-avatar">研</span>
+            <span data-sidebar-user-label>未知研究员</span>
+          </button>
+          <div class="user-menu" data-user-menu hidden>
+            <div class="user-menu-profile" data-auth-only>
+              <span class="user-avatar">研</span>
+              <span class="user-menu-profile-copy">
+                <strong data-sidebar-user-label>未知研究员</strong>
+                <small>湖北省社会科学界联合会</small>
+              </span>
+            </div>
+            <div class="user-menu-divider" data-auth-only aria-hidden="true"></div>
+            <div class="user-menu-group" data-guest-only>
+              <button type="button" data-auth-login><span data-icon="user-round"></span><span>登录 / 注册</span></button>
+            </div>
+            <div class="user-menu-divider" data-guest-only aria-hidden="true"></div>
+            <div class="user-menu-group">
+              <a href="./account-center.html#points" target="_blank" rel="noopener" data-auth-only><span data-icon="coins"></span><span>积分余额</span><span class="user-menu-trailing"><strong>268</strong><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></span></a>
+              <a href="./account-center.html" target="_blank" rel="noopener" data-auth-only><span data-icon="user-round"></span><span>账号中心</span><span class="user-menu-arrow"><span data-icon="chevron-right"></span></span></a>
+            </div>
+            <div class="user-menu-divider" aria-hidden="true"></div>
+            <div class="user-menu-group">
+              <button type="button" data-user-menu-toast="关于我们页面后续接入"><span data-icon="info"></span><span>关于我们</span></button>
+              <button type="button" data-user-menu-toast="帮助中心将在后续接入"><span data-icon="circle-help"></span><span>帮助中心</span></button>
+              <button type="button" data-feedback-open><span data-icon="message-square"></span><span>问题反馈</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="app-sidebar-mask" data-app-sidebar-mask hidden></div>
+
+    <div class="app-main">
+      <div class="reader-shell">
+        <header class="reader-topbar">
+          <div class="reader-topbar-main">
+            <div class="reader-file-info">
+              <div class="reader-file-title-row">
+                <h1 data-reader-file-title>基层公共文化服务数字化建设研究</h1>
+                <span class="reader-file-type">PDF</span>
+              </div>
+            </div>
+          </div>
+          <div class="reader-topbar-actions">
+            <button class="reader-toolbar-btn" type="button" data-reader-favorite aria-pressed="false" title="收藏到我的知识" aria-label="收藏到我的知识">
+              <span data-icon="star"></span>
+            </button>
+            <button class="reader-toolbar-btn" type="button" data-reader-download title="下载文件" aria-label="下载文件">
+              <span data-icon="download"></span>
+            </button>
+          </div>
+        </header>
+
+        <div class="reader-workspace">
+          <aside class="reader-outline" data-reader-outline>
+            <div class="reader-outline-head">
+              <div><span>页面目录</span><small><span data-reader-page-current>3</span> / <span data-reader-page-total>8</span> 页</small></div>
+              <button type="button" data-reader-outline-close aria-label="收起目录"><span data-icon="x"></span></button>
+            </div>
+            <nav class="reader-outline-list" aria-label="文稿目录">
+              <button class="is-active" type="button" data-reader-section-target="readerAbstract"><span>摘要</span><small>1</small></button>
+              <button type="button" data-reader-section-target="readerSectionOne"><span>一、研究背景与问题提出</span><small>1-2</small></button>
+              <button type="button" data-reader-section-target="readerSectionTwo"><span>二、政策演进与阶段特征</span><small>3-4</small></button>
+              <button type="button" data-reader-section-target="readerSectionThree"><span>三、区域差异与关键条件</span><small>5-6</small></button>
+              <button type="button" data-reader-section-target="readerSectionFour"><span>四、结论与建议</span><small>7-8</small></button>
+            </nav>
+            <div class="reader-outline-progress">
+              <span>阅读进度</span>
+              <strong data-reader-outline-progress>35%</strong>
+              <div><i data-reader-outline-progress-bar></i></div>
+            </div>
+          </aside>
+
+          <main class="reader-document-panel">
+            <div class="reader-document-scroll" data-reader-document-scroll>
+              <article class="reader-document" data-reader-document>
+                <header class="reader-document-head">
+                  <h2>基层公共文化服务数字化建设研究</h2>
+                  <p>湖北省社会科学院 · 2025 年</p>
+                </header>
+
+                <p class="reader-abstract" id="readerAbstract" data-reader-paragraph>
+                  <strong>摘要：</strong>公共文化服务数字化建设是推动基层公共文化服务提质增效的重要路径。本文以湖北省为例，分析基础设施、平台服务与基层治理之间的协同关系，并讨论数字化转型过程中的区域差异与实施条件。
+                </p>
+
+                <h3 id="readerSectionOne" data-reader-paragraph>一、研究背景与问题提出</h3>
+                <p data-reader-paragraph>随着公共文化服务体系建设持续推进，基层文化设施的覆盖范围和基本服务能力不断提升。与此同时，服务供给仍面临资源分散、数据标准不一和跨部门协同不足等问题。数字技术为服务资源整合、需求识别和精准供给提供了新的可能，但技术应用并不自动等同于服务效能提升。</p>
+                <p data-reader-paragraph>现有研究主要从数字化基础设施、平台建设和公众参与三个角度讨论公共文化服务转型。部分研究强调技术投入对服务效率的促进作用，也有研究指出，如果缺乏稳定的数据治理机制，数字化平台可能形成新的信息孤岛。因此，有必要从服务目标和基层治理条件出发，重新审视数字化建设的作用边界。</p>
+
+                <h3 id="readerSectionTwo" data-reader-paragraph>二、政策演进与阶段特征</h3>
+                <p data-reader-paragraph>从政策演进看，基层公共文化服务数字化大体经历基础支撑、服务融合和协同治理三个阶段。早期政策侧重网络联通和终端设备配置，此后逐步转向跨部门资源整合、线上线下服务融合和公众参与机制建设。</p>
+                <blockquote>现阶段政策重点已从“是否建设数字平台”转向“平台如何持续提供服务、如何形成跨部门协同能力”。</blockquote>
+                <p data-reader-paragraph>当前阶段更强调数据标准、平台协同与基层治理责任衔接。数字化不再只是文化部门的专项任务，而逐渐成为跨层级、跨部门共同推进的治理议题。政策目标也从设施覆盖率逐步扩展到服务效能、公众参与和满意度。</p>
+
+                <h3 id="readerSectionThree" data-reader-paragraph>三、区域差异与关键条件</h3>
+                <p data-reader-paragraph>不同地区在财政投入、技术能力和人才储备方面存在差异，数字化建设进度和服务效果也因此呈现不均衡特征。县域和乡镇层级更容易受到专业人员和运维能力不足的约束。</p>
+                <p data-reader-paragraph>推动公共文化服务数字化，需要同时关注技术条件、组织能力和制度保障。单纯增加平台数量或设备投入，未必能够形成稳定、可持续的服务能力。各地还应建立与本地人口结构、文化需求和服务半径相适应的运营机制。</p>
+
+                <h3 id="readerSectionFour" data-reader-paragraph>四、结论与建议</h3>
+                <p data-reader-paragraph>公共文化服务数字化建设应从设施导向转向服务导向，以数据标准、业务协同和用户需求为基础，逐步形成可持续的基层公共文化服务模式。</p>
+                <p data-reader-paragraph>第一，建立统一的数据标准和资源目录，降低跨部门共享成本。第二，将平台运维与基层服务能力建设同步推进，避免重建设、轻运营。第三，以公众实际使用和满意度为重要评价依据，持续优化服务内容。</p>
+              </article>
+            </div>
+
+            <div class="reader-selection-toolbar" data-reader-selection-toolbar role="toolbar" aria-label="选中文本工具栏" hidden>
+              <button type="button" data-reader-selection-action="总结"><span data-icon="file-text"></span>总结</button>
+              <button type="button" data-reader-selection-action="翻译"><span data-icon="globe"></span>翻译</button>
+              <button type="button" data-reader-selection-action="解释"><span data-icon="brain"></span>解释</button>
+              <button type="button" data-reader-selection-action="提问"><span data-icon="message-square"></span>提问</button>
+              <button type="button" data-reader-selection-action="记笔记"><span data-icon="pencil"></span>记笔记</button>
+              <span class="reader-selection-divider" aria-hidden="true"></span>
+              <button class="reader-selection-icon" type="button" data-reader-selection-format="highlight" aria-label="高亮" title="高亮"><span data-icon="highlighter"></span></button>
+              <button class="reader-selection-icon" type="button" data-reader-selection-format="underline" aria-label="下划线" title="下划线"><u>U</u></button>
+              <button class="reader-selection-icon" type="button" data-reader-selection-format="copy" aria-label="复制" title="复制"><span data-icon="copy"></span></button>
+            </div>
+
+            <footer class="reader-page-controls">
+              <div class="reader-page-navigation">
+                <button type="button" data-reader-page-prev aria-label="上一页"><span data-icon="chevron-left"></span></button>
+                <span><strong data-reader-current-page>3</strong> / <span data-reader-total-pages>8</span></span>
+                <button type="button" data-reader-page-next aria-label="下一页"><span data-icon="chevron-right"></span></button>
+              </div>
+              <div class="reader-view-controls">
+                <button type="button" data-reader-outline-toggle><span data-icon="panel-left"></span>目录</button>
+                <button class="is-active" type="button" data-reader-fit-width>适合宽度</button>
+                <div class="reader-zoom">
+                  <button type="button" data-reader-zoom-out aria-label="缩小">−</button>
+                  <span data-reader-zoom-value>100%</span>
+                  <button type="button" data-reader-zoom-in aria-label="放大">＋</button>
+                </div>
+              </div>
+            </footer>
+          </main>
+
+          <aside class="reader-tools" data-reader-tools>
+            <div class="reader-tool-tabs" role="tablist" aria-label="精读工具">
+              <button class="is-active" type="button" role="tab" aria-selected="true" data-reader-tab="assistant">精读问答</button>
+              <button type="button" role="tab" aria-selected="false" data-reader-tab="history">历史提问</button>
+              <button type="button" role="tab" aria-selected="false" data-reader-tab="notes">我的笔记</button>
+            </div>
+
+            <div class="reader-tool-panel" data-reader-panel="assistant">
+              <div class="reader-assistant-intro">
+                <span data-icon="scan-text"></span>
+                <div><strong>选择正文开始精读</strong><p>支持总结、翻译、解释和基于选区的继续提问。</p></div>
+              </div>
+              <div class="reader-ai-results" data-reader-ai-results>
+                <article class="reader-ai-card is-preset">
+                  <span>段落总结</span>
+                  <blockquote>数字技术为服务资源整合和需求识别提供可能，但技术投入本身并不能自动带来服务效能提升。</blockquote>
+                  <p>该段强调数字化建设需要与数据治理、组织协同和实际需求结合，避免形成新的信息孤岛。</p>
+                </article>
+              </div>
+            </div>
+
+            <div class="reader-tool-panel" data-reader-panel="history" hidden>
+              <div class="reader-history-list" data-reader-history-list>
+                <button class="is-active" type="button" data-reader-history-item>本文关于公共文化数字化的核心判断是什么？</button>
+                <button type="button" data-reader-history-item>政策演进可以分成哪几个阶段？</button>
+                <button type="button" data-reader-history-item>区域差异的主要原因有哪些？</button>
+              </div>
+              <form class="reader-question-form" data-reader-question-form>
+                <textarea rows="2" placeholder="基于当前文件继续提问" data-reader-question-input></textarea>
+                <button type="submit"><span data-icon="send"></span></button>
+              </form>
+            </div>
+
+            <div class="reader-tool-panel" data-reader-panel="notes" hidden>
+              <div class="reader-notes-head">
+                <span><strong data-reader-note-count>3</strong> 条笔记</span>
+                <button type="button" data-reader-note-open><span data-icon="plus"></span>新建笔记</button>
+              </div>
+              <div class="reader-note-editor" data-reader-note-editor hidden>
+                <textarea rows="3" placeholder="记录判断、疑问或延伸想法" data-reader-note-input></textarea>
+                <div><button type="button" data-reader-note-cancel>取消</button><button type="button" data-reader-note-save>保存</button></div>
+              </div>
+              <div class="reader-note-list" data-reader-note-list>
+                <article class="reader-note">
+                  <blockquote>数字化平台可能形成新的信息孤岛。</blockquote>
+                  <p>该结论需要补充地区样本和统计口径。</p>
+                  <footer><span>第 2 段 · 今天 14:06</span><button type="button" data-reader-note-delete aria-label="删除笔记"><span data-icon="trash-2"></span></button></footer>
+                </article>
+                <article class="reader-note">
+                  <blockquote>政策目标从设施覆盖率扩展到服务效能。</blockquote>
+                  <p>可进一步整理不同阶段的政策文件和评价指标。</p>
+                  <footer><span>第 4 段 · 09-15 16:20</span><button type="button" data-reader-note-delete aria-label="删除笔记"><span data-icon="trash-2"></span></button></footer>
+                </article>
+                <article class="reader-note">
+                  <blockquote>县域和乡镇更容易受到专业人员和运维能力不足的约束。</blockquote>
+                  <p>适合作为区域差异的原因分类。</p>
+                  <footer><span>第 5 段 · 09-14 10:35</span><button type="button" data-reader-note-delete aria-label="删除笔记"><span data-icon="trash-2"></span></button></footer>
+                </article>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/icons.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/auth.js" defer></script>
+  <script src="../assets/js/app-shell.js" defer></script>
+  <script src="../assets/js/research-assistant.js" defer></script>
+  <script src="../assets/js/v4.js" defer></script>
+  <script src="../assets/js/reader.js" defer></script>
+</body>
+</html>
+

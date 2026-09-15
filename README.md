@@ -1,15 +1,18 @@
-# 社科智联 / 社科智研 · HTML 演示站
+# 社科智研 · HTML 演示站
 
-湖北省社科联 × 荆楚网「社科研究与理论宣讲数智化平台」的高保真静态演示原型。
-纯 HTML + CSS + 原生 JS，无框架、无构建、无第三方依赖，双击即可运行。
+社科研究与理论宣讲数智化平台的高保真静态演示原型。
+纯 HTML + CSS + 原生 JS，无框架、无构建、无第三方依赖，可直接双击运行。
 
 ## 版本信息
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
-| V1 | 2026-09-11 | 首版：门户首页 + 社科智研产品门户 + 5 个工作台页面 + 账号中心的文档化说明 |
-| V2 | 2026-09-11 | 评审整改：正文级对比度达 WCAG AA（`--muted-foreground` #646a73、`--accent-active` #a83f14、页脚 rgba 白 .66）；未登记色 58 处收敛至 1；页面令牌统一映射到 `tokens.css`；`--nav-height` 54px；14/18px 越界圆角清零；补全局 `:active` 按下态与按钮阴影令牌化；Hero 增加演示数据声明 |
-| V3 | 2026-09-11 | 新增生成中骨架态（通用 `.skeleton` 组件 + 研究助手发送流程接线，`aria-busy`）；`deep-research.css` 残余 `#fef2f2` 改用 `var(--destructive-soft)`；设计系统 `DESIGN.md` / `globals.css` 同步回写校准值并新增 Destructive Soft；复审 95/100 通过（报告见 `2026/原型设计/设计体系符合度评审-V3.md`） |
+| V1 | 2026-09-11 | 首版：门户首页、社科智研产品门户、工作台页面和账号中心 |
+| V2 | 2026-09-11 | 对比度、设计令牌、圆角、按钮状态和设计系统整改 |
+| V3 | 2026-09-11 | 补全骨架态、研究助手交互和设计体系校准；原项目已归档到 `v3/` |
+| V4 | 2026-09-16 | 重构工作台、我的知识、共享社区、社科智审和精读工具；新增完整深浅模式和独立阅读窗口 |
+
+V4 为当前根目录版本，V3 保留在 `v3/` 目录用于对照和回溯。
 
 ## 快速预览
 
@@ -26,62 +29,89 @@ python -m http.server 8080
 
 | 文件 | 页面 | 说明 |
 | --- | --- | --- |
-| `index.html` | 社科智联门户首页 | Hero 首屏（canvas 动效 + 数字滚动）、最新动态、四大核心能力、社科伦理AI审查、生态共建、关于与二维码、页脚 |
-| `pages/social-research-home.html` | 社科智研产品门户 | 产品能力 / 工作流程 / 应用场景 / 安全可信，入口指向工作台 |
-| `pages/research-assistant.html` | 社科研究助手工作台 | 问答对话、消息操作（复制 / 重新生成 / 来源 / 反馈 / 播报）、引用来源面板、历史提问面板、文件与语音输入 |
-| `pages/knowledge-base.html` | 知识社区 | 分类筛选、搜索、知识卡片、分页、新建知识弹窗 |
-| `pages/deep-research.html` | 深度研究 | 两阶段流程：来源采集页 → 研究空间（对话 + 产出工作区），含来源弹窗 |
-| `pages/social-review.html` | 社科智审 | 审查任务队列、多维度审查 Tab（真实性 / 价值导向 / AI 伦理）、新建审查与结果弹窗 |
-| `pages/literature-reader.html` | 文献精读 | 文献库 / 我的文献、长文阅读、划词工具栏（总结 / 翻译 / 解释）、笔记、收藏下载 |
-| `pages/account-center.html` | 账号中心 | 账号资料、安全设置、积分、消息 |
+| `index.html` | 社科智研工作台 | 新建会话、历史会话、深度研究列表、我的知识、共享社区、社科智审、设置和账号状态 |
+| `pages/my-knowledge.html` | 我的知识 | 单文件管理、上传、收藏、共享审核、分类标签、分页和文件操作 |
+| `pages/shared-community.html` | 共享社区 | 社区共享与官方精选筛选、搜索、排序、收藏、共享审核和文件阅读入口 |
+| `pages/social-review.html` | 社科智审 | 文件提交、动态分析过程、分析日志、结果报告、风险项和历史任务 |
+| `pages/reader.html` | 精读工具 | 独立阅读窗口，支持目录、划词总结/翻译/解释、提问、笔记、高亮、下划线和收藏下载 |
+| `pages/account-center.html` | 账号中心 | 账号资料、安全设置、积分和消息 |
+| `pages/deep-research.html` | 深度研究 | 来源汇集、研究过程、研究对话和成果预览；当前保留，入口已断开，待重新设计 |
 
-站点导航路径：`index.html` → `pages/social-research-home.html` → 五个工作台页面 → `pages/account-center.html`。
+工作台导航入口为：
+
+`index.html` → `pages/my-knowledge.html` / `pages/shared-community.html` / `pages/social-review.html`
+
+精读工具从我的知识和共享社区的文件卡片新标签页打开。
 
 ## 目录结构
 
-```
+```text
 html-demo/
-├─ index.html                  # 门户首页
-├─ pages/                      # 其余 7 个页面
-└─ assets/
-   ├─ css/
-   │  ├─ tokens.css            # 设计令牌（配色 / 字体 / 圆角 / 阴影 / 动效，含 .dark 深色变量）
-   │  ├─ base.css              # 基础重置与排版
-   │  ├─ components.css        # 通用组件（按钮 / 表单 / 弹窗 / toast 等）
-   │  ├─ portal.css            # 门户类页面外壳
-   │  ├─ app-shell.css         # 工作台外壳（侧边栏 / 顶栏 / 面板）
-   │  ├─ social-union-home.css # 门户首页专用
-   │  └─ <page>.css            # 各页面专用样式
-   ├─ js/
-   │  ├─ icons.js              # SVG 图标注入（HTML 中写 data-icon="xxx"）
-   │  ├─ main.js               # 公共交互：顶栏滚动、移动端抽屉、toast
-   │  ├─ auth.js               # 登录 / 注册 / 退出弹窗与登录态
-   │  ├─ app-shell.js          # 工作台侧边栏折叠、历史对话面板、快捷键
-   │  └─ <page>.js             # 各页面专用逻辑
-   ├─ img/                     # brand-mark.svg、grid-pattern.svg
-   └─ images/social-union/     # 二维码、默认头像
+├─ index.html                  # V4 工作台入口
+├─ pages/                      # V4 其余页面
+│  ├─ my-knowledge.html
+│  ├─ shared-community.html
+│  ├─ social-review.html
+│  ├─ reader.html
+│  ├─ deep-research.html
+│  └─ account-center.html
+├─ assets/
+│  ├─ css/
+│  │  ├─ tokens.css            # 设计令牌与深浅模式变量
+│  │  ├─ base.css              # 基础重置与排版
+│  │  ├─ components.css        # 通用按钮、表单、弹窗和 Toast
+│  │  ├─ app-shell.css         # 工作台侧栏、顶栏和用户区
+│  │  ├─ research-assistant.css # 工作台与历史会话共享样式
+│  │  ├─ v4.css                # V4 工作台专用样式
+│  │  └─ <page>.css            # 各页面专用样式
+│  ├─ js/
+│  │  ├─ icons.js              # SVG 图标注入
+│  │  ├─ main.js               # 基础交互和 Toast
+│  │  ├─ auth.js               # 登录、注册和退出
+│  │  ├─ app-shell.js          # 侧栏、设置和快捷键
+│  │  ├─ research-assistant.js # 工作台会话交互
+│  │  ├─ v4.js                 # V4 工作台逻辑
+│  │  └─ <page>.js             # 各页面专用逻辑
+│  └─ img/
+│     └─ grid-pattern.svg
+├─ v3/                         # V3 原始项目归档
+│  ├─ index.html
+│  ├─ pages/
+│  ├─ assets/
+│  └─ README.md
+├─ cloudbaserc.json
+└─ .github/
 ```
 
-样式与脚本按「tokens → base → components → 外壳 → 页面」的顺序引入，页面级文件只放该页独有规则。
+页面样式按「tokens → base → components → 应用外壳 → 页面样式」顺序引入。页面级文件只保存该页独有规则。
 
 ## 交互与状态
 
-- 页面切换、Tab、筛选、弹窗、分页、划词工具栏、复制 / 反馈等交互均已实现，数据为页面内静态假数据。
-- 登录态：`localStorage["sheke-demo-user"]`（`assets/js/auth.js`）。
-- 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`（`assets/js/app-shell.js`）。
-- 快捷键：`Ctrl+J` 新建对话，`Ctrl+K` 搜索历史对话。
-- 未实现的入口统一用 `data-toast="…后续接入"` 点击提示，页面内共约 30 处，代表待接入的真实功能点。
-- 生成中反馈：工作台发送消息后先渲染骨架消息（`components.css` 的 `.skeleton` / `.skeleton-line`，节点带 `aria-busy="true"`），AI 回复到达或点击停止生成时移除；骨架动画在 `prefers-reduced-motion` 下自动停用。
+- 页面切换、筛选、排序、分页、弹窗、Toast 和划词工具均为前端静态交互，数据使用页面内模拟数据。
+- 登录态：`localStorage["sheke-demo-user"]`，由 `assets/js/auth.js` 管理。
+- 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`，由 `assets/js/app-shell.js` 管理。
+- 主题设置：`localStorage["sheke-v4-theme"]`，支持浅色、深色和跟随系统，由 `assets/js/v4.js` 管理。
+- 共享收藏：`localStorage["sheke-v4-community-favorites"]`，由共享社区和我的知识共享。
+- 快捷键：`Ctrl+K` 新建会话，`Ctrl+B` 收起或展开侧栏。
+- 精读工具使用独立标签页打开，不显示工作台侧边栏。
+- 未接入的真实功能统一使用 Toast 提示，避免误跳转。
 
 ## 开发约定
 
-- 新增一个工作台页面：复制任一 `pages/*.html` 骨架，保留 5 项侧边栏导航（研究助手 / 知识社区 / 深度研究 / 社科智审 / 文献精读）与当前页 `is-active` 标记，引入 4 个公共 CSS（tokens / base / components / app-shell）与 4 个公共 JS（icons / main / auth / app-shell），再追加本页 `xxx.css` / `xxx.js`。
-- 颜色、圆角、阴影、动效一律用 `tokens.css` 变量，不写魔法值。
-- 图标只用 `data-icon` 占位，由 `icons.js` 注入，不直接内联 SVG（门户首页的品牌图形除外）。
-- 中文文案、`aria-*` 与语义标签保持现有风格。
+- 根 `index.html` 保留为工作台入口，其余页面统一放在 `pages/`。
+- `pages/` 页面引用资源使用 `../assets/`，页面之间使用同目录相对路径。
+- 颜色、圆角、阴影、动效和风险状态优先使用 `tokens.css` 变量，不直接写重复魔法值。
+- 图标通过 `data-icon="name"` 声明，由 `icons.js` 注入，不在页面内联 SVG。
+- 页面级样式和脚本使用 `assets/css/<page>.css`、`assets/js/<page>.js`，公共逻辑不要复制到页面脚本。
+- 中文文案、`aria-*`、键盘操作和 `prefers-reduced-motion` 按现有页面规范维护。
 
 ## 已知限制
 
-- 纯前端演示：无后端接口、无真实鉴权、无持久化数据；刷新后仅登录态与侧边栏状态保留。
-- 视频播放、动态列表、入驻申请等入口为占位提示，尚未接入。
-- 仓库 `main` 分支，远端 `https://github.com/journey-roadside/skl-html-demo-2026.git`。
+- 纯前端演示：无后端接口、无真实鉴权和无持久化业务数据；刷新后仅保留浏览器本地状态。
+- 文件上传、下载、共享审核、分析报告和精读内容均为模拟流程。
+- `pages/deep-research.html` 已保留，但当前不与其他页面入口连接，后续重新设计。
+- V3 保留在 `v3/`，其页面结构和资源引用保持归档状态。
+
+仓库分支为 `main`，远端为：
+
+`https://github.com/journey-roadside/skl-html-demo-2026.git`

@@ -108,22 +108,16 @@
     const head = sidebar?.querySelector(".app-sidebar-head");
     if (!sidebar || !container || !head) return;
 
-    let actions = head.querySelector(".app-sidebar-head-actions");
-    let toggle = head.querySelector("[data-sidebar-collapse]");
-    if (!toggle) {
-      if (!actions) {
-        actions = document.createElement("div");
-        actions.className = "app-sidebar-head-actions";
-        head.append(actions);
-      }
-      toggle = document.createElement("button");
-      toggle.className = "app-sidebar-collapse";
-      toggle.type = "button";
-      toggle.dataset.sidebarCollapse = "";
-      toggle.innerHTML = '<span data-icon="panel-right"></span>';
-      actions.append(toggle);
-      window.SKIcons.hydrate(toggle);
-    }
+    const actions = document.createElement("div");
+    actions.className = "app-sidebar-head-actions";
+    const toggle = document.createElement("button");
+    toggle.className = "app-sidebar-collapse";
+    toggle.type = "button";
+    toggle.dataset.sidebarCollapse = "";
+    toggle.innerHTML = '<span data-icon="panel-right"></span>';
+    actions.append(toggle);
+    head.append(actions);
+    window.SKIcons.hydrate(toggle);
 
     const setCollapsed = (collapsed) => {
       container.classList.toggle("is-sidebar-collapsed", collapsed);
@@ -148,7 +142,6 @@
   function initMessageCenter() {
     const userRoot = document.querySelector(".app-sidebar-user");
     if (!userRoot || userRoot.querySelector("[data-message-center-open]")) return;
-    const menu = userRoot.querySelector("[data-user-menu]");
 
     const trigger = document.createElement("button");
     trigger.className = "app-sidebar-message-trigger";
@@ -202,10 +195,7 @@
       panel.hidden = !open;
       trigger.setAttribute("aria-expanded", String(open));
       trigger.classList.toggle("is-active", open);
-      if (open && menu) {
-        menu.hidden = true;
-        userRoot.querySelector("[data-user-menu-trigger]")?.setAttribute("aria-expanded", "false");
-      }
+      if (open && menu) menu.hidden = true;
     };
 
     trigger.addEventListener("click", (event) => {
@@ -247,7 +237,7 @@
 
     document.addEventListener("click", (event) => {
       if (event.target.closest("[data-settings-open]")) {
-        event.preventDefault();
+        openSettings();
         return;
       }
 

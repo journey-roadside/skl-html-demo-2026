@@ -32,62 +32,11 @@
       .replaceAll("'", "&#039;");
   }
 
-  function formatQuestionTime(date = new Date()) {
-    const pad = (value) => String(value).padStart(2, "0");
-    return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  }
-
-  function renderQuestionHistory() {
-    const list = document.querySelector(".question-history-list");
-    if (!list) return;
-
-    const questions = Array.from(document.querySelectorAll(".message-user:not([hidden])"))
-      .map((message) => ({
-        message,
-        text: message.querySelector(".message-body p")?.textContent.trim() || "",
-        time: message.dataset.questionTime || formatQuestionTime(),
-      }))
-      .filter((item) => item.text);
-
-    list.replaceChildren();
-    if (!questions.length) {
-      const empty = document.createElement("p");
-      empty.className = "question-history-empty";
-      empty.textContent = "当前会话暂无历史提问";
-      list.append(empty);
-      return;
-    }
-
-    questions.forEach(({ message, text, time }, index) => {
-      const button = document.createElement("button");
-      button.className = `question-history-item${index === questions.length - 1 ? " is-active" : ""}`;
-      button.type = "button";
-      button.dataset.questionHistoryItem = "";
-      button.innerHTML = `
-        <span class="question-history-text">${escapeHtml(text)}</span>
-        <time>${escapeHtml(time)}</time>
-      `;
-      button.addEventListener("click", () => {
-        list.querySelectorAll("[data-question-history-item]").forEach((item) => {
-          item.classList.remove("is-active");
-        });
-        button.classList.add("is-active");
-        message.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-          block: "center",
-        });
-        setQuestionHistoryOpen(false);
-      });
-      list.append(button);
-    });
-  }
-
   function getElements() {
     return {
       workspace: document.querySelector("[data-assistant-workspace]"),
       historyPanel: document.querySelector("[data-history-panel]"),
       sourcePanel: document.querySelector("[data-source-panel]"),
-      sessionFilesPanel: document.querySelector("[data-session-files-panel]"),
       questionHistoryPanel: document.querySelector("[data-question-history-panel]"),
       textarea: document.querySelector("[data-composer-input]"),
       sendButton: document.querySelector("[data-composer-send]"),
@@ -100,27 +49,17 @@
   }
 
   function setSourceOpen(open) {
-    const { sourcePanel, sessionFilesPanel, questionHistoryPanel } = getElements();
+    const { sourcePanel, questionHistoryPanel } = getElements();
     if (!sourcePanel) return;
     if (open && questionHistoryPanel) questionHistoryPanel.classList.remove("is-open");
-    if (open && sessionFilesPanel) sessionFilesPanel.classList.remove("is-open");
     sourcePanel.classList.toggle("is-open", open);
   }
 
   function setQuestionHistoryOpen(open) {
-    const { sourcePanel, sessionFilesPanel, questionHistoryPanel } = getElements();
+    const { sourcePanel, questionHistoryPanel } = getElements();
     if (!questionHistoryPanel) return;
     if (open && sourcePanel) sourcePanel.classList.remove("is-open");
-    if (open && sessionFilesPanel) sessionFilesPanel.classList.remove("is-open");
     questionHistoryPanel.classList.toggle("is-open", open);
-  }
-
-  function setSessionFilesOpen(open) {
-    const { sourcePanel, sessionFilesPanel, questionHistoryPanel } = getElements();
-    if (!sessionFilesPanel) return;
-    if (open && sourcePanel) sourcePanel.classList.remove("is-open");
-    if (open && questionHistoryPanel) questionHistoryPanel.classList.remove("is-open");
-    sessionFilesPanel.classList.toggle("is-open", open);
   }
 
   function setHistoryOpen(open) {
@@ -167,7 +106,6 @@
 
     const article = document.createElement("article");
     article.className = `message message-${role}`;
-    if (role === "user") article.dataset.questionTime = formatQuestionTime();
     article.innerHTML = `
       <div class="message-author">
         <span class="message-author-mark">${role === "user" ? "研" : "智"}</span>
@@ -189,26 +127,21 @@
               <button class="message-action" type="button" data-message-action="已重新生成回答" title="重新生成" aria-label="重新生成">
                 <span data-icon="rotate-cw"></span>
               </button>
+              <button class="message-action" type="button" data-source-trigger title="查看来源" aria-label="查看来源">
+                <span data-icon="link"></span>
+              </button>
               <button class="message-action" type="button" data-feedback-open title="问题反馈" aria-label="问题反馈">
                 <span data-icon="message-square"></span>
               </button>
               <button class="message-action" type="button" data-speech-toggle title="语音播报" aria-label="语音播报" aria-pressed="false">
                 <span data-icon="volume-2"></span>
               </button>
-              ${
-                options.hasSources
-                  ? `<button class="message-action" type="button" data-source-trigger title="查看来源" aria-label="查看来源">
-                <span data-icon="link"></span>
-              </button>`
-                  : ""
-              }
             </div>`
           : ""
       }
     `;
     window.SKIcons.hydrate(article);
     thread.append(article);
-    if (role === "user") renderQuestionHistory();
 
     const scroll = document.querySelector(".chat-scroll");
     if (scroll) scroll.scrollTop = scroll.scrollHeight;
@@ -259,16 +192,11 @@
 
     if (state.isNewConversation) {
       state.isNewConversation = false;
-      const disclaimer = document.querySelector("[data-composer-disclaimer]");
-      if (disclaimer) disclaimer.hidden = false;
       const chatHead = document.querySelector("[data-chat-head]");
       const title = document.querySelector("[data-chat-title]");
       const titleInput = document.querySelector("[data-chat-title-input]");
       const generatedTitle = content.length > 24 ? `${content.slice(0, 24)}…` : content;
       if (chatHead) chatHead.hidden = false;
-      chatHead?.classList.remove("is-new-conversation");
-      const titleEdit = document.querySelector("[data-chat-title-edit]");
-      if (titleEdit) titleEdit.hidden = false;
       if (title) title.textContent = generatedTitle;
       if (titleInput) titleInput.value = generatedTitle;
       const activeHistoryTitle = document.querySelector(
@@ -321,7 +249,6 @@
     if (!thread) return;
     if (state.managingHistory) setHistoryManageMode(false);
     stopSpeechPlayback();
-    setSessionFilesOpen(false);
     thread.querySelectorAll(".message").forEach((message) => {
       message.hidden = true;
     });
@@ -330,18 +257,7 @@
     });
     state.isNewConversation = true;
     const chatHead = document.querySelector("[data-chat-head]");
-    const disclaimer = document.querySelector("[data-composer-disclaimer]");
-    if (disclaimer) disclaimer.hidden = true;
-    const chatTitle = document.querySelector("[data-chat-title]");
-    const chatTitleInput = document.querySelector("[data-chat-title-input]");
-    const chatTitleEdit = document.querySelector("[data-chat-title-edit]");
-    if (chatHead) {
-      chatHead.hidden = false;
-      chatHead.classList.add("is-new-conversation");
-    }
-    if (chatTitle) chatTitle.textContent = "新建会话";
-    if (chatTitleInput) chatTitleInput.value = "新建会话";
-    if (chatTitleEdit) chatTitleEdit.hidden = true;
+    if (chatHead) chatHead.hidden = true;
 
     thread.querySelector(".new-chat")?.remove();
     const newChat = document.createElement("div");
@@ -382,7 +298,6 @@
     newChat.append(recommendations);
     thread.append(newChat);
     window.SKIcons.hydrate(recommendations);
-    renderQuestionHistory();
     bindPromptButtons(newChat);
     recommendations.querySelectorAll("[data-recommendation-toast]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -397,18 +312,12 @@
     const { thread, composerWrap, textarea } = getElements();
     if (!thread) return;
     stopSpeechPlayback();
-    document.querySelector("[data-chat-head]")?.classList.remove("is-new-conversation");
-    const disclaimer = document.querySelector("[data-composer-disclaimer]");
-    if (disclaimer) disclaimer.hidden = false;
-    const chatTitleEdit = document.querySelector("[data-chat-title-edit]");
-    if (chatTitleEdit) chatTitleEdit.hidden = false;
     placeComposerAtBottom(composerWrap);
     if (textarea) textarea.placeholder = CONTINUE_CHAT_PLACEHOLDER;
     thread.querySelector(".new-chat")?.remove();
     thread.querySelectorAll(".message").forEach((message) => {
       message.hidden = !demoConversationMessages.includes(message);
     });
-    renderQuestionHistory();
     state.isNewConversation = false;
   }
 
@@ -539,20 +448,9 @@
       button.addEventListener("click", () => setQuestionHistoryOpen(false));
     });
 
-    document.querySelectorAll("[data-session-files-open]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const { sessionFilesPanel } = getElements();
-        setSessionFilesOpen(!sessionFilesPanel?.classList.contains("is-open"));
-      });
-    });
-    document.querySelectorAll("[data-session-files-close]").forEach((button) => {
-      button.addEventListener("click", () => setSessionFilesOpen(false));
-    });
-
     document.addEventListener("click", (event) => {
-      const { sourcePanel, sessionFilesPanel, questionHistoryPanel } = getElements();
+      const { sourcePanel, questionHistoryPanel } = getElements();
       const clickedInsideSource = sourcePanel && sourcePanel.contains(event.target);
-      const clickedInsideFiles = sessionFilesPanel && sessionFilesPanel.contains(event.target);
       const clickedInsideHistory = questionHistoryPanel && questionHistoryPanel.contains(event.target);
 
       if (
@@ -571,15 +469,6 @@
         !event.target.closest("[data-question-history-open]")
       ) {
         setQuestionHistoryOpen(false);
-      }
-
-      if (
-        sessionFilesPanel &&
-        sessionFilesPanel.classList.contains("is-open") &&
-        !clickedInsideFiles &&
-        !event.target.closest("[data-session-files-open]")
-      ) {
-        setSessionFilesOpen(false);
       }
     });
   }
@@ -773,7 +662,8 @@
       </div>
       <div class="history-dialog-body">
         <label class="field" data-history-dialog-field hidden>
-          <input type="text" maxlength="60" aria-label="对话标题" data-history-dialog-input>
+          <span class="field-label">对话标题</span>
+          <input type="text" maxlength="60" data-history-dialog-input>
         </label>
       </div>
       <div class="history-dialog-actions">
@@ -804,7 +694,7 @@
     confirmButton.classList.toggle("danger", Boolean(options.danger));
     field.hidden = !options.inputLabel;
     if (options.inputLabel) {
-      input.setAttribute("aria-label", options.inputLabel);
+      field.querySelector(".field-label").textContent = options.inputLabel;
       input.value = options.value || "";
     }
 
@@ -1017,8 +907,8 @@
     historySearchModal.innerHTML = `
       <div class="history-search-head">
         <div>
-          <h2 id="historySearchTitle">搜索历史记录</h2>
-          <p>查找当前工作台中的对话和深度研究</p>
+          <h2 id="historySearchTitle">搜索历史对话</h2>
+          <p>输入关键词查找当前工作台中的会话</p>
         </div>
         <button class="history-search-close" type="button" data-history-search-close aria-label="关闭搜索">
           <span data-icon="x"></span>
@@ -1026,7 +916,7 @@
       </div>
       <label class="history-search-field">
         <span data-icon="search"></span>
-        <input type="search" placeholder="搜索对话或深度研究" autocomplete="off" data-history-search-input>
+        <input type="search" placeholder="搜索历史对话" autocomplete="off" data-history-search-input>
       </label>
       <div class="history-search-results" data-history-search-results></div>
     `;
@@ -1035,17 +925,11 @@
 
     const renderResults = (keyword) => {
       const normalized = keyword.trim().toLowerCase();
-      const records = [
-        ...Array.from(document.querySelectorAll("[data-history-item] .history-item-text"), (node) => ({
-          title: node.textContent.trim(),
-          type: "history",
-        })),
-        ...Array.from(document.querySelectorAll("[data-research-item] .research-item-copy strong"), (node) => ({
-          title: node.textContent.trim(),
-          type: "research",
-        })),
-      ];
-      const results = records.filter((record) => record.title.toLowerCase().includes(normalized));
+      const historyTitles = Array.from(
+        document.querySelectorAll("[data-history-item] .history-item-text"),
+        (node) => node.textContent.trim(),
+      );
+      const results = historyTitles.filter((title) => title.toLowerCase().includes(normalized));
       const container = historySearchModal.querySelector("[data-history-search-results]");
 
       container.replaceChildren();
@@ -1057,33 +941,12 @@
         return;
       }
 
-      results.forEach(({ title, type }) => {
+      results.forEach((title) => {
         const button = document.createElement("button");
         button.className = "history-search-result";
         button.type = "button";
-        if (type === "research") {
-          const tag = document.createElement("span");
-          tag.className = "history-search-tag";
-          tag.textContent = "深度研究";
-          const titleNode = document.createElement("span");
-          titleNode.className = "history-search-title";
-          titleNode.textContent = title;
-          button.append(tag, titleNode);
-        } else {
-          button.textContent = title;
-        }
+        button.textContent = title;
         button.addEventListener("click", () => {
-          if (type === "research") {
-            document.querySelectorAll("[data-research-item]").forEach((item) => {
-              item.classList.toggle(
-                "is-active",
-                item.querySelector(".research-item-copy strong")?.textContent.trim() === title,
-              );
-            });
-            closeHistorySearch();
-            window.SKApp.showToast(`已打开深度研究：${title}`);
-            return;
-          }
           showDemoConversation();
           const chatHead = document.querySelector("[data-chat-head]");
           const titleNode =
@@ -1379,19 +1242,13 @@
       if (!modifier || event.repeat || event.defaultPrevented) return;
 
       const key = event.key.toLowerCase();
-      if (key === "b") {
-        event.preventDefault();
-        document.querySelector("[data-sidebar-collapse]")?.click();
-        return;
-      }
-
-      if (key === "k") {
+      if (key === "j") {
         event.preventDefault();
         createNewConversation();
         return;
       }
 
-      if (key === "j") {
+      if (key === "k") {
         event.preventDefault();
         if (historySearchModal && !historySearchModal.hidden) {
           historySearchModal.querySelector("[data-history-search-input]").focus();

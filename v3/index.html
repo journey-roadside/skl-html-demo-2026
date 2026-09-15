@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="社科智联——湖北省社科联与荆楚网联合建设的社科研究与理论宣讲数智化平台。">
+<meta name="theme-color" content="#fcfaf8">
+<title>社科智联 · 智汇社科 联结未来</title>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/social-union-home.css">
+</head>
+<body>
+
+<!-- ======== 顶部导航 ======== -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="brand" href="#home" aria-label="社科智联首页">
+      <span class="brand-text">
+        <span class="brand-name">社科智联</span>
+        <span class="brand-en">SOCIAL SCIENCE UNION</span>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="主导航">
+      <a class="nav-link is-active" href="#home">首页</a>
+      <a class="nav-link" href="#news">最新动态</a>
+      <a class="nav-link" href="#products">社科智研</a>
+      <a class="nav-link" href="#join">生态共建</a>
+      <a class="nav-link" href="#about">关于</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="hamburger" id="hamburger" type="button" aria-label="打开导航菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 移动端抽屉菜单 -->
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <span class="drawer-title">导航</span>
+      <button class="drawer-close" id="drawerClose" type="button" aria-label="关闭菜单">×</button>
+    </div>
+    <nav class="drawer-nav" aria-label="移动端导航">
+      <a href="#home">首页</a>
+      <a href="#news">最新动态</a>
+      <a href="#products">社科智研</a>
+      <a href="#join">生态共建</a>
+      <a href="#about">关于</a>
+    </nav>
+  </div>
+  <div class="drawer-mask" id="drawerMask" hidden></div>
+</header>
+
+<main>
+  <!-- ======== Hero 首屏 ======== -->
+  <section class="hero" id="home">
+    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="container hero-inner">
+      <p class="hero-eyebrow reveal">湖北省社科联 × 荆楚网 联合打造</p>
+      <h1 class="hero-title reveal">智汇社科<span class="dot">·</span>联结未来</h1>
+      <p class="hero-sub reveal">一站式社科研究与理论宣讲数智化平台，让知识流动，让研究更高效。</p>
+      <div class="hero-actions reveal">
+        <a class="btn btn-primary" href="#join">联盟入驻</a>
+        <a class="btn btn-outline" href="./pages/social-research-home.html" target="_blank" rel="noopener">体验社科智研</a>
+      </div>
+      <div class="hero-stats reveal">
+        <div class="stat"><strong data-count="30" data-suffix="+">30+</strong><span>联盟成员单位</span></div>
+        <div class="stat"><strong data-count="5000" data-suffix="+">5000+</strong><span>社科专业知识库</span></div>
+        <div class="stat"><strong data-count="1000" data-suffix="+">1000+</strong><span>社科知识贡献者</span></div>
+      </div>
+      <p class="demo-note reveal">本页统计数据与动态内容均为原型演示示意</p>
+    </div>
+  </section>
+
+  <!-- ======== 最新动态 ======== -->
+  <section class="section news" id="news">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2 class="section-title">最新动态</h2>
+        <a class="text-link" href="#" data-toast="动态列表页后续接入"><span>查看更多</span><span class="arrow">→</span></a>
+      </div>
+      <div class="news-strip" id="newsStrip">
+        <article class="news-card reveal">
+          <span class="tag">政策</span>
+          <h3 class="news-title">湖北省哲学社会科学促进条例正式施行</h3>
+          <p class="news-excerpt">为全省哲学社会科学繁荣发展提供法治保障，明确平台建设与数据共享要求。</p>
+          <time class="news-time">2026-08-20</time>
+        </article>
+        <article class="news-card reveal">
+          <span class="tag">通知</span>
+          <h3 class="news-title">关于征集 2026 年度联盟研究课题的通知</h3>
+          <p class="news-excerpt">面向联盟成员单位开放申报，聚焦数智赋能社科研究的重点方向。</p>
+          <time class="news-time">2026-08-15</time>
+        </article>
+        <article class="news-card reveal">
+          <span class="tag">成果</span>
+          <h3 class="news-title">社科智研工具站 2.0 上线，四大能力全面升级</h3>
+          <p class="news-excerpt">研究助手、智审、伦理审查与知识库共享能力迎来全新体验。</p>
+          <time class="news-time">2026-08-08</time>
+        </article>
+        <article class="news-card reveal">
+          <span class="tag">科普</span>
+          <h3 class="news-title">大模型时代的社科研究：一场方法论的进化</h3>
+          <p class="news-excerpt">从文献综述到数据分析，AI 如何重塑人文社科研究流程。</p>
+          <time class="news-time">2026-08-01</time>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 产品矩阵 ======== -->
+  <section class="section products" id="products">
+    <div class="container">
+      <div class="section-head center reveal">
+
+        <h2 class="section-title">社科智研 · 四大核心能力</h2>
+        <p class="section-desc">覆盖社科研究全流程，助力科研提质增效</p>
+      </div>
+      <div class="product-grid">
+        <article class="product-card reveal">
+          <div class="product-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.6 0-3.1-.4-4.4-1.1L3 20l1.1-5.1A8.5 8.5 0 1 1 21 11.5z"/>
+              <path d="M8.5 10h7M8.5 13.5h4.5"/>
+            </svg>
+          </div>
+          <h3>社科研究助手</h3>
+          <p>文献检索、综述生成、数据分析与写作辅助，让研究全流程更高效。</p>
+          <a class="text-link" href="#" data-toast="社科研究助手详情后续接入">了解更多 <span class="arrow">→</span></a>
+        </article>
+        <article class="product-card reveal">
+          <div class="product-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </div>
+          <h3>社科智审</h3>
+          <p>面向项目申报与成果评审的智能辅助工具，规范流程、提升效率。</p>
+          <a class="text-link" href="#" data-toast="社科智审详情后续接入">了解更多 <span class="arrow">→</span></a>
+        </article>
+        <article class="product-card reveal">
+          <div class="product-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/>
+              <path d="M12 8v6M9 11h6"/>
+            </svg>
+          </div>
+          <h3>社科伦理审查</h3>
+          <p>内置伦理规范与审查模板，支持在线申报、协同审查与留痕归档。</p>
+          <a class="text-link" href="#" data-toast="社科伦理审查详情后续接入">了解更多 <span class="arrow">→</span></a>
+        </article>
+        <article class="product-card reveal">
+          <div class="product-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="8" ry="3"/>
+              <path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/>
+              <path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>
+            </svg>
+          </div>
+          <h3>知识库共享</h3>
+          <p>联盟成员共建共享的社科数据与知识资产，安全可控、按需开放。</p>
+          <a class="text-link" href="#" data-toast="知识库共享详情后续接入">了解更多 <span class="arrow">→</span></a>
+        </article>
+      </div>
+      <div class="products-cta reveal">
+        <a class="btn btn-primary" href="./pages/social-research-home.html" target="_blank" rel="noopener">立即体验</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 社科伦理AI审查（理响 AI） ======== -->
+  <section class="section lixiang">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+
+          <h2 class="section-title">社科伦理AI审查</h2>
+        </div>
+
+      </div>
+      <div class="lixiang-grid">
+        <article class="video-card reveal">
+          <div class="video-cover">
+            <button class="video-play" type="button" aria-label="播放视频" data-toast="视频播放功能后续接入"></button>
+            <span class="video-duration">08:26</span>
+            <span class="video-tag">专题</span>
+          </div>
+          <div class="video-body">
+            <h3>社科伦理研究新范式</h3>
+            <p>在课题申报、数据采集与成果发表前提供伦理预审与合规指引，让社科研究更规范、更安心。</p>
+          </div>
+        </article>
+        <div class="text-cards">
+          <article class="text-card reveal">
+            <span class="tag">图文</span>
+            <h4>理论宣讲如何「数智化」——三个实践案例</h4>
+            <time class="news-time">2026-08-18</time>
+          </article>
+          <article class="text-card reveal">
+            <span class="tag">图文</span>
+            <h4>把论文写在祖国大地上：基层宣讲的荆楚样本</h4>
+            <time class="news-time">2026-08-10</time>
+          </article>
+          <article class="text-card reveal">
+            <span class="tag">专题</span>
+            <h4>理响 AI 第一期：AI 赋能思政课备课</h4>
+            <time class="news-time">2026-08-03</time>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 共建生态 ======== -->
+  <section class="section join" id="join">
+    <div class="container">
+      <div class="section-head center reveal">
+
+        <h2 class="section-title">共建生态 · 智联同行</h2>
+        <p class="section-desc">以数据共建共享为纽带，连接高校、科研院所与媒体机构，构建开放协同的社科创新生态。</p>
+      </div>
+      <ul class="member-wall reveal">
+        <li>综合性大学</li>
+        <li>师范院校</li>
+        <li>财经院校</li>
+        <li>理工院校</li>
+        <li>科研院所</li>
+        <li>主流媒体</li>
+        <li>省级学会</li>
+        <li>市州社科联</li>
+        <li>新型智库</li>
+        <li>出版机构</li>
+        <li>数据机构</li>
+        <li>学术期刊</li>
+      </ul>
+      <div class="join-cta reveal">
+        <a class="btn btn-primary" href="#" data-toast="入驻申请流程后续接入">申请入驻</a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 关于我们 ======== -->
+  <section class="section about" id="about">
+    <div class="container about-grid">
+      <div class="about-intro reveal">
+
+        <h2 class="section-title">关于我们</h2>
+        <p>社科智联是湖北省社科联与荆楚网联合建设的社科研究与理论宣讲数智化平台，面向公众、联盟机构与科研人员，提供智研工具、动态资讯、生态共建与理论宣讲等一站式服务，以数字技术赋能哲学社会科学繁荣发展。</p>
+        <div class="about-qr">
+          <div class="qr-item">
+            <img src="assets/images/social-union/qr-official.png" alt="官方公众号" width="120" height="120">
+            <span>官方公众号</span>
+          </div>
+          <div class="qr-item">
+            <img src="assets/images/social-union/qr-eco.png" alt="生态共建" width="120" height="120">
+            <span>生态共建</span>
+          </div>
+          <div class="qr-item">
+            <img src="assets/images/social-union/qr-community.png" alt="官方社群" width="120" height="120">
+            <span>官方社群</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+</main>
+
+<!-- ======== 页脚 ======== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <span class="brand-name">社科智联</span>
+        <p class="footer-slogan">一站式社科研究与理论宣讲数智化平台<br>让知识流动，让研究更高效</p>
+        <p class="footer-meta">运营主体：湖北省社会科学界联合会 · 荆楚网（湖北日报网）</p>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-col-title">平台工具</h3>
+        <a href="./pages/social-research-home.html" target="_blank" rel="noopener">社科智研</a>
+        <a href="#" data-toast="更新日志后续接入">更新日志</a>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-col-title">生态共建</h3>
+        <a href="#" data-toast="入驻申请流程后续接入">申请入驻</a>
+        <a href="#" data-toast="联盟章程后续接入">联盟章程</a>
+        <a href="#" data-toast="数据共享标准后续接入">数据共享标准</a>
+        <a href="#" data-toast="成员单位名录后续接入">成员单位名录</a>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-col-title">支持与法律</h3>
+        <a href="#" data-toast="用户协议后续接入">用户协议</a>
+        <a href="#" data-toast="隐私政策后续接入">隐私政策</a>
+        <a href="#" data-toast="免责声明后续接入">免责声明</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 社科智联 · 湖北省社科联 / 荆楚网</span>
+      <span>鄂ICP备XXXXXXXX号</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/js/social-union-home.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
