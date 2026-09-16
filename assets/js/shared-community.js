@@ -463,7 +463,7 @@
       button.addEventListener("click", () => {
         const action = button.dataset.communityAction;
         if (action === "基于文件提问") {
-          window.location.href = `../index.html?file=${encodeURIComponent(state.activeCard?.dataset.id || "")}`;
+          window.location.href = `./research-assistant.html?file=${encodeURIComponent(state.activeCard?.dataset.id || "")}`;
           return;
         }
         window.SKApp.showToast(`${action}页面后续接入`);
@@ -513,7 +513,7 @@
     document.querySelectorAll("[data-history-item]").forEach((item) => {
       item.addEventListener("click", () => {
         const title = item.querySelector(".history-item-text")?.textContent.trim() || "";
-        window.location.href = `../index.html?conversation=${encodeURIComponent(title)}`;
+        window.location.href = `./research-assistant.html?conversation=${encodeURIComponent(title)}`;
       });
     });
     document.querySelector("[data-research-expand]")?.addEventListener("click", () => {
@@ -527,4 +527,5 @@
     applyFilters(true);
   });
 })();
+
 

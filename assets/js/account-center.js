@@ -55,7 +55,7 @@
       if (logout) {
         authPromptSuppressed = true;
         window.SKAuth.signOut();
-        window.location.href = "../index.html";
+        window.location.href = "./research-assistant.html";
         return;
       }
 
@@ -84,4 +84,5 @@
     });
   });
 })();
+
 

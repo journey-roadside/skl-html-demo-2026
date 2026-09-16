@@ -854,7 +854,7 @@
     document.querySelectorAll("[data-history-item]").forEach((item) => {
       item.addEventListener("click", () => {
         const title = item.querySelector(".history-item-text")?.textContent.trim() || "";
-        window.location.href = `../index.html?conversation=${encodeURIComponent(title)}`;
+        window.location.href = `./research-assistant.html?conversation=${encodeURIComponent(title)}`;
       });
     });
     document.querySelector("[data-research-expand]")?.addEventListener("click", () => {
@@ -978,4 +978,5 @@
     initDemoState();
   });
 })();
+
 
