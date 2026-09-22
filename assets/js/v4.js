@@ -18,8 +18,10 @@
           ? "深色"
           : "浅色"
         : theme;
-    document.documentElement.classList.toggle("dark", resolvedTheme === "深色");
-    document.documentElement.style.colorScheme = resolvedTheme === "深色" ? "dark" : "light";
+    // <html data-theme-lock="light"> 的页面固定浅色，不跟随系统深色偏好
+    const dark = resolvedTheme === "深色" && document.documentElement.dataset.themeLock !== "light";
+    document.documentElement.classList.toggle("dark", dark);
+    document.documentElement.style.colorScheme = dark ? "dark" : "light";
     if (persist) {
       try {
         localStorage.setItem(THEME_STORAGE_KEY, theme);
@@ -278,6 +280,7 @@
     const mask = document.querySelector("[data-research-modal-mask]");
     const modal = document.querySelector("[data-research-modal]");
     if (!mask || !modal) return;
+    window.SKApp?.releaseFocusTrap(modal);
     mask.classList.remove("is-open");
     modal.classList.remove("is-open");
     document.body.classList.remove("is-locked");
@@ -321,6 +324,7 @@
       modal.classList.add("is-open");
     });
     document.body.classList.add("is-locked");
+    window.SKApp?.setFocusTrap(modal, { initial: isEdit ? input : confirm });
     if (isEdit) {
       window.setTimeout(() => {
         input.focus();

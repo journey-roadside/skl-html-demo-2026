@@ -1,2 +1,10 @@
-# AI Agent 运行时生成的沙箱/权限配置，非项目文件
-reasonix.toml
+# AI Agent 运行配置
+CLAUDE.md
+AGENTS.md
+.claude/
+
+# 部署配置
+.gitignore
+.github/
+cloudbaserc.json
+

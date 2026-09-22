@@ -55,7 +55,7 @@
       if (logout) {
         authPromptSuppressed = true;
         window.SKAuth.signOut();
-        window.location.href = "./research-assistant.html";
+        window.location.href = "./knowledge-alliance.html";
         return;
       }
 

@@ -124,11 +124,13 @@
       modal.classList.add("is-open");
     });
     document.body.classList.add("is-locked");
+    window.SKApp?.setFocusTrap(modal, { initial: modal.querySelector("[data-auth-phone]") });
     setMode("login");
     window.setTimeout(() => modal.querySelector("[data-auth-phone]").focus(), 50);
   }
 
   function closeModal() {
+    window.SKApp?.releaseFocusTrap(modal);
     mask.classList.remove("is-open");
     modal.classList.remove("is-open");
     document.body.classList.remove("is-locked");
@@ -264,11 +266,12 @@
       logoutConfirmModal.classList.add("is-open");
     });
     document.body.classList.add("is-locked");
-    window.setTimeout(() => logoutConfirmModal.querySelector("[data-logout-confirm-submit]").focus(), 60);
+    window.SKApp?.setFocusTrap(logoutConfirmModal, { initial: logoutConfirmModal.querySelector("[data-logout-confirm-submit]") });
   }
 
   function closeLogoutConfirm() {
     if (!logoutConfirmModal || logoutConfirmModal.hidden) return;
+    window.SKApp?.releaseFocusTrap(logoutConfirmModal);
     logoutConfirmMask.classList.remove("is-open");
     logoutConfirmModal.classList.remove("is-open");
     document.body.classList.remove("is-locked");

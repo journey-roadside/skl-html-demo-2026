@@ -70,9 +70,11 @@
       settingsModal.classList.add("is-open");
     });
     document.body.classList.add("is-locked");
+    window.SKApp?.setFocusTrap(settingsModal);
   }
 
   function closeSettings() {
+    window.SKApp?.releaseFocusTrap(settingsModal);
     settingsMask.classList.remove("is-open");
     settingsModal.classList.remove("is-open");
     document.body.classList.remove("is-locked");
@@ -86,11 +88,20 @@
     const sidebar = document.querySelector("[data-app-sidebar]");
     const mask = document.querySelector("[data-app-sidebar-mask]");
     if (!sidebar || !mask) return;
+    const mobileQuery = window.matchMedia("(max-width: 899.98px)");
+    const syncSidebarAccess = () => {
+      const hidden = mobileQuery.matches && !sidebar.classList.contains("is-open");
+      sidebar.inert = hidden;
+      sidebar.setAttribute("aria-hidden", String(hidden));
+    };
 
     const setOpen = (open) => {
       sidebar.classList.toggle("is-open", open);
       mask.classList.toggle("is-open", open);
       mask.hidden = !open;
+      if (open) window.SKApp?.setFocusTrap(sidebar);
+      else window.SKApp?.releaseFocusTrap(sidebar);
+      syncSidebarAccess();
     };
 
     document.querySelectorAll("[data-app-sidebar-open]").forEach((button) => {
@@ -100,6 +111,14 @@
       button.addEventListener("click", () => setOpen(false));
     });
     sidebar.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setOpen(false)));
+    mobileQuery.addEventListener("change", syncSidebarAccess);
+    syncSidebarAccess();
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && sidebar.classList.contains("is-open")) {
+        event.preventDefault();
+        setOpen(false);
+      }
+    });
   }
 
   function initSidebarCollapse() {

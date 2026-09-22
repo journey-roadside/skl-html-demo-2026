@@ -6,10 +6,111 @@
     recording: false,
     isNewConversation: false,
     managingHistory: false,
+    selectedAgent: null,
     selectedHistoryItems: new Set(),
   };
   const NEW_CHAT_PLACEHOLDER = "输入你的社科研究问题，或上传资料开始研究";
   const CONTINUE_CHAT_PLACEHOLDER = "继续追问，或上传资料作为研究依据";
+
+  const DEFAULT_WELCOME = {
+    title: "从一个清晰的社科问题开始",
+    description: "可以提问、上传资料，或先开启深度思考与联网搜索。",
+    placeholder: NEW_CHAT_PLACEHOLDER,
+    prompts: [
+      { label: "梳理政策脉络", prompt: "梳理基层公共文化服务数字化建设的政策脉络" },
+      { label: "比较研究框架", prompt: "比较区域治理研究的三种主要分析框架" },
+      { label: "提取核心观点", prompt: "从上传资料中提取核心观点和争议问题" },
+    ],
+  };
+
+  const AGENT_CONFIGS = {
+    research: {
+      controlLabel: "社科智研",
+      mark: "研",
+      title: "让研究从问题走向证据",
+      description: "聚焦选题梳理、政策分析与文献比较，快速形成有来源、有脉络的研究框架。",
+      placeholder: "输入你的社科研究问题，或上传资料开始研究",
+      responseTitle: "研究提示",
+      responseText: "已结合当前对话和资料范围完成初步梳理。该结果会保留来源边界，并标记需要进一步核验的政策条款与数据口径。",
+      prompts: [
+        { label: "梳理政策脉络", prompt: "梳理基层公共文化服务数字化建设的政策脉络" },
+        { label: "比较研究框架", prompt: "比较区域治理研究的三种主要分析框架" },
+        { label: "提取核心观点", prompt: "从上传资料中提取核心观点和争议问题" },
+      ],
+    },
+    review: {
+      controlLabel: "社科智审",
+      mark: "审",
+      title: "让社科成果经得起审查",
+      description: "围绕价值导向、事实依据、版权规范与 AI 伦理，辅助完成材料审查与风险研判。",
+      placeholder: "输入需要审查的社科成果或材料内容",
+      responseTitle: "审查提示",
+      responseText: "已按价值导向、真实性、版权与 AI 伦理维度完成初步审查。结果将标注需要人工复核的风险点和材料依据。",
+      prompts: [
+        { label: "分析价值导向", prompt: "分析研究成果的价值导向与规范性" },
+        { label: "核验事实依据", prompt: "核验材料中的事实依据与潜在争议" },
+        { label: "生成审查报告", prompt: "生成社科成果风险审查报告" },
+      ],
+    },
+  };
+
+  let titleTypingTimer = null;
+
+  function getLandingConfig() {
+    return state.selectedAgent ? AGENT_CONFIGS[state.selectedAgent] : DEFAULT_WELCOME;
+  }
+
+  function syncAgentControls() {
+    const modeSwitches = document.querySelector(".mode-switches");
+    const agentSelection = document.querySelector("[data-agent-selection]");
+    const agentLabel = document.querySelector("[data-agent-selected-label]");
+    const agentClear = document.querySelector("[data-agent-clear]");
+    const config = state.selectedAgent ? AGENT_CONFIGS[state.selectedAgent] : null;
+
+    if (modeSwitches) modeSwitches.hidden = Boolean(config);
+    if (agentSelection) agentSelection.hidden = !config;
+    if (!config) return;
+
+    if (agentLabel) agentLabel.textContent = config.controlLabel;
+    if (agentClear) agentClear.setAttribute("aria-label", `取消${config.controlLabel}`);
+  }
+
+  function animateNewChatTitle(element, text, animate) {
+    window.clearTimeout(titleTypingTimer);
+    titleTypingTimer = null;
+    if (!element) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!animate || reduceMotion) {
+      element.textContent = text;
+      return;
+    }
+
+    element.textContent = "";
+    let index = 0;
+    const revealNext = () => {
+      index += 1;
+      element.textContent = text.slice(0, index);
+      if (index < text.length) {
+        titleTypingTimer = window.setTimeout(revealNext, 70);
+      }
+    };
+    revealNext();
+  }
+
+  function selectAgent(agentKey, animate = true) {
+    if (!AGENT_CONFIGS[agentKey]) return;
+    state.selectedAgent = agentKey;
+    syncAgentControls();
+    if (document.querySelector(".new-chat")) createNewConversation({ animate });
+  }
+
+  function clearSelectedAgent(animate = true) {
+    if (!state.selectedAgent) return;
+    state.selectedAgent = null;
+    syncAgentControls();
+    if (document.querySelector(".new-chat")) createNewConversation({ animate });
+  }
   let feedbackMask;
   let feedbackModal;
   let historySearchMask;
@@ -88,6 +189,7 @@
       historyPanel: document.querySelector("[data-history-panel]"),
       sourcePanel: document.querySelector("[data-source-panel]"),
       sessionFilesPanel: document.querySelector("[data-session-files-panel]"),
+      searchResultsPanel: document.querySelector("[data-search-results-panel]"),
       questionHistoryPanel: document.querySelector("[data-question-history-panel]"),
       textarea: document.querySelector("[data-composer-input]"),
       sendButton: document.querySelector("[data-composer-send]"),
@@ -100,27 +202,45 @@
   }
 
   function setSourceOpen(open) {
-    const { sourcePanel, sessionFilesPanel, questionHistoryPanel } = getElements();
+    const { sourcePanel, sessionFilesPanel, searchResultsPanel, questionHistoryPanel } = getElements();
     if (!sourcePanel) return;
     if (open && questionHistoryPanel) questionHistoryPanel.classList.remove("is-open");
     if (open && sessionFilesPanel) sessionFilesPanel.classList.remove("is-open");
+    if (open && searchResultsPanel) searchResultsPanel.classList.remove("is-open");
     sourcePanel.classList.toggle("is-open", open);
   }
 
   function setQuestionHistoryOpen(open) {
-    const { sourcePanel, sessionFilesPanel, questionHistoryPanel } = getElements();
+    const { sourcePanel, sessionFilesPanel, searchResultsPanel, questionHistoryPanel } = getElements();
     if (!questionHistoryPanel) return;
     if (open && sourcePanel) sourcePanel.classList.remove("is-open");
     if (open && sessionFilesPanel) sessionFilesPanel.classList.remove("is-open");
+    if (open && searchResultsPanel) searchResultsPanel.classList.remove("is-open");
     questionHistoryPanel.classList.toggle("is-open", open);
   }
 
   function setSessionFilesOpen(open) {
-    const { sourcePanel, sessionFilesPanel, questionHistoryPanel } = getElements();
+    const { sourcePanel, sessionFilesPanel, searchResultsPanel, questionHistoryPanel } = getElements();
     if (!sessionFilesPanel) return;
     if (open && sourcePanel) sourcePanel.classList.remove("is-open");
+    if (open && searchResultsPanel) searchResultsPanel.classList.remove("is-open");
     if (open && questionHistoryPanel) questionHistoryPanel.classList.remove("is-open");
     sessionFilesPanel.classList.toggle("is-open", open);
+  }
+
+  function setSearchResultsOpen(open, resultId) {
+    const { sourcePanel, sessionFilesPanel, searchResultsPanel, questionHistoryPanel } = getElements();
+    if (!searchResultsPanel) return;
+    if (open && sourcePanel) sourcePanel.classList.remove("is-open");
+    if (open && sessionFilesPanel) sessionFilesPanel.classList.remove("is-open");
+    if (open && questionHistoryPanel) questionHistoryPanel.classList.remove("is-open");
+    searchResultsPanel.classList.toggle("is-open", open);
+    searchResultsPanel.querySelectorAll("[data-search-result-id]").forEach((card) => {
+      card.classList.toggle(
+        "is-active",
+        Boolean(open && resultId && card.dataset.searchResultId === resultId),
+      );
+    });
   }
 
   function setHistoryOpen(open) {
@@ -165,13 +285,16 @@
     }
     thread.querySelector(".new-chat")?.remove();
 
+    const config = state.selectedAgent ? AGENT_CONFIGS[state.selectedAgent] : null;
+    const assistantName = config?.controlLabel || "社科研究助手";
+    const assistantMark = config?.mark || "智";
     const article = document.createElement("article");
     article.className = `message message-${role}`;
     if (role === "user") article.dataset.questionTime = formatQuestionTime();
     article.innerHTML = `
       <div class="message-author">
-        <span class="message-author-mark">${role === "user" ? "研" : "智"}</span>
-        <span>${role === "user" ? "陌生的研究员" : "社科研究助手"}</span>
+        <span class="message-author-mark">${role === "user" ? "研" : assistantMark}</span>
+        <span>${role === "user" ? "陌生的研究员" : assistantName}</span>
       </div>
       <div class="message-body">
         ${
@@ -217,14 +340,17 @@
   function createSkeletonMessage() {
     const { thread } = getElements();
     if (!thread) return null;
+    const config = state.selectedAgent ? AGENT_CONFIGS[state.selectedAgent] : null;
+    const assistantName = config?.controlLabel || "社科研究助手";
+    const assistantMark = config?.mark || "智";
     const article = document.createElement("article");
     article.className = "message message-ai skeleton-message";
     article.setAttribute("aria-busy", "true");
     article.setAttribute("aria-label", "正在生成回答");
     article.innerHTML = `
       <div class="message-author">
-        <span class="message-author-mark">智</span>
-        <span>社科研究助手</span>
+        <span class="message-author-mark">${assistantMark}</span>
+        <span>${assistantName}</span>
       </div>
       <div class="message-body">
         <div class="skeleton skeleton-line"></div>
@@ -257,6 +383,9 @@
       return;
     }
 
+    const useReferenceConversation =
+      state.isNewConversation && !state.selectedAgent && demoConversationMessages.length > 0;
+
     if (state.isNewConversation) {
       state.isNewConversation = false;
       const disclaimer = document.querySelector("[data-composer-disclaimer]");
@@ -277,25 +406,31 @@
       if (activeHistoryTitle) activeHistoryTitle.textContent = generatedTitle;
     }
 
-    createMessage("user", content);
-    textarea.value = "";
-    autoGrowTextarea();
-    state.sending = true;
-    if (sendButton) sendButton.hidden = true;
-    if (stopButton) stopButton.hidden = false;
-    state.skeletonMessage = createSkeletonMessage();
-
-    window.setTimeout(() => {
-      removeSkeletonMessage();
+    if (useReferenceConversation) {
+      const firstQuestion = demoConversationMessages.find((message) =>
+        message.classList.contains("message-user"),
+      );
+      const firstQuestionText = firstQuestion?.querySelector(".message-body p");
+      if (firstQuestionText) firstQuestionText.textContent = content;
+      if (firstQuestion) firstQuestion.dataset.questionTime = formatQuestionTime();
+      showDemoConversation();
+      const scroll = document.querySelector(".chat-scroll");
+      if (scroll) scroll.scrollTop = 0;
+    } else {
+      createMessage("user", content);
+      const config = state.selectedAgent ? AGENT_CONFIGS[state.selectedAgent] : null;
       createMessage(
         "ai",
-        "已结合当前对话和资料范围完成初步梳理。该结果会保留来源边界，并标记需要进一步核验的政策条款与数据口径。",
-        { title: "研究提示" },
+        config?.responseText || "已结合当前对话和资料范围完成初步梳理。该结果会保留来源边界，并标记需要进一步核验的政策条款与数据口径。",
+        { title: config?.responseTitle || "研究提示" },
       );
-      state.sending = false;
-      if (sendButton) sendButton.hidden = false;
-      if (stopButton) stopButton.hidden = true;
-    }, 700);
+    }
+
+    textarea.value = "";
+    autoGrowTextarea();
+    state.sending = false;
+    if (sendButton) sendButton.hidden = false;
+    if (stopButton) stopButton.hidden = true;
   }
 
   function stopGeneration() {
@@ -308,17 +443,21 @@
     window.SKApp.showToast("已停止生成");
   }
 
-  function createNewConversation() {
+  function createNewConversation(options = {}) {
     const studioThread = document.querySelector("[data-studio-thread]");
     if (studioThread) {
       studioThread.replaceChildren();
       const studioWelcome = document.querySelector("[data-studio-welcome]");
       if (studioWelcome) studioWelcome.hidden = false;
+      syncAgentControls();
       return;
     }
 
     const { thread, textarea, composerWrap } = getElements();
     if (!thread) return;
+    const config = getLandingConfig();
+    const animate = Boolean(options.animate);
+
     if (state.managingHistory) setHistoryManageMode(false);
     stopSpeechPlayback();
     setSessionFilesOpen(false);
@@ -346,13 +485,18 @@
     thread.querySelector(".new-chat")?.remove();
     const newChat = document.createElement("div");
     newChat.className = "new-chat";
+    if (animate) newChat.dataset.agentTransition = "true";
+    const promptMarkup = config.prompts
+      .map(
+        (item) =>
+          `<button type="button" data-prompt="${escapeHtml(item.prompt)}">${escapeHtml(item.label)}</button>`,
+      )
+      .join("");
     newChat.innerHTML = `
-      <h2>从一个清晰的社科问题开始</h2>
-      <p>可以提问、上传资料，或先开启深度思考与联网搜索。</p>
+      <h2 data-new-chat-title></h2>
+      <p>${escapeHtml(config.description)}</p>
       <div class="new-chat-prompts">
-        <button type="button" data-prompt="梳理基层公共文化服务数字化建设的政策脉络">梳理政策脉络</button>
-        <button type="button" data-prompt="比较区域治理研究的三种主要分析框架">比较研究框架</button>
-        <button type="button" data-prompt="从上传资料中提取核心观点和争议问题">提取核心观点</button>
+        ${promptMarkup}
       </div>
     `;
     if (composerWrap) newChat.append(composerWrap);
@@ -382,6 +526,8 @@
     newChat.append(recommendations);
     thread.append(newChat);
     window.SKIcons.hydrate(recommendations);
+    animateNewChatTitle(newChat.querySelector("[data-new-chat-title]"), config.title, animate);
+    syncAgentControls();
     renderQuestionHistory();
     bindPromptButtons(newChat);
     recommendations.querySelectorAll("[data-recommendation-toast]").forEach((button) => {
@@ -390,9 +536,8 @@
       });
     });
     if (textarea) textarea.focus();
-    if (textarea) textarea.placeholder = NEW_CHAT_PLACEHOLDER;
+    if (textarea) textarea.placeholder = config.placeholder;
   }
-
   function showDemoConversation() {
     const { thread, composerWrap, textarea } = getElements();
     if (!thread) return;
@@ -435,18 +580,48 @@
     const menu = document.querySelector("[data-composer-add-menu]");
     const trigger = menu?.querySelector("[data-composer-add-trigger]");
     const list = menu?.querySelector("[data-composer-add-menu-list]");
+    const agentTrigger = menu?.querySelector("[data-composer-agent-trigger]");
+    const agentList = menu?.querySelector("[data-composer-agent-list]");
     if (!menu || !trigger || !list) return;
+
+    const setAgentOpen = (open) => {
+      if (!agentTrigger || !agentList) return;
+      agentList.hidden = !open;
+      agentTrigger.setAttribute("aria-expanded", String(open));
+    };
 
     const setOpen = (open) => {
       list.hidden = !open;
       trigger.setAttribute("aria-expanded", String(open));
+      if (!open) setAgentOpen(false);
     };
 
     trigger.addEventListener("click", () => {
       setOpen(list.hidden);
     });
 
+    if (agentTrigger && agentList) {
+      agentTrigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setAgentOpen(agentList.hidden);
+      });
+    }
+
+    const clearAgentButton = document.querySelector("[data-agent-clear]");
+    clearAgentButton?.addEventListener("click", (event) => {
+      event.preventDefault();
+      clearSelectedAgent(true);
+      getElements().textarea?.focus();
+    });
+
     list.addEventListener("click", (event) => {
+      const agentOption = event.target.closest("[data-composer-agent-option]");
+      if (agentOption) {
+        setOpen(false);
+        selectAgent(agentOption.dataset.composerAgentOption, true);
+        return;
+      }
+
       const item = event.target.closest("[data-composer-add-item]");
       if (!item) return;
       if (item.dataset.composerAddItem === "文献" && !window.SKAuth?.getUser()) {
@@ -462,10 +637,16 @@
     });
 
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !list.hidden) setOpen(false);
+      if (event.key !== "Escape") return;
+      if (agentList && !agentList.hidden) {
+        setAgentOpen(false);
+        return;
+      }
+      if (!list.hidden) setOpen(false);
     });
-  }
 
+    syncAgentControls();
+  }
   function initComposer() {
     const { textarea, sendButton, stopButton, fileInput } = getElements();
     if (!textarea) return;
@@ -547,6 +728,22 @@
     });
     document.querySelectorAll("[data-session-files-close]").forEach((button) => {
       button.addEventListener("click", () => setSessionFilesOpen(false));
+    });
+
+    document.querySelectorAll("[data-thinking-search-open]").forEach((button) => {
+      button.addEventListener("click", () => {
+        setSearchResultsOpen(true, button.dataset.thinkingSearchOpen);
+      });
+    });
+    document.querySelectorAll("[data-search-results-close]").forEach((button) => {
+      button.addEventListener("click", () => setSearchResultsOpen(false));
+    });
+    document.addEventListener("click", (event) => {
+      const { searchResultsPanel } = getElements();
+      if (!searchResultsPanel?.classList.contains("is-open")) return;
+      if (searchResultsPanel.contains(event.target)) return;
+      if (event.target.closest("[data-thinking-search-open]")) return;
+      setSearchResultsOpen(false);
     });
 
     document.addEventListener("click", (event) => {
@@ -1403,6 +1600,10 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const agentParam = params.get("agent");
+    const promptParam = params.get("prompt");
+    if (agentParam && AGENT_CONFIGS[agentParam]) state.selectedAgent = agentParam;
     initComposerAddMenu();
     initComposer();
     initPanels();
@@ -1417,5 +1618,13 @@
       ).filter((element) => element.classList.contains("message"));
     }
     createNewConversation();
+    if (promptParam) {
+      const { textarea } = getElements();
+      if (textarea) {
+        textarea.value = promptParam;
+        autoGrowTextarea();
+        textarea.focus();
+      }
+    }
   });
 })();

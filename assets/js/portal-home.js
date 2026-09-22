@@ -25,6 +25,20 @@
     });
   });
 
+  /* ---------- 页内锚点平滑滑动（仅 #news / #about 等页内区块） ---------- */
+  var SCROLL_OFFSET = 76;
+  $$('.brand[href^="#"], .site-nav a[href^="#"], .drawer-nav a[href^="#"], .hero-actions a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var id = link.getAttribute('href').slice(1);
+      var target = id && document.getElementById(id);
+      if (!target) { return; }
+      e.preventDefault();
+      var top = target.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+      window.scrollTo({ top: top < 0 ? 0 : top, behavior: reduceMotion ? 'auto' : 'smooth' });
+      if (history.replaceState) { history.replaceState(null, '', '#' + id); }
+      if (drawer && drawer.classList.contains('is-open')) { setDrawer(false); }
+    });
+  });
   /* ---------- 顶部导航：滚动态 ---------- */
   var header = $('#siteHeader');
   function onScrollHeader() { header.classList.toggle('is-scrolled', window.scrollY > 10); }
@@ -99,58 +113,6 @@
     }, { threshold: 0.4 });
     $$('.stat strong').forEach(function (el) { countIO.observe(el); });
   }
-
-  /* ---------- 导航高亮跟随（scrollspy） ---------- */
-  var navLinks = $$('.nav-link');
-  var spySections = $$('main section[id]').filter(function (s) {
-    return navLinks.some(function (l) { return l.getAttribute('href') === '#' + s.id; });
-  });
-  var clickLocked = false;
-  function updateSpy() {
-    if (clickLocked) { return; }
-    var line = Math.min(window.innerHeight * 0.55, 420);
-    var current = null;
-    var i, r;
-    // 滚动到底部：选中最后一个导航模块（超高视口下最后模块无法滚过激活线）
-    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4 && spySections.length) {
-      current = spySections[spySections.length - 1];
-    } else {
-      // 优先：横跨激活线的 section（当前可视区主体）
-      for (i = 0; i < spySections.length; i++) {
-        r = spySections[i].getBoundingClientRect();
-        if (r.top <= line && r.bottom > line) { current = spySections[i]; break; }
-      }
-      // 兜底：激活线上方最靠下的 section
-      if (!current) {
-        for (i = 0; i < spySections.length; i++) {
-          r = spySections[i].getBoundingClientRect();
-          if (r.top <= line) { current = spySections[i]; }
-        }
-      }
-    }
-    navLinks.forEach(function (l) {
-      l.classList.toggle('is-active', current !== null && l.getAttribute('href') === '#' + current.id);
-    });
-  }
-  window.addEventListener('scroll', updateSpy, { passive: true });
-  // 点击导航项：立即高亮并锁定，直到用户手动滚动
-  function highlightLink(l) {
-    navLinks.forEach(function (x) { x.classList.toggle('is-active', x === l); });
-  }
-  navLinks.forEach(function (l) {
-    l.addEventListener('click', function () {
-      clickLocked = true;
-      highlightLink(l);
-    });
-  });
-  ['wheel', 'touchstart'].forEach(function (ev) {
-    window.addEventListener(ev, function () {
-      if (clickLocked) { clickLocked = false; updateSpy(); }
-    }, { passive: true });
-  });
-  window.addEventListener('resize', function () { clickLocked = false; updateSpy(); });
-  window.addEventListener('resize', updateSpy);
-  updateSpy();
 
   /* ---------- Hero WebGL2 粒子背景 ---------- */
   var canvas = $('#heroCanvas');

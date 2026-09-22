@@ -24,18 +24,28 @@
     const closeButtons = document.querySelectorAll("[data-drawer-close]");
 
     if (!drawer || !mask) return;
+    drawer.inert = true;
 
     const setOpen = (open) => {
       drawer.classList.toggle("is-open", open);
       mask.classList.toggle("is-open", open);
       mask.hidden = !open;
       drawer.setAttribute("aria-hidden", String(!open));
+      drawer.inert = !open;
       document.body.classList.toggle("is-locked", open);
+      if (open) setFocusTrap(drawer);
+      else releaseFocusTrap(drawer);
     };
 
     openButtons.forEach((button) => button.addEventListener("click", () => setOpen(true)));
     closeButtons.forEach((button) => button.addEventListener("click", () => setOpen(false)));
     drawer.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setOpen(false)));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && drawer.classList.contains("is-open")) {
+        event.preventDefault();
+        setOpen(false);
+      }
+    });
 
     window.SKApp = window.SKApp || {};
     window.SKApp.closeDrawer = () => setOpen(false);
@@ -153,6 +163,70 @@
     });
   }
 
+  const focusTrapState = new WeakMap();
+  let activeFocusTrap = null;
+
+  function getFocusableElements(container) {
+    const selector = [
+      "a[href]",
+      "button:not([disabled])",
+      "input:not([disabled]):not([type='hidden'])",
+      "select:not([disabled])",
+      "textarea:not([disabled])",
+      "[tabindex]:not([tabindex='-1'])",
+    ].join(",");
+    return Array.from(container.querySelectorAll(selector)).filter((element) => {
+      if (element.hidden || element.getAttribute("aria-hidden") === "true") return false;
+      const style = window.getComputedStyle(element);
+      return style.display !== "none" && style.visibility !== "hidden" && element.getClientRects().length > 0;
+    });
+  }
+
+  function releaseFocusTrap(container) {
+    const state = focusTrapState.get(container);
+    if (!state) return;
+    document.removeEventListener("keydown", state.onKeydown, true);
+    focusTrapState.delete(container);
+    if (activeFocusTrap === container) activeFocusTrap = null;
+    if (state.previous && document.contains(state.previous)) {
+      state.previous.focus({ preventScroll: true });
+    }
+  }
+
+  function setFocusTrap(container, options = {}) {
+    if (!container) return;
+    if (activeFocusTrap && activeFocusTrap !== container) releaseFocusTrap(activeFocusTrap);
+    releaseFocusTrap(container);
+    const previous = document.activeElement;
+    const onKeydown = (event) => {
+      if (event.key !== "Tab") return;
+      const focusable = getFocusableElements(container);
+      if (!focusable.length) {
+        event.preventDefault();
+        container.tabIndex = -1;
+        container.focus({ preventScroll: true });
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (!container.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeydown, true);
+    focusTrapState.set(container, { onKeydown, previous });
+    activeFocusTrap = container;
+    const initial = options.initial || getFocusableElements(container)[0] || container;
+    window.requestAnimationFrame(() => initial.focus({ preventScroll: true }));
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     initHeader();
     initMobileDrawer();
@@ -165,5 +239,7 @@
 
   window.SKApp = Object.assign(window.SKApp || {}, {
     showToast,
+    setFocusTrap,
+    releaseFocusTrap,
   });
 })();

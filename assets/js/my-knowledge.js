@@ -185,6 +185,26 @@
     const matching = [];
 
     cards.forEach((card) => {
+      const meta = card.querySelector(".knowledge-card-meta");
+      if (meta) {
+        if (state.filter === "favorite") {
+          if (meta.dataset.defaultText === undefined) meta.dataset.defaultText = meta.textContent;
+          meta.textContent = card.dataset.size || "";
+        } else if (meta.dataset.defaultText !== undefined) {
+          meta.textContent = meta.dataset.defaultText;
+          delete meta.dataset.defaultText;
+        }
+      }
+      const updatedText = card.querySelector(".knowledge-card-updated");
+      const suffix = state.filter === "favorite" ? "收藏" : state.filter === "community" ? "共享至社区" : "";
+      if (updatedText && suffix) {
+        if (updatedText.dataset.defaultText === undefined) updatedText.dataset.defaultText = updatedText.textContent;
+        const sourceText = updatedText.dataset.defaultText;
+        updatedText.textContent = sourceText.endsWith(` ${suffix}`) ? sourceText.slice(0, -suffix.length - 1) : sourceText;
+      } else if (updatedText?.dataset.defaultText !== undefined) {
+        updatedText.textContent = updatedText.dataset.defaultText;
+        delete updatedText.dataset.defaultText;
+      }
       const isFavorite = card.dataset.favorite === "true";
       const isCommunity = card.dataset.shared === "community";
       const matchesCategory =
@@ -284,12 +304,14 @@
       modal.classList.add("is-open");
     });
     document.body.classList.add("is-locked");
+    window.SKApp?.setFocusTrap(modal);
   }
 
   function closeModal() {
     const mask = document.querySelector("[data-knowledge-modal-mask]");
     const modal = state.activeModal;
     if (!mask || !modal) return;
+    window.SKApp?.releaseFocusTrap(modal);
     mask.classList.remove("is-open");
     modal.classList.remove("is-open");
     document.body.classList.remove("is-locked");
@@ -854,7 +876,7 @@
     document.querySelectorAll("[data-history-item]").forEach((item) => {
       item.addEventListener("click", () => {
         const title = item.querySelector(".history-item-text")?.textContent.trim() || "";
-        window.location.href = `./research-assistant.html?conversation=${encodeURIComponent(title)}`;
+        window.location.href = `./knowledge-alliance.html?conversation=${encodeURIComponent(title)}`;
       });
     });
     document.querySelector("[data-research-expand]")?.addEventListener("click", () => {

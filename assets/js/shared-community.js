@@ -2,6 +2,12 @@
   "use strict";
 
   const PAGE_SIZE = 9;
+  const FILE_ICONS = {
+    PDF: "file-pdf",
+    DOCX: "file-word",
+    MD: "file-text",
+    TXT: "file-txt",
+  };
   const FAVORITES_KEY = "sheke-v4-community-favorites";
   const state = {
     channel: "community",
@@ -126,7 +132,7 @@
     card.dataset.downloads = String(downloads);
     card.dataset.time = time;
     card.dataset.description = description;
-    const icon = type === "DOCX" ? "file-word" : "file-text";
+    const icon = FILE_ICONS[type] || "file-text";
     card.innerHTML = `
       <button class="community-card-main" type="button" data-community-open>
         <span class="community-file-mark"><span data-icon="${icon}"></span></span>
@@ -276,11 +282,13 @@
       modal.classList.add("is-open");
     });
     document.body.classList.add("is-locked");
+    window.SKApp?.setFocusTrap(modal);
   }
 
   function closeModal() {
     const mask = document.querySelector("[data-community-modal-mask]");
     const modal = document.querySelector("[data-community-share-modal]");
+    window.SKApp?.releaseFocusTrap(modal);
     mask.classList.remove("is-open");
     modal.classList.remove("is-open");
     document.body.classList.remove("is-locked");
@@ -434,6 +442,15 @@
 
   function initCards() {
     const grid = document.querySelector("[data-community-grid]");
+    getCards().forEach((card) => {
+      const meta = card.querySelector(".community-card-meta");
+      if (!meta || card.querySelector(".community-card-divider")) return;
+      const divider = document.createElement("span");
+      divider.className = "community-card-divider";
+      divider.setAttribute("aria-hidden", "true");
+      meta.before(divider);
+    });
+
     grid.addEventListener("click", (event) => {
       const card = event.target.closest("[data-community-card]");
       if (!card) return;
@@ -444,11 +461,7 @@
         return;
       }
       if (event.target.closest("[data-community-open]")) {
-        window.open(
-          `./reader.html?source=community&file=${encodeURIComponent(card.dataset.name)}`,
-          "_blank",
-          "noopener,noreferrer",
-        );
+        window.SKApp.showToast("文件阅读页后续接入");
       }
     });
 
@@ -463,7 +476,7 @@
       button.addEventListener("click", () => {
         const action = button.dataset.communityAction;
         if (action === "基于文件提问") {
-          window.location.href = `./research-assistant.html?file=${encodeURIComponent(state.activeCard?.dataset.id || "")}`;
+          window.location.href = `./knowledge-alliance.html?file=${encodeURIComponent(state.activeCard?.dataset.id || "")}`;
           return;
         }
         window.SKApp.showToast(`${action}页面后续接入`);
@@ -513,7 +526,7 @@
     document.querySelectorAll("[data-history-item]").forEach((item) => {
       item.addEventListener("click", () => {
         const title = item.querySelector(".history-item-text")?.textContent.trim() || "";
-        window.location.href = `./research-assistant.html?conversation=${encodeURIComponent(title)}`;
+        window.location.href = `./knowledge-alliance.html?conversation=${encodeURIComponent(title)}`;
       });
     });
     document.querySelector("[data-research-expand]")?.addEventListener("click", () => {

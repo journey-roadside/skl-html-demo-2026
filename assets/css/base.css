@@ -21,7 +21,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: var(--font-size-sm);
   line-height: 1.6;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -59,7 +59,7 @@ button {
 
 button:not(:disabled):active,
 .btn:active {
-  transform: translateY(0) scale(0.98);
+  transform: none;
 }
 
 h1,
@@ -90,7 +90,7 @@ ol {
 .container {
   width: min(100%, var(--content-width));
   margin-inline: auto;
-  padding-inline: 28px;
+  padding-inline: var(--spacing-4);
 }
 
 .skip-link {
@@ -98,7 +98,7 @@ ol {
   z-index: 200;
   top: 12px;
   left: 12px;
-  padding: 8px 14px;
+  padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--radius-sm);
   background: var(--primary);
   color: var(--primary-foreground);
@@ -115,7 +115,7 @@ ol {
   width: 1px;
   height: 1px;
   padding: 0;
-  margin: -1px;
+  margin: calc(-1 * var(--spacing-1));
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -145,15 +145,15 @@ ol {
   transform: none;
 }
 
-@media (max-width: 767.98px) {
+@media (min-width: 576px) {
   .container {
-    padding-inline: 20px;
+    padding-inline: var(--spacing-5);
   }
 }
 
-@media (max-width: 575.98px) {
+@media (min-width: 768px) {
   .container {
-    padding-inline: 16px;
+    padding-inline: 28px;
   }
 }
 
