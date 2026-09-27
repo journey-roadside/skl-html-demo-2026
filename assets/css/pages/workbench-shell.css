@@ -1022,14 +1022,18 @@
   /* 加载中隐藏时一并不接受点击，避免点到看不见的按钮 */
   opacity: 0;
   pointer-events: none;
-  transition:
-    opacity var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
 .workbench-user-menu__refresh.is-visible {
   opacity: 1;
   pointer-events: auto;
+  /* 与骨架同一条规矩：只在出现时淡入。
+     它紧挨着数值，若消失时淡出，就会在数值旁边留一层 150ms 的半透明，
+     整块区域看上去像在变色 */
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
 
 .workbench-user-menu__refresh:hover {
