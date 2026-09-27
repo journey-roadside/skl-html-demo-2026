@@ -1257,26 +1257,22 @@
   line-height: 1.6;
 }
 
-/* 底部固定条：一条横线 + 「查看全部」，列表与缺省状态共用 */
+/* 底部固定条：一条横线 + 「查看全部」，列表与缺省状态共用。
+   是跳转到消息中心页的链接（新窗口），故用 a 而非 button */
 .workbench-message-center__foot {
   padding: var(--spacing-2) var(--spacing-3);
   border-top: 1px solid var(--border);
   text-align: center;
 }
 
-.workbench-message-center__foot button {
+.workbench-message-center__foot a {
+  display: inline-block;
   color: var(--accent-active);
   font-size: var(--font-size-xxs);
 }
 
-.workbench-message-center__foot button:hover {
+.workbench-message-center__foot a:hover {
   text-decoration: underline;
-}
-
-.workbench-message-center__foot button:disabled {
-  color: var(--muted-foreground);
-  cursor: default;
-  text-decoration: none;
 }
 
 /* 展开态侧栏只有 15rem 宽，消息面板向右越出侧栏换取可读宽度与字号。
