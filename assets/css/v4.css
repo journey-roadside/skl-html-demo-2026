@@ -790,9 +790,10 @@
   font-size: var(--font-size-sm);
 }
 
+/* 聚焦态与重命名输入框一致：边框实心 --accent-strong，外环 3px --accent */
 .research-modal-field input:focus {
-  border-color: var(--accent-active);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 .research-modal-message {

@@ -860,11 +860,12 @@
   line-height: 1.6;
 }
 
+/* 聚焦态与重命名输入框一致：边框实心 --accent-strong，外环 3px --accent */
 .knowledge-field input:focus,
 .knowledge-field textarea:focus,
 .knowledge-field select:focus {
-  border-color: var(--accent-active);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 .knowledge-dropzone {
@@ -1123,8 +1124,8 @@
 }
 
 .knowledge-custom-tag input:focus {
-  border-color: var(--accent-active);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 .knowledge-custom-tag-list {
