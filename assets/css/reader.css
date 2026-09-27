@@ -160,7 +160,7 @@
   margin-inline: auto;
   padding: var(--spacing-12) var(--spacing-10);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  /* 直角：纸质页面的边界是方的，圆角会把它读成"卡片" */
   background: var(--card);
   box-shadow: var(--shadow-card);
 }
