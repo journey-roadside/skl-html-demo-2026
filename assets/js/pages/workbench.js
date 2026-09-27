@@ -1003,7 +1003,8 @@
 
       <dialog class="workbench-confirm" data-dialog-prompt aria-labelledby="workbenchPromptTitle">
         <h2 class="workbench-confirm__title" id="workbenchPromptTitle" data-dialog-prompt-title>重命名</h2>
-        <input class="workbench-prompt__input" type="text" data-dialog-prompt-input aria-label="名称">
+        <label class="workbench-confirm__label" for="workbenchPromptInput">名称</label>
+        <input class="workbench-prompt__input" id="workbenchPromptInput" type="text" data-dialog-prompt-input>
         <div class="workbench-confirm__actions">
           <button class="workbench-confirm__button" type="button" data-dialog-prompt-cancel>取消</button>
           <button class="workbench-confirm__button workbench-confirm__button--primary" type="button" data-dialog-prompt-ok>确定</button>
