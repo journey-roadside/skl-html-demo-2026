@@ -166,8 +166,11 @@
       actionConfirm.classList.add("projects-dialog__button--primary");
       actionConfirm.classList.remove("projects-dialog__button--danger");
       actionDialog.showModal();
+      /* 只聚焦到末尾，不做全选：全选会套用全局 ::selection（淡桃底 + 橙字），
+         视觉上像变成了提示文字 */
       actionInput.focus();
-      actionInput.select();
+      const end = actionInput.value.length;
+      actionInput.setSelectionRange(end, end);
       return;
     }
 
