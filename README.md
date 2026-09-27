@@ -14,8 +14,9 @@
 | V4.1 | 2026-09-16 | 20260916-调整项目结构并重构门户首页：社科智联官网作为根 `index.html`，产品门户和工作台迁入 `pages/`，补齐资源并统一页面入口与相对路径 |
 | V5 | 2026-09-23 | 大重构：定位升级为「湖北社科数据信息联盟」官网首页；重写门户首页（双智能体入口 / 研究能力 / 联盟共建）；新增智能体广场、知识联盟、项目列表；引入统一工作台壳（workbench-shell / workbench.js），页面导航收归前端壳；设计令牌 tokens.css 扩展重写 |
 | V5.1 | 2026-09-27 | 项目详情增强：对话项三点菜单（移出项目 / 删除）、项目资料支持本地上传与删除、资料项改双行布局并隐藏扩展名、列表一屏 5 项滚动、格式筛选新增「全部」默认项 |
+| V5.2 | 2026-09-27 | 壳层单源重构：侧栏与用户区合并为 `workbench.js` 内的模板并在运行时注入，5 个页面各删除 926 行重复结构（净减约 1.29 万行）；删除 12 个零引用资源文件 |
 
-当前根目录以 V5.1 为主版本：
+当前根目录以 V5.2 为主版本：
 
 - `index.html` 为「湖北社科数据信息联盟」官网首页。
 - `pages/knowledge-alliance.html` 为知识联盟（工作台底座）。
@@ -52,6 +53,8 @@ python -m http.server 8080
 
 智能体广场、项目列表由官网首页与工作台导航进入；页面间通过统一工作台壳（workbench-shell / workbench.js）切换，不互相直接链接。
 
+5 个 `pages/` 页面只保留 `<div class="workbench-shell">` 和自身内容区，侧栏与用户区由 `assets/js/pages/workbench.js` 在运行时注入。
+
 ## 目录结构
 
 ```text
@@ -71,7 +74,7 @@ html-demo/
 │  │  ├─ portal-home.css       # 官网首页样式
 │  │  ├─ app-shell.css         # 工作台侧栏、顶栏和用户区
 │  │  ├─ agent-square.css      # 智能体广场样式
-│  │  ├─ knowledge-alliance.css # 知识联盟样式
+│  │  ├─ shared-community.css  # 共享社区样式
 │  │  ├─ projects.css          # 项目列表样式
 │  │  ├─ research-assistant.css # 工作台与历史会话共享样式
 │  │  ├─ my-knowledge.css      # 我的知识样式
@@ -84,15 +87,14 @@ html-demo/
 │  │  ├─ main.js               # 基础交互和 Toast
 │  │  ├─ auth.js               # 登录、注册和退出
 │  │  ├─ portal-home.js        # 官网首页交互
-│  │  ├─ app-shell.js          # 侧栏、设置和快捷键
-│  │  ├─ knowledge-alliance.js # 知识联盟逻辑
-│  │  ├─ projects.js           # 项目列表逻辑
+│  │  ├─ shared-community.js   # 共享社区逻辑
 │  │  ├─ research-assistant.js # 工作台会话交互
 │  │  ├─ my-knowledge.js       # 我的知识逻辑
 │  │  ├─ v4.js                 # 旧工作台逻辑（保留兼容）
 │  │  ├─ <page>.js            # 各页面专用逻辑
 │  │  └─ pages/
-│  │     └─ workbench.js       # 统一工作台外壳逻辑（页面导航收归此处）
+│  │     ├─ projects.js        # 项目列表逻辑
+│  │     └─ workbench.js       # 统一工作台外壳：侧栏与用户区单源模板 + 注入逻辑
 │  ├─ img/
 │  │  └─ grid-pattern.svg
 │  └─ images/social-union/     # 官网二维码和默认头像
@@ -115,7 +117,8 @@ html-demo/
 
 - 页面切换、筛选、排序、分页、弹窗、Toast 和划词工具均为前端静态交互，数据使用页面内模拟数据。
 - 登录态：`localStorage["sheke-demo-user"]`，由 `assets/js/auth.js` 管理。
-- 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`，由 `assets/js/app-shell.js` 管理。
+- 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`，由 `assets/js/pages/workbench.js` 管理。
+- 壳层注入：`workbench.js` 先注入侧栏与用户区，再按 `location.pathname` 推导激活导航、对话入口形态和 `data-project-create-trigger`，页面无需声明自身状态。
 - 主题设置：`localStorage["sheke-v4-theme"]`，支持浅色、深色和跟随系统，由 `assets/js/v4.js` 管理。
 - 共享收藏：`localStorage["sheke-v4-community-favorites"]`，由共享社区和我的知识共享。
 - 项目资料上传：仅记录文件名、大小和类型并保留在当前会话内存中，刷新后不保留；文件不落盘、不上传服务端。
@@ -131,6 +134,8 @@ html-demo/
 - 颜色、圆角、阴影、动效和风险状态优先使用 `tokens.css` 变量，不直接写重复魔法值。
 - 图标通过 `data-icon="name"` 声明，由 `icons.js` 注入，不在页面内联 SVG。
 - 页面级样式和脚本使用 `assets/css/<page>.css`、`assets/js/<page>.js`，公共逻辑不要复制到页面脚本。
+- 侧栏与用户区结构只在 `assets/js/pages/workbench.js` 的 `SHELL_SIDEBAR` / `SHELL_USER` 模板中维护，页面里不要复制这段结构；页面间的壳层差异由 `applyShellState()` 按路径推导，不要写回页面。
+- 壳层模板用 JS 模板字符串内联，不使用 `fetch` 或 iframe 加载片段，以保证 `file://` 直接双击打开仍可用。
 - 中文文案、`aria-*`、键盘操作和 `prefers-reduced-motion` 按现有页面规范维护。
 
 ## 已知限制
@@ -139,6 +144,7 @@ html-demo/
 - 文件上传、下载、共享审核、分析报告和精读内容均为模拟流程。
 - V5 起 `social-research-home`、`account-center`、`reader`、`shared-community`、`social-review`、`deep-research` 等 V4 独立页面已整合进官网首页、工作台或智能体广场，原文件不再随 V5 站点提供（可在 `v4/` 归档查阅）。
 - V3 保留在 `v3/`、V4 保留在 `v4/`，其页面结构和资源引用保持归档状态。
+- 项目列表与智能体广场两页只加载 `workbench.js`，侧栏用户区的展开动作未接线（`main.js` / `v4.js` 才绑定 `[data-user-menu-trigger]`），点头像不会弹出用户菜单。此为重构前既有的问题，本次未改动。
 
 仓库分支为 `main`，远端为：
 
