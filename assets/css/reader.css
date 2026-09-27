@@ -73,11 +73,7 @@
   white-space: nowrap;
 }
 
-.reader-bar__type {
-  flex: 0 0 auto;
-}
-
-/* 更新时间：与格式标签同款胶囊（.tag 提供底色/字号/圆角），只补不参与文件名压缩 */
+/* 更新时间：胶囊底由 .tag 提供，这里只保证不参与文件名压缩 */
 .reader-bar__time {
   flex: 0 0 auto;
 }
