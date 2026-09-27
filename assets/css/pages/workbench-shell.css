@@ -1004,12 +1004,12 @@
   color: var(--foreground);
 }
 
-/* 积分余额行：整行无点击行为（只有刷新按钮可交互），故不是 button，也不参与行级 hover；
-   尾随元素为「刷新 + 数值」两个，比其它行多一列。
-   选择器必须带父级前缀：上面 :is(button, a, .workbench-user-menu__row) 的权重是 (0,2,0)，
-   单类选择器会被它压住，四列模板不生效，数值会被挤到第二行 */
-.workbench-user-menu__group > .workbench-user-menu__row {
-  grid-template-columns: 18px minmax(0, 1fr) auto auto;
+/* 积分余额行整行无点击行为（只有刷新按钮可交互），故不是 button，也不参与行级 hover；
+   布局沿用上面的三列模板，只有「刷新 + 数值」自成一组、间距比行内其它间隙更紧 */
+.workbench-user-menu__points-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
 }
 
 .workbench-user-menu__refresh {
@@ -1058,21 +1058,20 @@
   height: 13px;
 }
 
-/* 积分余额：数值与骨架叠在同一格，打开菜单时先显示骨架再露出数值 */
+/* 积分余额：骨架绝对定位、正好盖住数值本身。
+   不用 grid 叠格是为了让骨架宽度跟随数值宽度——数值换个位数，
+   骨架跟着变宽，加载前后宽度完全一致，也不会把刷新按钮推来推去 */
 .workbench-user-menu__points {
   position: relative;
-  display: grid;
-  min-width: 2.5rem;
-  justify-items: end;
-}
-
-.workbench-user-menu__points > * {
-  grid-area: 1 / 1;
 }
 
 .workbench-user-menu__points .skeleton {
-  width: 100%;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
   height: 12px;
+  transform: translateY(-50%);
   opacity: 0;
   transition: opacity var(--duration-fast) var(--ease-out);
 }
@@ -1089,7 +1088,8 @@
 .workbench-user-menu__group strong {
   color: var(--foreground);
   font-family: var(--font-mono);
-  font-size: 11px;
+  /* 分值比行内文字（12px）大一档，11px 时等宽字体偏小不易读 */
+  font-size: var(--font-size-xs);
 }
 
 .workbench-message-center__head {

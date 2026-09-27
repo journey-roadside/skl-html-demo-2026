@@ -782,7 +782,10 @@
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: var(--surface);
+  /* 用 --skeleton 而非 --surface：骨架常落在白色卡片/弹层上，
+     --surface(#faf7f3) 与白底对比度仅 1.03，肉眼不可见，
+     连 ::after 的白色微光也一并看不见 */
+  background: var(--skeleton);
   border-radius: var(--radius-sm);
 }
 

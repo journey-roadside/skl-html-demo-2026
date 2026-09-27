@@ -924,15 +924,17 @@
               <path d="M11 11l2 2"></path>
             </svg>
             <span>积分余额</span>
-            <button class="workbench-user-menu__refresh" type="button" role="menuitem" data-user-points-refresh aria-label="刷新积分余额">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
-                <path d="M21 3v5h-5"></path>
-              </svg>
-            </button>
-            <span class="workbench-user-menu__points" data-user-points>
-              <strong>268</strong>
-              <span class="skeleton" aria-hidden="true"></span>
+            <span class="workbench-user-menu__points-group" role="presentation">
+              <button class="workbench-user-menu__refresh" type="button" role="menuitem" data-user-points-refresh aria-label="刷新积分余额">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                  <path d="M21 3v5h-5"></path>
+                </svg>
+              </button>
+              <span class="workbench-user-menu__points" data-user-points>
+                <strong>268</strong>
+                <span class="skeleton" aria-hidden="true"></span>
+              </span>
             </span>
           </div>
           <button type="button" role="menuitem">
