@@ -1252,7 +1252,7 @@
                   </header>
                   <ul class="project-detail__conversation-list" data-project-conversation-list>
                     <li class="project-detail__conversation-item">
-                      <button type="button">
+                      <button class="project-detail__conversation-open" type="button">
                         <span class="project-detail__conversation-icon" aria-hidden="true">
                           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -1261,9 +1261,20 @@
                         <span class="project-detail__conversation-name">明曜AI系统先进性评估</span>
                         <span class="project-detail__conversation-date">09-18</span>
                       </button>
+                      <button class="project-detail__conversation-more" type="button" aria-label="明曜AI系统先进性评估对话操作" aria-haspopup="menu" aria-expanded="false">
+                        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <circle cx="5" cy="12" r="1"></circle>
+                          <circle cx="12" cy="12" r="1"></circle>
+                          <circle cx="19" cy="12" r="1"></circle>
+                        </svg>
+                      </button>
+                      <div class="projects-card__menu-panel project-detail__conversation-menu" role="menu" aria-label="明曜AI系统先进性评估对话操作" data-conversation-menu hidden>
+                        <button class="projects-card__menu-item" type="button" role="menuitem" data-conversation-action="remove">移出项目</button>
+                        <button class="projects-card__menu-item projects-card__menu-item--danger" type="button" role="menuitem" data-conversation-action="delete">删除</button>
+                      </div>
                     </li>
                     <li class="project-detail__conversation-item">
-                      <button type="button">
+                      <button class="project-detail__conversation-open" type="button">
                         <span class="project-detail__conversation-icon" aria-hidden="true">
                           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -1272,6 +1283,17 @@
                         <span class="project-detail__conversation-name">中国量子计算发展近况</span>
                         <span class="project-detail__conversation-date">09-18</span>
                       </button>
+                      <button class="project-detail__conversation-more" type="button" aria-label="中国量子计算发展近况对话操作" aria-haspopup="menu" aria-expanded="false">
+                        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <circle cx="5" cy="12" r="1"></circle>
+                          <circle cx="12" cy="12" r="1"></circle>
+                          <circle cx="19" cy="12" r="1"></circle>
+                        </svg>
+                      </button>
+                      <div class="projects-card__menu-panel project-detail__conversation-menu" role="menu" aria-label="中国量子计算发展近况对话操作" data-conversation-menu hidden>
+                        <button class="projects-card__menu-item" type="button" role="menuitem" data-conversation-action="remove">移出项目</button>
+                        <button class="projects-card__menu-item projects-card__menu-item--danger" type="button" role="menuitem" data-conversation-action="delete">删除</button>
+                      </div>
                     </li>
                   </ul>
                   <div class="project-detail__conversation-empty" data-project-conversation-empty hidden>
@@ -1290,7 +1312,7 @@
                       <span>项目资料</span>
                     </span>
                     <span class="project-detail__side-actions">
-                      <button class="project-detail__side-button" type="button" aria-label="添加项目资料">
+                      <button class="project-detail__side-button" type="button" aria-label="添加项目资料" data-project-resource-add>
                         <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                           <path d="M12 5v14M5 12h14"></path>
                         </svg>
@@ -1301,6 +1323,7 @@
                         </svg>
                       </button>
                       <div class="project-detail__resource-filter-menu" role="menu" aria-label="文件格式筛选" data-project-resource-filter-menu hidden>
+                        <button class="project-detail__resource-filter-option project-detail__resource-filter-option--all" type="button" role="menuitemradio" aria-checked="true" data-resource-filter-all>全部</button>
                         <button class="project-detail__resource-filter-option" type="button" role="menuitemcheckbox" aria-checked="false" data-resource-filter-value="PDF">PDF</button>
                         <button class="project-detail__resource-filter-option" type="button" role="menuitemcheckbox" aria-checked="false" data-resource-filter-value="DOCX">DOCX</button>
                         <button class="project-detail__resource-filter-option" type="button" role="menuitemcheckbox" aria-checked="false" data-resource-filter-value="Markdown">Markdown</button>
@@ -1309,45 +1332,48 @@
                   </header>
                   <p class="project-detail__side-description">项目资料支持本项目所有对话使用。</p>
 
-                  <ul class="project-detail__resource-list" aria-label="项目资料列表">
+                  <ul class="project-detail__resource-list" aria-label="项目资料列表" data-project-resource-list>
                     <li class="project-detail__resource-item" data-resource-type="PDF">
-                      <span class="project-detail__resource-file-icon" aria-hidden="true">
-                        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <path d="M14 2v6h6"></path>
-                        </svg>
-                      </span>
                       <span class="project-detail__resource-copy">
-                        <strong>公共文化服务政策汇编.pdf</strong>
+                        <strong>公共文化服务政策汇编</strong>
                         <small>PDF · 2.4 MB</small>
                       </span>
                       <span class="project-detail__resource-date">今天 09:18</span>
+                      <button class="project-detail__resource-remove" type="button" aria-label="从项目中删除公共文化服务政策汇编.pdf" data-resource-remove>
+                        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M3 6h18"></path>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                      </button>
                     </li>
                     <li class="project-detail__resource-item" data-resource-type="DOCX">
-                      <span class="project-detail__resource-file-icon" aria-hidden="true">
-                        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <path d="M14 2v6h6"></path>
-                        </svg>
-                      </span>
                       <span class="project-detail__resource-copy">
-                        <strong>基层公共文化设施调研纪要.docx</strong>
+                        <strong>基层公共文化设施调研纪要</strong>
                         <small>DOCX · 1.1 MB</small>
                       </span>
                       <span class="project-detail__resource-date">昨天 16:40</span>
+                      <button class="project-detail__resource-remove" type="button" aria-label="从项目中删除基层公共文化设施调研纪要.docx" data-resource-remove>
+                        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M3 6h18"></path>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                      </button>
                     </li>
                     <li class="project-detail__resource-item" data-resource-type="Markdown">
-                      <span class="project-detail__resource-file-icon" aria-hidden="true">
-                        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <path d="M14 2v6h6"></path>
-                        </svg>
-                      </span>
                       <span class="project-detail__resource-copy">
-                        <strong>数字化案例资料.md</strong>
-                        <small>Markdown · 680 KB</small>
+                        <strong>数字化案例资料</strong>
+                        <small>MD · 680 KB</small>
                       </span>
                       <span class="project-detail__resource-date">09-14</span>
+                      <button class="project-detail__resource-remove" type="button" aria-label="从项目中删除数字化案例资料.md" data-resource-remove>
+                        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M3 6h18"></path>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                      </button>
                     </li>
                   </ul>
                 </section>
@@ -1379,6 +1405,27 @@
           <div class="projects-dialog__actions">
             <button class="projects-dialog__button" type="button" data-project-action-cancel>取消</button>
             <button class="projects-dialog__button projects-dialog__button--primary" type="submit" data-project-action-confirm>保存</button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog class="projects-dialog" data-resource-upload-dialog aria-labelledby="resourceUploadTitle">
+        <form class="projects-dialog__form" data-resource-upload-form>
+          <h2 class="projects-dialog__title" id="resourceUploadTitle">添加项目资料</h2>
+          <p class="projects-dialog__description">从本地上传资料，上传后本项目所有对话均可使用。</p>
+          <label class="projects-dialog__picker">
+            <input class="visually-hidden" type="file" multiple data-resource-upload-input>
+            <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 16V4m0 0L8 8m4-4 4 4"></path>
+              <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+            </svg>
+            <span>选择本地文件</span>
+            <small>支持 PDF、DOC、DOCX、TXT、Markdown 格式</small>
+          </label>
+          <ul class="projects-dialog__file-list" aria-label="待上传文件" data-resource-upload-list hidden></ul>
+          <div class="projects-dialog__actions">
+            <button class="projects-dialog__button" type="button" data-resource-upload-cancel>取消</button>
+            <button class="projects-dialog__button projects-dialog__button--primary" type="submit" data-resource-upload-confirm disabled>确认</button>
           </div>
         </form>
       </dialog>

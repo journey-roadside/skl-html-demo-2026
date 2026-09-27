@@ -395,6 +395,97 @@
   outline-offset: 2px;
 }
 
+.projects-dialog__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.projects-dialog__picker {
+  display: flex;
+  min-height: 7rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-5);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.projects-dialog__picker .workbench-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--accent-active);
+}
+
+.projects-dialog__picker small {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.projects-dialog__picker:focus-within {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.projects-dialog__file-list {
+  display: grid;
+  max-height: 9rem;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-3);
+  overflow-y: auto;
+}
+
+.projects-dialog__file {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: var(--font-size-xs);
+}
+
+.projects-dialog__file-name {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.projects-dialog__file-size {
+  flex: 0 0 auto;
+  color: var(--text-secondary);
+}
+
+.projects-dialog__file-remove {
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  line-height: 1;
+}
+
+.projects-dialog__file-remove:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
 @media (hover: hover) {
   .projects-tab:hover {
     color: var(--foreground);
@@ -531,7 +622,8 @@
 .project-detail__back:focus-visible,
 .project-detail__icon-button:focus-visible,
 .project-detail__send:focus-visible,
-.project-detail__conversation-item button:focus-visible,
+.project-detail__conversation-open:focus-visible,
+.project-detail__conversation-more:focus-visible,
 .project-detail__side-button:focus-visible,
 .project-detail__resource-empty:focus-visible {
   outline: 2px solid var(--ring);
@@ -830,27 +922,63 @@
   gap: var(--spacing-2);
 }
 
-.project-detail__conversation-item button {
-  display: grid;
-  width: 100%;
+.project-detail__conversation-item {
+  position: relative;
+  display: flex;
   min-height: 3rem;
+  align-items: center;
+  border-radius: var(--radius-md);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.project-detail__conversation-item:hover,
+.project-detail__conversation-item:active {
+  background: var(--surface-hover);
+}
+
+.project-detail__conversation-open {
+  display: grid;
+  min-width: 0;
+  min-height: 3rem;
+  flex: 1 1 auto;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--spacing-3);
-  padding: 0 var(--spacing-4);
+  padding: 0 var(--spacing-2) 0 var(--spacing-4);
   border: 0;
-  border-radius: var(--radius-md);
+  border-radius: inherit;
   background: transparent;
   color: var(--foreground);
   cursor: pointer;
   font: inherit;
   text-align: left;
-  transition: background var(--duration-fast) var(--ease-out);
 }
 
-.project-detail__conversation-item button:hover,
-.project-detail__conversation-item button:active {
-  background: var(--surface-hover);
+.project-detail__conversation-more {
+  display: grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 auto;
+  margin-right: var(--spacing-2);
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.project-detail__conversation-more .workbench-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.project-detail__conversation-more[aria-expanded="true"] {
+  background: var(--surface);
+  color: var(--foreground);
 }
 
 .project-detail__conversation-icon {
@@ -1046,7 +1174,8 @@
   .project-detail__composer,
   .project-detail__icon-button,
   .project-detail__send,
-  .project-detail__conversation-item button,
+  .project-detail__conversation-item,
+  .project-detail__conversation-more,
   .project-detail__side-button,
   .project-detail__resource-empty {
     transition: none;
@@ -1117,67 +1246,100 @@
   }
 }
 .project-detail__resource-list {
+  /* 必须等于资料项的实际渲染高度：内边距 8×2 + 名称行 20.8 + 行间距 4 + 元信息行 24（被删除按钮 1.5rem 撑起） */
+  --resource-item-height: 4.05rem;
   display: grid;
   gap: var(--spacing-2);
+  /* 一屏 5 项，第 6 项起在卡片内滚动；不足 5 项时 auto 不产生滚动条 */
+  max-height: calc(5 * var(--resource-item-height) + 4 * var(--spacing-2));
   margin-top: var(--spacing-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
 }
 
 .project-detail__resource-item {
   display: grid;
   min-width: 0;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  /* 首行放名称并跨满整行；次行为「格式·大小 时间 …… 删除」，中间 1fr 列留白把删除键顶到最右 */
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--spacing-3);
+  column-gap: var(--spacing-2);
+  row-gap: var(--spacing-1);
   min-height: 3.5rem;
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   background: var(--surface);
 }
 
-.project-detail__resource-file-icon {
+.project-detail__resource-remove {
   display: grid;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  grid-row: 2;
+  grid-column: 4;
   place-items: center;
+  border: 0;
   border-radius: var(--radius-sm);
-  background: var(--card);
-  color: var(--accent-active);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
 
-.project-detail__resource-file-icon .workbench-icon {
-  width: 0.875rem;
-  height: 0.875rem;
+.project-detail__resource-remove .workbench-icon {
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
+.project-detail__resource-remove:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* 展开为网格项，让名称与元信息分别落到两行 */
 .project-detail__resource-copy {
+  display: contents;
+}
+
+.project-detail__resource-copy strong {
   display: block;
   min-width: 0;
-}
-
-.project-detail__resource-copy strong,
-.project-detail__resource-copy small {
-  display: block;
+  grid-row: 1;
+  grid-column: 1 / -1;
   overflow: hidden;
+  color: var(--foreground);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.project-detail__resource-copy strong {
-  color: var(--foreground);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-}
-
 .project-detail__resource-copy small {
-  margin-top: var(--spacing-1);
+  display: block;
+  grid-row: 2;
+  grid-column: 1;
+  overflow: hidden;
   color: var(--text-secondary);
   font-size: var(--font-size-xxs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .project-detail__resource-date {
+  grid-row: 2;
+  grid-column: 2;
   color: var(--text-secondary);
   font-size: var(--font-size-xxs);
   white-space: nowrap;
+}
+
+/* 与「格式 · 大小」中的分隔点一致，把时间串进同一行元信息 */
+.project-detail__resource-date::before {
+  margin-right: var(--spacing-1);
+  content: "·";
 }
 .project-detail__resource-filter-menu {
   position: absolute;
@@ -1230,6 +1392,11 @@
   box-shadow: inset 0 0 0 3px var(--card);
 }
 
+/* 「全部」与具体格式互斥，用圆形指示器区别于多选的方形勾选框 */
+.project-detail__resource-filter-option--all::before {
+  border-radius: var(--radius-full);
+}
+
 .project-detail__resource-filter-option:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 1px;
@@ -1248,4 +1415,32 @@
     background: var(--surface-hover);
     color: var(--foreground);
   }
+
+  .project-detail__conversation-more:hover {
+    background: var(--surface);
+    color: var(--foreground);
+  }
+
+  .projects-dialog__picker:hover {
+    border-color: var(--accent-strong);
+  }
+
+  .projects-dialog__file-remove:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+
+  .project-detail__resource-remove:hover {
+    background: var(--destructive-soft);
+    color: var(--destructive);
+  }
+}
+
+/* 复用 .projects-card__menu-panel 的视觉，仅覆盖为向下展开。 */
+/* ponytail: 固定向下展开，最后一行贴底时再补翻转逻辑 */
+.project-detail__conversation-menu {
+  top: calc(100% - var(--spacing-2));
+  right: var(--spacing-2);
+  bottom: auto;
+  z-index: 9;
 }
