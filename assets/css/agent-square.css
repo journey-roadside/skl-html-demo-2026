@@ -236,6 +236,7 @@
   min-height: 2.75rem;
   align-items: center;
   color: inherit;
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
 .agent-square-detail__breadcrumb .workbench-icon {
@@ -471,6 +472,11 @@
 
   .agent-square-prompts__list a:hover {
     color: var(--accent-active);
+  }
+
+  /* 面包屑返回链：移入由次级文字色转为前景色，与项目详情顶部导航（.project-detail__back）一致 */
+  .agent-square-detail__breadcrumb a:hover {
+    color: var(--foreground);
   }
 }
 
