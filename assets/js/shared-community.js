@@ -118,12 +118,14 @@
   }
 
   function createCard(file, index) {
-    const [name, type, size, _source, _org, topic, channel, featured, downloads, time, description] = file;
+    const [name, type, size, _source, org, topic, channel, featured, downloads, time, description] = file;
     const card = document.createElement("article");
     card.className = "community-card";
     card.dataset.communityCard = "";
     card.dataset.id = `shared-${index + 1}`;
     card.dataset.name = name;
+    /* 分享机构：查看页顶栏的「文件所属用户」用它 */
+    card.dataset.org = org;
     card.dataset.type = type;
     card.dataset.size = size;
     card.dataset.topic = topic;
@@ -203,6 +205,17 @@
     });
   }
 
+  /* 查看页地址：文件名 + 分享机构（owner）都跟着卡片数据走。
+     两个入口（卡片点击、详情预览区）共用，避免地址拼法漂移 */
+  function readerUrl(card) {
+    return (
+      "./reader.html?source=community&file=" +
+      encodeURIComponent(card.dataset.name) +
+      "&owner=" +
+      encodeURIComponent(card.dataset.org || "")
+    );
+  }
+
   function openDetail(card) {
     state.activeCard = card;
     const detail = document.querySelector("[data-community-detail]");
@@ -225,7 +238,7 @@
     /* 预览区指向该文件的查看页（新窗口）；切换卡片时链接要跟着换 */
     const previewLink = document.querySelector("[data-community-preview-link]");
     if (previewLink) {
-      previewLink.href = "./reader.html?source=community&file=" + encodeURIComponent(card.dataset.name);
+      previewLink.href = readerUrl(card);
     }
     document.querySelector("[data-community-detail-topic]").textContent = card.dataset.topic;
     document.querySelector("[data-community-detail-time]").textContent = card.dataset.time;
@@ -468,11 +481,7 @@
       }
       if (event.target.closest("[data-community-open]")) {
         /* 原为「文件阅读页后续接入」占位提示，现已接入查看页（与我的知识同款新窗口打开） */
-        window.open(
-          `./reader.html?source=community&file=${encodeURIComponent(card.dataset.name)}`,
-          "_blank",
-          "noopener,noreferrer",
-        );
+        window.open(readerUrl(card), "_blank", "noopener,noreferrer");
       }
     });
 
