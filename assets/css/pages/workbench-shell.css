@@ -1311,6 +1311,38 @@
   color: var(--destructive);
 }
 
+/* 移入项目弹窗：项目选择列表（一屏 5 项，超出滚动） */
+.workbench-move__list {
+  display: grid;
+  max-height: 15rem;
+  margin-top: var(--spacing-5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.workbench-move__item {
+  width: 100%;
+  min-height: 45px;
+  padding: 0 var(--spacing-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  text-align: left;
+}
+
+.workbench-move__item:last-child {
+  border-bottom: 0;
+}
+
+@media (hover: hover) {
+  .workbench-move__item:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+}
+
 /* 重命名弹窗的输入框，对齐 .projects-dialog__input */
 .workbench-prompt__input {
   width: 100%;

@@ -1019,6 +1019,15 @@
           <button class="workbench-confirm__button workbench-confirm__button--primary" type="button" data-dialog-prompt-ok>确定</button>
         </div>
       </dialog>
+
+      <dialog class="workbench-confirm workbench-move" data-dialog-move aria-labelledby="workbenchMoveTitle">
+        <h2 class="workbench-confirm__title" id="workbenchMoveTitle">移入项目</h2>
+        <p class="workbench-confirm__desc" data-dialog-move-desc></p>
+        <ul class="workbench-move__list" data-dialog-move-list aria-label="选择项目"></ul>
+        <div class="workbench-confirm__actions">
+          <button class="workbench-confirm__button" type="button" data-dialog-move-cancel>取消</button>
+        </div>
+      </dialog>
     </footer>`;
 
   const shell = document.querySelector(".workbench-shell");
@@ -1423,7 +1432,7 @@
   const ROW_MENU_ITEMS = {
     project: [["rename", "重命名"], ["delete", "删除"]],
     child: [["rename", "重命名"], ["remove", "移出项目"], ["delete", "删除"]],
-    dialog: [["rename", "重命名"], ["archive", "归档"], ["delete", "删除"]]
+    dialog: [["rename", "重命名"], ["move", "移入项目"], ["archive", "归档"], ["delete", "删除"]]
   };
 
   const rowKind = function (button) {
@@ -1497,6 +1506,82 @@
     window.SKApp?.showToast?.("已移出项目");
   };
 
+  /* 反向：独立会话移入项目，生成二级会话行 */
+  const createChildRow = function (name) {
+    const item = document.createElement("li");
+    item.className = "workbench-project__child-row";
+    const title = document.createElement("button");
+    title.type = "button";
+    title.className = "workbench-project__child";
+    title.textContent = name;
+    const action = document.createElement("button");
+    action.type = "button";
+    action.className = "workbench-row-action";
+    action.setAttribute("aria-label", "更多操作：" + name);
+    action.innerHTML =
+      '<svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">' +
+      '<circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg>';
+    item.appendChild(title);
+    item.appendChild(action);
+    return item;
+  };
+
+  /* 每个会话只能属于一个项目：先脱离当前位置，再挂到目标项目下 */
+  const moveRowIntoProject = function (row, name, panel, projectName) {
+    if (!panel) return;
+    row.remove();
+    panel.appendChild(createChildRow(name));
+    /* 展开目标项目，让移入的会话直接可见 */
+    const state = panel.closest(".workbench-project")?.querySelector(".workbench-project__state");
+    if (state && !state.checked) state.checked = true;
+    window.SKApp?.showToast?.("已移入「" + projectName + "」");
+  };
+
+  const dialogMove = document.querySelector("[data-dialog-move]");
+  const dialogMoveDesc = document.querySelector("[data-dialog-move-desc]");
+  const dialogMoveList = document.querySelector("[data-dialog-move-list]");
+
+  const openMoveDialog = function (button) {
+    if (!dialogMove || typeof dialogMove.showModal !== "function") return;
+    const refs = rowRefs("dialog", button);
+    if (!refs || !refs.title) return;
+    const name = refs.title.textContent.trim();
+    const projects = Array.prototype.map.call(
+      document.querySelectorAll(".workbench-project"),
+      function (project) {
+        return {
+          name: (project.querySelector(".workbench-project__title")?.textContent || "").trim(),
+          panel: project.querySelector("[data-project-panel]")
+        };
+      }
+    ).filter(function (item) {
+      return item.name && item.panel;
+    });
+
+    dialogMoveDesc.textContent = projects.length
+      ? "选择「" + name + "」要移入的项目，移入后将不再出现在对话列表中。"
+      : "还没有可移入的项目。";
+    dialogMoveList.textContent = "";
+    projects.forEach(function (project) {
+      const item = document.createElement("li");
+      const pick = document.createElement("button");
+      pick.type = "button";
+      pick.className = "workbench-move__item";
+      pick.textContent = project.name;
+      item.appendChild(pick);
+      pick.addEventListener("click", function () {
+        dialogMove.close();
+        moveRowIntoProject(refs.row, name, project.panel, project.name);
+      });
+      dialogMoveList.appendChild(item);
+    });
+    dialogMove.showModal();
+  };
+
+  document.querySelector("[data-dialog-move-cancel]")?.addEventListener("click", function () {
+    dialogMove?.close();
+  });
+
   const runRowAction = function (action, button) {
     if (!button) return;
     const kind = rowKind(button);
@@ -1513,6 +1598,11 @@
           window.SKApp?.showToast?.("已重命名为“" + value + "”");
         }
       });
+      return;
+    }
+
+    if (action === "move") {
+      openMoveDialog(button);
       return;
     }
 
