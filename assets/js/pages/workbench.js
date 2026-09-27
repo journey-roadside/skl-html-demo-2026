@@ -1530,7 +1530,7 @@
     item.appendChild(action);
     dialogList.appendChild(item);
     row.remove();
-    window.SKApp?.showToast?.("已移出项目");
+    window.SKApp?.showToast?.("已移出“" + name + "”");
   };
 
   /* 反向：独立会话移入项目，生成二级会话行 */
