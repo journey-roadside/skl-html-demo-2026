@@ -1368,8 +1368,13 @@
     if (dialogPromptInput) dialogPromptInput.value = options.value || "";
     promptCallback = options.onOk || null;
     dialogPrompt.showModal();
-    dialogPromptInput?.focus();
-    dialogPromptInput?.select();
+    /* 只聚焦到末尾，不做全选：全选会套用全局 ::selection（淡桃底 + 橙字），
+       视觉上像变成了提示文字 */
+    if (dialogPromptInput) {
+      dialogPromptInput.focus();
+      const end = dialogPromptInput.value.length;
+      dialogPromptInput.setSelectionRange(end, end);
+    }
   };
 
   document.querySelector("[data-dialog-confirm-ok]")?.addEventListener("click", function () {
