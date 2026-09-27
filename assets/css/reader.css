@@ -77,11 +77,39 @@
   flex: 0 0 auto;
 }
 
+/* 文件所属用户：右端整组（用户信息 + 竖线 + 动作按钮）靠 margin-left:auto 推到最右 */
+.reader-bar__owner {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: auto;
+}
+
+.reader-bar__avatar {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--foreground);
+  color: var(--on-dark);
+  font-size: var(--font-size-xxs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+}
+
+.reader-bar__owner-name {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+}
+
 .reader-bar__actions {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  margin-left: auto;
 }
 
 .reader-action {
@@ -156,6 +184,11 @@
 @media (max-width: 575.98px) {
   .reader-bar {
     padding-inline: var(--spacing-4);
+  }
+
+  /* 窄屏优先保文件名：用户信息只留头像 */
+  .reader-bar__owner-name {
+    display: none;
   }
 
   .reader-content {
