@@ -1657,18 +1657,17 @@
   const renderDialogSearch = function (keyword) {
     if (!dialogSearchList || !dialogList) return;
     const word = (keyword || "").trim().toLowerCase();
-    /* 带上当前会话的选中态，搜索结果里保留同一标记 */
-    const entries = Array.prototype.map.call(
+    const titles = Array.prototype.map.call(
       dialogList.querySelectorAll(".workbench-dialog__title"),
       function (title) {
-        return { name: title.textContent.trim(), active: title.classList.contains("is-active") };
+        return title.textContent.trim();
       }
     );
     const matched = word
-      ? entries.filter(function (entry) {
-          return entry.name.toLowerCase().indexOf(word) !== -1;
+      ? titles.filter(function (title) {
+          return title.toLowerCase().indexOf(word) !== -1;
         })
-      : entries;
+      : titles;
 
     dialogSearchList.textContent = "";
     if (!matched.length) {
@@ -1678,12 +1677,11 @@
       dialogSearchList.appendChild(empty);
       return;
     }
-    matched.forEach(function (entry) {
+    matched.forEach(function (title) {
       const item = document.createElement("button");
       item.type = "button";
       item.className = "workbench-search__item";
-      if (entry.active) item.classList.add("is-active");
-      item.textContent = entry.name;
+      item.textContent = title;
       dialogSearchList.appendChild(item);
     });
   };

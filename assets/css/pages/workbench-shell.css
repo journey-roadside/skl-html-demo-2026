@@ -1453,13 +1453,6 @@
   border-bottom: 0;
 }
 
-/* 当前会话：与侧栏一致的选中态（浅橙底 + 强调色文字） */
-.workbench-search__item.is-active {
-  background: var(--accent-soft);
-  color: var(--accent-active);
-  font-weight: var(--font-weight-medium);
-}
-
 .workbench-search__item:hover {
   background: var(--surface-hover);
 }
