@@ -1095,6 +1095,15 @@
       const summary = document.querySelector('.workbench-section__action[href="./projects.html"]');
       if (summary) summary.setAttribute("aria-current", "page");
     }
+
+    /* 设置区块只在社科智研工作台存在（由 v4.js 渲染）：本页没有就跳转过去并由该页打开 */
+    if (!document.querySelector("[data-settings-view]")) {
+      document.querySelectorAll("[data-settings-open]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          window.location.href = "./research-assistant.html?settings=1";
+        });
+      });
+    }
   };
 
   if (!shell.querySelector(".workbench-header")) {

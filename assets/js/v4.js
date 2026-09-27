@@ -602,5 +602,8 @@
     initSidebarScrollIndicator();
     initResearchModal();
     initDefaultState();
+
+    /* 其它页面的用户菜单「设置」带 ?settings=1 跳过来，落地即进入设置区块 */
+    if (new URLSearchParams(location.search).get("settings") === "1") setSettingsView(true);
   });
 })();
