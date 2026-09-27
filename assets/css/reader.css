@@ -164,8 +164,9 @@
 }
 
 .reader-page__label {
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.9);
   font-size: var(--font-size-xxs);
+  font-weight: 600;
 }
 
 .reader-sheet {
