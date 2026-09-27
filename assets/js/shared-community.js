@@ -221,6 +221,12 @@
       `${card.dataset.type} · ${card.dataset.size}`;
     document.querySelector("[data-community-preview-name]").textContent = card.dataset.name;
     document.querySelector("[data-community-preview-size]").textContent = card.dataset.size;
+
+    /* 预览区指向该文件的查看页（新窗口）；切换卡片时链接要跟着换 */
+    const previewLink = document.querySelector("[data-community-preview-link]");
+    if (previewLink) {
+      previewLink.href = "./reader.html?source=community&file=" + encodeURIComponent(card.dataset.name);
+    }
     document.querySelector("[data-community-detail-topic]").textContent = card.dataset.topic;
     document.querySelector("[data-community-detail-time]").textContent = card.dataset.time;
     document.querySelector("[data-community-detail-downloads]").textContent = `${card.dataset.downloads} 次`;
@@ -461,7 +467,12 @@
         return;
       }
       if (event.target.closest("[data-community-open]")) {
-        window.SKApp.showToast("文件阅读页后续接入");
+        /* 原为「文件阅读页后续接入」占位提示，现已接入查看页（与我的知识同款新窗口打开） */
+        window.open(
+          `./reader.html?source=community&file=${encodeURIComponent(card.dataset.name)}`,
+          "_blank",
+          "noopener,noreferrer",
+        );
       }
     });
 

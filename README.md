@@ -46,7 +46,7 @@ python -m http.server 8080
 | `pages/projects.html` | 项目列表 | 课题示例、项目详情、对话、创建 / 重命名项目；对话项三点菜单（移出项目 / 删除）、项目资料本地上传与删除、格式筛选含「全部」 |
 | `pages/research-assistant.html` | 社科智研工作台 | 用户信息、通用设置、帮助与反馈及政策脉络等研究模块 |
 | `pages/my-knowledge.html` | 我的知识 | 文件上传、重命名、删除与共享审核 |
-| `pages/file-viewer.html` | 文件查看 | 知识文件在新页面打开后的查看页：顶部工具条（文件名称、格式类型标签、重命名 / 加入知识库 / 下载图标按钮）+ 下方内容栏；地址支持 `?name=` `?type=`，两者都可省 |
+| `pages/reader.html` | 文件查看 | 知识文件在新页面打开后的查看页：顶部工具条（文件名称、格式类型标签、重命名 / 加入知识库 / 下载图标按钮）+ 下方内容栏；地址契约 `?source=<来源>&file=<文件名>`，`file` 可省 |
 
 主访问路径为：
 
@@ -67,7 +67,7 @@ html-demo/
 │  ├─ research-assistant.html  # 社科智研工作台
 │  ├─ projects.html            # 项目列表
 │  ├─ my-knowledge.html        # 我的知识
-│  └─ file-viewer.html         # 文件查看（知识文件新窗口打开后的查看页）
+│  └─ reader.html              # 文件查看（知识文件新窗口打开后的查看页）
 ├─ assets/
 │  ├─ css/
 │  │  ├─ tokens.css            # 设计令牌（仅浅色，全站无深色模式）
@@ -80,7 +80,7 @@ html-demo/
 │  │  ├─ projects.css          # 项目列表样式
 │  │  ├─ research-assistant.css # 工作台与历史会话共享样式
 │  │  ├─ my-knowledge.css      # 我的知识样式
-│  │  ├─ file-viewer.css       # 文件查看页样式
+│  │  ├─ reader.css            # 文件查看页样式
 │  │  ├─ v4.css                # 旧工作台样式（保留兼容）
 │  │  ├─ <page>.css            # 各页面专用样式
 │  │  └─ pages/
@@ -93,7 +93,7 @@ html-demo/
 │  │  ├─ shared-community.js   # 共享社区逻辑
 │  │  ├─ research-assistant.js # 工作台会话交互
 │  │  ├─ my-knowledge.js       # 我的知识逻辑
-│  │  ├─ file-viewer.js        # 文件查看页：把 URL 参数铺到顶栏与正文标题
+│  │  ├─ reader.js             # 文件查看页：把 URL 参数铺到顶栏与正文标题
 │  │  ├─ v4.js                 # 旧工作台逻辑（保留兼容）
 │  │  ├─ <page>.js            # 各页面专用逻辑
 │  │  └─ pages/

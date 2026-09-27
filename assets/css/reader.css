@@ -1,7 +1,7 @@
-/* ============ 文件查看页（pages/file-viewer.html） ============
+/* ============ 文件查看页（pages/reader.html） ============
    上下结构：顶部工具条 + 下方内容栏；不挂工作台壳层，故样式自成一页 */
 
-.file-viewer-body {
+.reader-body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -9,7 +9,7 @@
   background: var(--surface);
 }
 
-.file-viewer-bar {
+.reader-bar {
   position: sticky;
   z-index: 10;
   top: 0;
@@ -21,14 +21,14 @@
   background: var(--card);
 }
 
-.file-viewer-bar__file {
+.reader-bar__file {
   display: flex;
   min-width: 0;
   align-items: center;
   gap: var(--spacing-3);
 }
 
-.file-viewer-bar__name {
+.reader-bar__name {
   overflow: hidden;
   margin: 0;
   font-size: var(--font-size-md);
@@ -37,18 +37,18 @@
   white-space: nowrap;
 }
 
-.file-viewer-bar__type {
+.reader-bar__type {
   flex: 0 0 auto;
 }
 
-.file-viewer-bar__actions {
+.reader-bar__actions {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
   margin-left: auto;
 }
 
-.file-viewer-action {
+.reader-action {
   display: grid;
   width: 36px;
   height: 36px;
@@ -62,26 +62,26 @@
     color var(--duration-fast) var(--ease-out);
 }
 
-.file-viewer-action .icon {
+.reader-action .icon {
   width: 17px;
   height: 17px;
 }
 
 @media (hover: hover) {
-  .file-viewer-action:hover {
+  .reader-action:hover {
     border-color: var(--border);
     background: var(--surface-hover);
     color: var(--foreground);
   }
 }
 
-.file-viewer-content {
+.reader-content {
   flex: 1;
   overflow-y: auto;
   padding: var(--spacing-8) var(--spacing-6) var(--spacing-12);
 }
 
-.file-viewer-sheet {
+.reader-sheet {
   max-width: 52rem;
   margin-inline: auto;
   padding: var(--spacing-12) var(--spacing-10);
@@ -91,26 +91,26 @@
   box-shadow: var(--shadow-card);
 }
 
-.file-viewer-sheet__title {
+.reader-sheet__title {
   margin: 0;
   font-size: var(--font-size-2xl);
   font-weight: 600;
   line-height: 1.4;
 }
 
-.file-viewer-sheet__meta {
+.reader-sheet__meta {
   margin: var(--spacing-3) 0 0;
   color: var(--muted-foreground);
   font-size: var(--font-size-xxs);
 }
 
-.file-viewer-sheet h3 {
+.reader-sheet h3 {
   margin: var(--spacing-8) 0 0;
   font-size: var(--font-size-md);
   font-weight: 600;
 }
 
-.file-viewer-sheet p {
+.reader-sheet p {
   margin: var(--spacing-3) 0 0;
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
@@ -118,15 +118,15 @@
 }
 
 @media (max-width: 575.98px) {
-  .file-viewer-bar {
+  .reader-bar {
     padding-inline: var(--spacing-4);
   }
 
-  .file-viewer-content {
+  .reader-content {
     padding: var(--spacing-4) var(--spacing-4) var(--spacing-8);
   }
 
-  .file-viewer-sheet {
+  .reader-sheet {
     padding: var(--spacing-6) var(--spacing-5);
   }
 }

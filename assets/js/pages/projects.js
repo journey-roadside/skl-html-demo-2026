@@ -665,8 +665,12 @@
     item.className = "project-detail__resource-item";
     item.dataset.resourceType = getResourceType(file.name);
 
-    const copy = document.createElement("span");
+    /* 与静态种子的资料项同构：点击名称区新窗口打开该文件的查看页 */
+    const copy = document.createElement("a");
     copy.className = "project-detail__resource-copy";
+    copy.href = "./reader.html?source=project&file=" + encodeURIComponent(file.name);
+    copy.target = "_blank";
+    copy.rel = "noopener";
     const name = document.createElement("strong");
     name.textContent = getResourceName(file.name);
     const meta = document.createElement("small");
