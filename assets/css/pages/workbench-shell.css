@@ -621,6 +621,12 @@
   background: var(--destructive);
 }
 
+/* 无未读时由 workbench.js 挂上 .is-hidden。
+   壳层重写时这条规则被漏掉，JS 挂了很久的空类名，红点一直不消失 */
+.workbench-user__badge.is-hidden {
+  display: none;
+}
+
 .workbench-scroll::-webkit-scrollbar {
   display: none;
   width: 0;
