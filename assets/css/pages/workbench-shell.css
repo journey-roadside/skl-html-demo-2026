@@ -1181,11 +1181,6 @@
   text-align: left;
 }
 
-/* 条目自带 display:grid，会盖掉浏览器给 [hidden] 的 display:none，必须显式补一条 */
-.workbench-message-center__item[hidden] {
-  display: none;
-}
-
 .workbench-message-center__item:hover {
   background: var(--surface-hover);
 }
