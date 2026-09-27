@@ -724,8 +724,10 @@
     box-shadow var(--duration-fast) var(--ease-out);
 }
 
-/* 提问输入区：与「社科助手」输入框同一套聚焦样式（卡片阴影为其静止态自带） */
-.project-detail__composer:focus-within {
+/* 提问输入区：与「社科助手」输入框同一套聚焦样式（卡片阴影为其静止态自带）。
+   用 :has(输入框:focus) 而非 :focus-within——后者会被工具条上的模式按钮
+   （深度研究 / 联网搜索）与发送键触发，点按钮时输入区边框会跟着亮，看着像输入框被聚焦 */
+.project-detail__composer:has(.project-detail__textarea:focus) {
   border-color: var(--accent-strong);
   box-shadow: 0 0 0 3px var(--accent), var(--shadow-card);
 }
