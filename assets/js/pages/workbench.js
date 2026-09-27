@@ -953,7 +953,7 @@
         </div>
         <div class="workbench-user-menu__divider" aria-hidden="true"></div>
         <div class="workbench-user-menu__group">
-          <a role="menuitem" href="../index.html">
+          <a role="menuitem" href="../index.html" target="_blank" rel="noopener" aria-label="官网（在新窗口打开）">
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"></circle>
               <path d="M2 12h20"></path>
