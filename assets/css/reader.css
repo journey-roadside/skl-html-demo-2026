@@ -77,13 +77,13 @@
   flex: 0 0 auto;
 }
 
-/* 文件所属用户：右端整组（用户信息 + 竖线 + 动作按钮）靠 margin-left:auto 推到最右 */
+/* 右端整组（动作按钮 + 竖线 + 用户信息）靠 margin-left:auto 贴到最右；
+   auto 挂在组内最左边的元素上，整组才会一起被推过去 */
 .reader-bar__owner {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
   gap: var(--spacing-2);
-  margin-left: auto;
 }
 
 .reader-bar__avatar {
@@ -108,8 +108,10 @@
 
 .reader-bar__actions {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: var(--spacing-2);
+  margin-left: auto;
 }
 
 .reader-action {
