@@ -205,14 +205,17 @@
     });
   }
 
-  /* 查看页地址：文件名 + 分享机构（owner）都跟着卡片数据走。
-     两个入口（卡片点击、详情预览区）共用，避免地址拼法漂移 */
+  /* 查看页地址：文件名 / 分享机构 / 时间都跟着卡片数据走。
+     两个入口（卡片点击、详情预览区）共用，避免地址拼法漂移。
+     time 取卡片上的「今天 09:20 共享」原文，由查看页折算成 YYYY-MM-DD */
   function readerUrl(card) {
     return (
       "./reader.html?source=community&file=" +
       encodeURIComponent(card.dataset.name) +
       "&owner=" +
-      encodeURIComponent(card.dataset.org || "")
+      encodeURIComponent(card.dataset.org || "") +
+      "&time=" +
+      encodeURIComponent(card.dataset.time || "")
     );
   }
 
