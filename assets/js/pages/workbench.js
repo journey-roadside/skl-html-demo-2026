@@ -955,11 +955,12 @@
         <div class="workbench-user-menu__group">
           <a role="menuitem" href="../index.html">
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="9"></circle>
-              <path d="M12 16v-4"></path>
-              <path d="M12 8h.01"></path>
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M2 12h20"></path>
+              <path d="M12 2a15 15 0 0 1 0 20"></path>
+              <path d="M12 2a15 15 0 0 0 0 20"></path>
             </svg>
-            <span>关于我们</span>
+            <span>官网</span>
           </a>
           <button type="button" role="menuitem">
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
