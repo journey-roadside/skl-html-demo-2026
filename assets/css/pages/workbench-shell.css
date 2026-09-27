@@ -1142,9 +1142,11 @@
 }
 
 /* 静止时滑块透明、滚动时才显形；槽位一直保留（scrollbar-width 恒为 thin），
-   所以显隐不会让正文左右抖动 */
+   所以显隐不会让正文左右抖动。
+   高度取「整放 5 条预览」为准（实测 5 条 ≈ 417px），并额外用 65vh 兜底，
+   避免小窗口下弹层顶到屏幕外；展开后才需要滚动 */
 .workbench-message-center__list {
-  max-height: 20rem;
+  max-height: min(27rem, 65vh);
   overflow-y: auto;
   padding: var(--spacing-1);
   scrollbar-width: thin;
@@ -1177,6 +1179,11 @@
   padding-left: var(--spacing-5);
   border-radius: var(--radius-sm);
   text-align: left;
+}
+
+/* 条目自带 display:grid，会盖掉浏览器给 [hidden] 的 display:none，必须显式补一条 */
+.workbench-message-center__item[hidden] {
+  display: none;
 }
 
 .workbench-message-center__item:hover {
@@ -1248,6 +1255,28 @@
   color: var(--muted-foreground);
   font-size: var(--font-size-xxs);
   line-height: 1.6;
+}
+
+/* 底部固定条：一条横线 + 「查看全部」，列表与缺省状态共用 */
+.workbench-message-center__foot {
+  padding: var(--spacing-2) var(--spacing-3);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.workbench-message-center__foot button {
+  color: var(--accent-active);
+  font-size: var(--font-size-xxs);
+}
+
+.workbench-message-center__foot button:hover {
+  text-decoration: underline;
+}
+
+.workbench-message-center__foot button:disabled {
+  color: var(--muted-foreground);
+  cursor: default;
+  text-decoration: none;
 }
 
 /* 展开态侧栏只有 15rem 宽，消息面板向右越出侧栏换取可读宽度与字号。

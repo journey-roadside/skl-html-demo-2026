@@ -1057,6 +1057,9 @@
             <p>审核进度、积分变动与系统通知会出现在这里</p>
           </div>
         </div>
+        <div class="workbench-message-center__foot">
+          <button type="button" data-message-view-all>查看全部</button>
+        </div>
       </section>
 
       <dialog class="workbench-search" data-dialog-search aria-labelledby="workbenchSearchTitle">
@@ -1359,6 +1362,9 @@
   const messagePanel = document.querySelector("[data-message-center]");
   const messageDot = document.querySelector("[data-message-dot]");
   const messageCount = document.querySelector("[data-message-count]");
+  /* 消息列表默认只露最近几条，其余由「查看全部」展开 */
+  const MESSAGE_PREVIEW_COUNT = 5;
+  let messageExpanded = false;
 
   if (messageTrigger) {
     messageTrigger.hidden = false;
@@ -1371,10 +1377,20 @@
     const unreadCount = messagePanel.querySelectorAll(".workbench-message-center__item.is-unread").length;
     const messageEmpty = messagePanel.querySelector("[data-message-empty]");
     const messageReadAll = messagePanel.querySelector("[data-message-read-all]");
+    const messageViewAll = messagePanel.querySelector("[data-message-view-all]");
 
-    /* 列表清空后由缺省状态接管；此时没有可标记的内容，"全部已读"一并禁用 */
+    /* 默认只露最近 MESSAGE_PREVIEW_COUNT 条，其余交给「查看全部」展开 */
+    items.forEach(function (item, index) {
+      item.hidden = !messageExpanded && index >= MESSAGE_PREVIEW_COUNT;
+    });
+
+    /* 列表清空后由缺省状态接管；没有可标记/可展开的内容时，两个按钮一并禁用 */
     if (messageEmpty) messageEmpty.hidden = items.length > 0;
     if (messageReadAll) messageReadAll.disabled = unreadCount === 0;
+    if (messageViewAll) {
+      messageViewAll.disabled = items.length <= MESSAGE_PREVIEW_COUNT;
+      messageViewAll.textContent = messageExpanded ? "收起" : "查看全部";
+    }
     if (messageCount) {
       messageCount.textContent = unreadCount
         ? unreadCount + " 条未读"
@@ -1471,6 +1487,13 @@
     });
 
     messagePanel.addEventListener("click", function (event) {
+      const viewAll = event.target.closest("[data-message-view-all]");
+      if (viewAll) {
+        messageExpanded = !messageExpanded;
+        updateMessageState();
+        return;
+      }
+
       const readAll = event.target.closest("[data-message-read-all]");
       if (readAll) {
         const items = messagePanel.querySelectorAll(".workbench-message-center__item");
@@ -1479,6 +1502,7 @@
         items.forEach(function (item) {
           item.remove();
         });
+        messageExpanded = false;
         updateMessageState();
         window.SKApp?.showToast?.("消息已全部已读");
         return;
