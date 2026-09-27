@@ -1,6 +1,32 @@
 (function () {
   "use strict";
 
+  /* 全局 Toast 兜底：壳层在 5 个页面都会加载，而定义 SKApp.showToast 的 main.js 只在其中三页加载
+     （agent-square / projects 没有）。这里补齐缺失的实现，让侧栏交互在任何页面都能给出提示。
+     表现与 main.js 的 showToast 一致，共用同一个 [data-toast] 元素与 .toast（components.css）样式。 */
+  if (!window.SKApp || typeof window.SKApp.showToast !== "function") {
+    let shellToastTimer = 0;
+    window.SKApp = Object.assign(window.SKApp || {}, {
+      showToast: function (message) {
+        let toast = document.querySelector("[data-toast]");
+        if (!toast) {
+          toast = document.createElement("div");
+          toast.className = "toast";
+          toast.dataset.toast = "";
+          toast.setAttribute("role", "status");
+          toast.setAttribute("aria-live", "polite");
+          document.body.append(toast);
+        }
+        window.clearTimeout(shellToastTimer);
+        toast.textContent = message;
+        toast.classList.add("is-visible");
+        shellToastTimer = window.setTimeout(function () {
+          toast.classList.remove("is-visible");
+        }, 2400);
+      }
+    });
+  }
+
   /* 统一工作台壳：侧栏与用户区单源注入，页面只保留 <div class="workbench-shell"> 与内容区 */
   const SHELL_SIDEBAR = `    <header class="workbench-header">
       <input class="visually-hidden workbench-sidebar__state" type="checkbox" id="workbench-sidebar-state">
