@@ -1,36 +1,6 @@
 (function () {
   "use strict";
 
-  const THEME_STORAGE_KEY = "sheke-v4-theme";
-
-  function getThemeSetting() {
-    let stored = "跟随系统";
-    try {
-      stored = localStorage.getItem(THEME_STORAGE_KEY) || "跟随系统";
-    } catch {}
-    return ["跟随系统", "深色", "浅色"].includes(stored) ? stored : "跟随系统";
-  }
-
-  function applyTheme(theme, persist = false) {
-    const resolvedTheme =
-      theme === "跟随系统"
-        ? window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "深色"
-          : "浅色"
-        : theme;
-    // <html data-theme-lock="light"> 的页面固定浅色，不跟随系统深色偏好
-    const dark = resolvedTheme === "深色" && document.documentElement.dataset.themeLock !== "light";
-    document.documentElement.classList.toggle("dark", dark);
-    document.documentElement.style.colorScheme = dark ? "dark" : "light";
-    if (persist) {
-      try {
-        localStorage.setItem(THEME_STORAGE_KEY, theme);
-      } catch {}
-    }
-  }
-
-  applyTheme(getThemeSetting());
-
   function showDemoUser() {
     const userChip = document.querySelector("[data-user-chip]");
     const guestActions = document.querySelector("[data-guest-actions]");
@@ -562,9 +532,6 @@
             item.setAttribute("aria-selected", String(selected));
           });
           setOpen(false);
-          if (select.dataset.settingsSelectName === "主题") {
-            applyTheme(option.dataset.settingsSelectValue, true);
-          }
           window.SKApp.showToast(`${select.dataset.settingsSelectName || "设置项"}已切换为${option.dataset.settingsSelectValue}`);
         });
       });
@@ -576,26 +543,6 @@
         if (event.key === "Escape" && !menu.hidden) setOpen(false);
       });
     });
-  }
-
-  function initThemeSetting() {
-    const theme = getThemeSetting();
-    const select = document.querySelector('[data-settings-select-name="主题"]');
-    const label = select?.querySelector("[data-settings-select-label]");
-    if (label) label.textContent = theme;
-    select?.querySelectorAll("[data-settings-select-value]").forEach((option) => {
-      const selected = option.dataset.settingsSelectValue === theme;
-      option.classList.toggle("is-selected", selected);
-      option.setAttribute("aria-selected", String(selected));
-    });
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const syncSystemTheme = () => {
-      if (getThemeSetting() === "跟随系统") applyTheme("跟随系统");
-    };
-    if (typeof media.addEventListener === "function") {
-      media.addEventListener("change", syncSystemTheme);
-    }
   }
 
   function initSidebarScrollIndicator() {
@@ -652,7 +599,6 @@
     initUserMenuActions();
     initCollapsedToolbar();
     initSettingsSelects();
-    initThemeSetting();
     initSidebarScrollIndicator();
     initResearchModal();
     initDefaultState();

@@ -177,15 +177,6 @@
   color: var(--primary-foreground);
 }}
 
-.dark .community-search-submit {
-  border: 1px solid var(--border-strong);
-  background: var(--terminal-surface);
-  color: var(--terminal-text);
-}@media (hover: hover){.dark .community-search-submit:hover{
-  background: var(--terminal-surface-raised);
-  color: var(--terminal-text);
-}}
-
 .community-search-share .icon,
 .community-search-submit .icon {
   width: 17px;
@@ -1149,38 +1140,4 @@
   .community-modal-actions {
     margin-inline: -26px;
   }
-}
-
-.dark .community-card,
-.dark .community-select-list,
-.dark .community-related-card {
-  border-color: var(--border);
-  background: var(--card);
-}
-
-.dark .community-search input,
-.dark .community-sort select,
-.dark .community-field input,
-.dark .community-field textarea,
-.dark .community-field select {
-  border-color: var(--border-strong);
-  background: var(--surface);
-  color: var(--foreground);
-}
-
-.dark .community-scroll {
-  background:
-    radial-gradient(1100px 480px at 82% -10%, rgba(251, 129, 71, 0.09), transparent 60%),
-    radial-gradient(900px 420px at -8% 108%, rgba(251, 129, 71, 0.06), transparent 55%),
-    linear-gradient(180deg, var(--background), var(--background) 60%);
-}
-
-.dark .community-scroll::before {
-  background-image: radial-gradient(rgba(245, 245, 244, 0.065) 1px, transparent 1.5px);
-}
-
-.dark .shared-community-page .btn-primary {
-  border: 1px solid var(--border-strong);
-  background: var(--terminal-surface);
-  color: var(--terminal-text);
 }

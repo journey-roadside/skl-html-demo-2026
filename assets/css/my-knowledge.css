@@ -1330,21 +1330,3 @@
     transform: translateY(0);
   }
 }
-
-.dark .knowledge-card-visual {
-  background: var(--surface);
-}
-
-.dark .knowledge-card-more {
-  background: rgba(28, 28, 28, 0.9);
-}
-
-.dark .knowledge-page .btn-primary {
-  border: 1px solid var(--border-strong);
-  background: var(--terminal-surface);
-  color: var(--terminal-text);
-}@media (hover: hover){.dark .knowledge-page .btn-primary:hover{
-  border-color: var(--border-strong);
-  background: var(--terminal-surface-raised);
-  color: var(--terminal-text);
-}}
