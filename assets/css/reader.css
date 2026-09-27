@@ -21,6 +21,42 @@
   background: var(--card);
 }
 
+/* 首页入口：与右侧动作按钮同一套尺寸与 hover；靠一条竖线同文件名分开 */
+.reader-bar__home {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.reader-bar__home .icon {
+  width: 17px;
+  height: 17px;
+}
+
+@media (hover: hover) {
+  .reader-bar__home:hover {
+    border-color: var(--border);
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+}
+
+.reader-bar__divider {
+  width: 1px;
+  height: 20px;
+  flex: 0 0 auto;
+  background: var(--border);
+}
+
 .reader-bar__file {
   display: flex;
   min-width: 0;
