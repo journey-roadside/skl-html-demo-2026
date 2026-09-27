@@ -1278,6 +1278,15 @@
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   background: var(--surface);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+/* 资料项底色本就是 --surface，移到 --surface-hover 只差 1.5%，
+   在白色卡片上几乎看不出；这里改用 --muted（更暗一档的同一族底色）确保移入可见 */
+@media (hover: hover) {
+  .project-detail__resource-item:hover {
+    background: var(--muted);
+  }
 }
 
 .project-detail__resource-remove {
