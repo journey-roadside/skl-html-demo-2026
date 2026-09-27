@@ -1343,6 +1343,12 @@
   }
 }
 
+/* 选中项（顺序在 hover 之后，悬停时保持选中色） */
+.workbench-move__item.is-selected {
+  background: var(--accent-soft);
+  color: var(--accent-active);
+}
+
 /* 重命名弹窗的输入框，对齐 .projects-dialog__input */
 .workbench-prompt__input {
   width: 100%;

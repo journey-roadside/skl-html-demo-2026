@@ -1023,9 +1023,10 @@
       <dialog class="workbench-confirm workbench-move" data-dialog-move aria-labelledby="workbenchMoveTitle">
         <h2 class="workbench-confirm__title" id="workbenchMoveTitle">移入项目</h2>
         <p class="workbench-confirm__desc" data-dialog-move-desc></p>
-        <ul class="workbench-move__list" data-dialog-move-list aria-label="选择项目"></ul>
+        <ul class="workbench-move__list" data-dialog-move-list role="listbox" aria-label="选择项目"></ul>
         <div class="workbench-confirm__actions">
           <button class="workbench-confirm__button" type="button" data-dialog-move-cancel>取消</button>
+          <button class="workbench-confirm__button workbench-confirm__button--primary" type="button" data-dialog-move-ok disabled>确定</button>
         </div>
       </dialog>
     </footer>`;
@@ -1540,6 +1541,9 @@
   const dialogMove = document.querySelector("[data-dialog-move]");
   const dialogMoveDesc = document.querySelector("[data-dialog-move-desc]");
   const dialogMoveList = document.querySelector("[data-dialog-move-list]");
+  const dialogMoveOk = document.querySelector("[data-dialog-move-ok]");
+  let pendingMove = null;
+  let pickedProject = null;
 
   const openMoveDialog = function (button) {
     if (!dialogMove || typeof dialogMove.showModal !== "function") return;
@@ -1562,17 +1566,29 @@
       ? "选择「" + name + "」要移入的项目，移入后将不再出现在对话列表中。"
       : "还没有可移入的项目。";
     dialogMoveList.textContent = "";
+    pendingMove = { row: refs.row, name: name };
+    pickedProject = null;
+    if (dialogMoveOk) dialogMoveOk.disabled = true;
+
     projects.forEach(function (project) {
       const item = document.createElement("li");
+      item.setAttribute("role", "presentation");
       const pick = document.createElement("button");
       pick.type = "button";
       pick.className = "workbench-move__item";
+      pick.setAttribute("role", "option");
+      pick.setAttribute("aria-selected", "false");
       pick.textContent = project.name;
-      item.appendChild(pick);
       pick.addEventListener("click", function () {
-        dialogMove.close();
-        moveRowIntoProject(refs.row, name, project.panel, project.name);
+        dialogMoveList.querySelectorAll(".workbench-move__item").forEach(function (other) {
+          const selected = other === pick;
+          other.classList.toggle("is-selected", selected);
+          other.setAttribute("aria-selected", String(selected));
+        });
+        pickedProject = project;
+        if (dialogMoveOk) dialogMoveOk.disabled = false;
       });
+      item.appendChild(pick);
       dialogMoveList.appendChild(item);
     });
     dialogMove.showModal();
@@ -1580,6 +1596,18 @@
 
   document.querySelector("[data-dialog-move-cancel]")?.addEventListener("click", function () {
     dialogMove?.close();
+    pendingMove = null;
+    pickedProject = null;
+  });
+
+  dialogMoveOk?.addEventListener("click", function () {
+    if (!pendingMove || !pickedProject) return;
+    const move = pendingMove;
+    const target = pickedProject;
+    dialogMove?.close();
+    pendingMove = null;
+    pickedProject = null;
+    moveRowIntoProject(move.row, move.name, target.panel, target.name);
   });
 
   const runRowAction = function (action, button) {
