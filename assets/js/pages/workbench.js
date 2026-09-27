@@ -1028,6 +1028,34 @@
             <span class="workbench-message-center__item-head"><strong>账号安全提示</strong><time>昨天 18:03</time></span>
             <span class="workbench-message-center__item-copy">你的账号在新设备上完成登录，如非本人操作请及时处理。</span>
           </button>
+          <button class="workbench-message-center__item" type="button">
+            <span class="workbench-message-center__item-head"><strong>项目协作邀请</strong><time>昨天 15:41</time></span>
+            <span class="workbench-message-center__item-copy">“荆楚文化数字化传播研究”邀请你加入协作，可查看全部资料。</span>
+          </button>
+          <button class="workbench-message-center__item" type="button">
+            <span class="workbench-message-center__item-head"><strong>知识库同步完成</strong><time>昨天 11:07</time></span>
+            <span class="workbench-message-center__item-copy">本次同步 128 条资料，其中 6 条因格式不兼容已跳过。</span>
+          </button>
+          <button class="workbench-message-center__item" type="button">
+            <span class="workbench-message-center__item-head"><strong>智能体能力升级</strong><time>2 天前</time></span>
+            <span class="workbench-message-center__item-copy">「荆楚智审」新增政策合规比对，可在智能体广场查看说明。</span>
+          </button>
+          <button class="workbench-message-center__item" type="button">
+            <span class="workbench-message-center__item-head"><strong>存储空间提醒</strong><time>3 天前</time></span>
+            <span class="workbench-message-center__item-copy">个人空间已使用 4.2 GB / 5 GB，建议清理不再引用的资料。</span>
+          </button>
+          <button class="workbench-message-center__item" type="button">
+            <span class="workbench-message-center__item-head"><strong>社区共享审核通过</strong><time>4 天前</time></span>
+            <span class="workbench-message-center__item-copy">“县域供给能力评估”已发布到知识联盟，其他成员可检索。</span>
+          </button>
+          <div class="workbench-message-center__empty" data-message-empty hidden>
+            <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+            </svg>
+            <strong>暂无消息</strong>
+            <p>研究进度、协作邀请与系统通知会出现在这里</p>
+          </div>
         </div>
       </section>
 
@@ -1339,14 +1367,28 @@
   const updateMessageState = function () {
     if (!messagePanel || !messageTrigger) return;
 
+    const items = messagePanel.querySelectorAll(".workbench-message-center__item");
     const unreadCount = messagePanel.querySelectorAll(".workbench-message-center__item.is-unread").length;
+    const messageEmpty = messagePanel.querySelector("[data-message-empty]");
+    const messageReadAll = messagePanel.querySelector("[data-message-read-all]");
+
+    /* 列表清空后由缺省状态接管；此时没有可标记的内容，"全部已读"一并禁用 */
+    if (messageEmpty) messageEmpty.hidden = items.length > 0;
+    if (messageReadAll) messageReadAll.disabled = unreadCount === 0;
     if (messageCount) {
-      messageCount.textContent = unreadCount ? unreadCount + " 条未读" : "暂无未读消息";
+      messageCount.textContent = unreadCount
+        ? unreadCount + " 条未读"
+        : items.length
+          ? "暂无未读消息"
+          : "暂无消息";
     }
     if (messageDot) {
       messageDot.classList.toggle("is-hidden", unreadCount === 0);
     }
-    messageTrigger.setAttribute("aria-label", unreadCount ? "消息，" + unreadCount + " 条未读" : "消息，暂无未读消息");
+    messageTrigger.setAttribute(
+      "aria-label",
+      unreadCount ? "消息，" + unreadCount + " 条未读" : items.length ? "消息，暂无未读消息" : "消息，暂无消息"
+    );
   };
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -1431,11 +1473,14 @@
     messagePanel.addEventListener("click", function (event) {
       const readAll = event.target.closest("[data-message-read-all]");
       if (readAll) {
-        messagePanel.querySelectorAll(".workbench-message-center__item.is-unread").forEach(function (item) {
-          item.classList.remove("is-unread");
+        const items = messagePanel.querySelectorAll(".workbench-message-center__item");
+        if (!items.length) return;
+        /* 全部已读 = 列表清空，交给缺省状态占位 */
+        items.forEach(function (item) {
+          item.remove();
         });
         updateMessageState();
-        window.SKApp?.showToast?.("消息已全部标记为已读");
+        window.SKApp?.showToast?.("消息已全部已读");
         return;
       }
 
@@ -1445,6 +1490,19 @@
         updateMessageState();
       }
     });
+
+    /* 滚动时才显形滑块：静止 700ms 后收起（槽位始终预留，显隐不会让内容左右抖） */
+    const messageList = messagePanel.querySelector(".workbench-message-center__list");
+    let messageListTimer = 0;
+    if (messageList) {
+      messageList.addEventListener("scroll", function () {
+        messageList.classList.add("is-scrolling");
+        window.clearTimeout(messageListTimer);
+        messageListTimer = window.setTimeout(function () {
+          messageList.classList.remove("is-scrolling");
+        }, 700);
+      });
+    }
 
     updateMessageState();
   }
