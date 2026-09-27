@@ -133,6 +133,7 @@ html-demo/
 
 ## 开发约定
 
+- **前端样式一律以 `../原型设计/design-system` 的设计标准为准**（`DESIGN.md` 规范正文 + `globals.css` 令牌实现）；`assets/css/tokens.css` 是其落地实现，取值冲突时以 `design-system` 为准并同步修正 `tokens.css`。详见 `AGENTS.md`。
 - 根 `index.html` 为「湖北社科数据信息联盟」官网首页，产品门户、工作台与智能体统一放在 `pages/`。
 - `pages/` 页面引用资源使用 `../assets/`，返回官网首页使用 `../index.html`。
 - 社科智研工作台入口为 `pages/research-assistant.html`，业务页面中的"新建会话"和"设置"均指向该文件。

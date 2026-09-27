@@ -699,7 +699,6 @@
 .auth-modal {
   max-height: calc(100vh - 28px);
   overflow-y: auto;
-  padding: var(--modal-pad) var(--spacing-5);
 }
 
 .footer-grid {
