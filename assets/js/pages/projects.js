@@ -668,7 +668,6 @@
     /* 与静态种子的资料项同构：点击名称区新窗口打开该文件的查看页 */
     const copy = document.createElement("a");
     copy.className = "project-detail__resource-copy";
-    copy.href = "./reader.html?source=project&file=" + encodeURIComponent(file.name);
     copy.target = "_blank";
     copy.rel = "noopener";
     const name = document.createElement("strong");
@@ -680,6 +679,13 @@
     const date = document.createElement("span");
     date.className = "project-detail__resource-date";
     date.textContent = "刚刚";
+
+    /* 带上底部行那句更新时间原文（刚上传即「刚刚」），由查看页折算成 YYYY-MM-DD */
+    copy.href =
+      "./reader.html?source=project&file=" +
+      encodeURIComponent(file.name) +
+      "&time=" +
+      encodeURIComponent(date.textContent);
 
     const remove = document.createElement("button");
     remove.className = "project-detail__resource-remove";

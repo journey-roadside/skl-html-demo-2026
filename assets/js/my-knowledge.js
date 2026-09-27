@@ -665,8 +665,10 @@
       }
 
       if (event.target.closest("[data-knowledge-open]")) {
+        /* 更新时间取卡片左下那句原文（如「昨天 18:20 更新」），由查看页折算成 YYYY-MM-DD */
         window.open(
-          `./reader.html?source=knowledge&file=${encodeURIComponent(getCardName(card))}`,
+          `./reader.html?source=knowledge&file=${encodeURIComponent(getCardName(card))}` +
+            `&time=${encodeURIComponent(getCardTimeText(card))}`,
           "_blank",
           "noopener,noreferrer",
         );

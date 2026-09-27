@@ -11,6 +11,33 @@
   const DEFAULT_FILE = "基层公共文化服务数字化研究.pdf";
   const DEFAULT_OWNER = "社科研究员";
 
+  /* 更新时间在列表里是相对文案（今天 09:18 / 昨天 16:40 / 09-14 / 刚刚），
+     顶栏统一显示 YYYY-MM-DD，所以折算放在本页——调用方只管把列表上那句原文传过来。
+     已经是 YYYY-MM-DD 的原样返回；认不出的也原样显示，不静默改成今天 */
+  function normalizeTime(value) {
+    const pad = function (n) {
+      return String(n).padStart(2, "0");
+    };
+    const format = function (date) {
+      return date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate());
+    };
+    const now = new Date();
+    const raw = String(value || "").trim();
+
+    const full = /\d{4}-\d{2}-\d{2}/.exec(raw);
+    if (full) return full[0];
+    if (!raw) return format(now);
+    if (raw.indexOf("昨天") !== -1) {
+      const yesterday = new Date(now);
+      yesterday.setDate(yesterday.getDate() - 1);
+      return format(yesterday);
+    }
+    if (raw.indexOf("今天") !== -1 || raw.indexOf("刚刚") !== -1) return format(now);
+    const monthDay = /(\d{1,2})-(\d{1,2})/.exec(raw);
+    if (monthDay) return now.getFullYear() + "-" + pad(Number(monthDay[1])) + "-" + pad(Number(monthDay[2]));
+    return raw;
+  }
+
   const params = new URLSearchParams(window.location.search);
   const fileName = (params.get("file") || "").trim() || DEFAULT_FILE;
   const ownerName = (params.get("owner") || "").trim() || DEFAULT_OWNER;
@@ -26,14 +53,6 @@
   if (nameNode) nameNode.textContent = fileName;
   if (titleNode) titleNode.textContent = baseName;
   if (ownerNode) ownerNode.textContent = ownerName;
-  if (timeNode) {
-    /* 更新时间统一 YYYY-MM-DD；调用方可用 ?time= 传真实时间，缺省取当天 */
-    const pad = function (n) {
-      return String(n).padStart(2, "0");
-    };
-    const now = new Date();
-    const today = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate());
-    timeNode.textContent = (params.get("time") || "").trim() || today;
-  }
+  if (timeNode) timeNode.textContent = normalizeTime(params.get("time"));
   document.title = fileName + " · 湖北社科数据信息联盟";
 })();
