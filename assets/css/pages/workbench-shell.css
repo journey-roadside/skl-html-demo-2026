@@ -1143,10 +1143,10 @@
 
 /* 静止时滑块透明、滚动时才显形；槽位一直保留（scrollbar-width 恒为 thin），
    所以显隐不会让正文左右抖动。
-   高度取「整放 5 条预览」为准（实测 5 条 ≈ 417px），并额外用 65vh 兜底，
-   避免小窗口下弹层顶到屏幕外；展开后才需要滚动 */
+   高度固定封顶：预览的 5 条不追求全部装下，超出即滚动（展开态同理）；
+   60vh 是矮窗口兜底，避免弹层顶出屏幕外 */
 .workbench-message-center__list {
-  max-height: min(27rem, 65vh);
+  max-height: min(20rem, 60vh);
   overflow-y: auto;
   padding: var(--spacing-1);
   scrollbar-width: thin;
@@ -1295,7 +1295,15 @@
     right: auto;
     bottom: var(--spacing-5);
     left: calc(100% + 8px);
+  }
+
+  .workbench-shell:has(.workbench-sidebar__state:checked) .workbench-user-menu {
     width: 220px;
+  }
+
+  /* 消息盒子收起态与展开态同宽：两者内容一致，宽度跟着状态变会显得跳动 */
+  .workbench-shell:has(.workbench-sidebar__state:checked) .workbench-message-center {
+    width: min(20rem, calc(100vw - var(--spacing-12)));
   }
 }
 
