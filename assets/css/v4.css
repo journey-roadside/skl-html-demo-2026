@@ -1048,9 +1048,10 @@
   min-width: 0;
 }
 
+/* 开关行：标题与括号说明并排一行 */
 .settings-view-row-copy strong,
 .settings-view-row-copy small {
-  display: block;
+  display: inline;
 }
 
 .settings-view-row-copy strong {
@@ -1059,7 +1060,6 @@
 }
 
 .settings-view-row-copy small {
-  margin-top: var(--spacing-1);
   color: var(--muted-foreground);
   font-size: var(--font-size-xxs);
 }
