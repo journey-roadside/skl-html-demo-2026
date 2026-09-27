@@ -16,9 +16,19 @@
   const nameNode = document.querySelector("[data-file-name]");
   const typeNode = document.querySelector("[data-file-type]");
   const titleNode = document.querySelector("[data-file-title]");
+  const timeNode = document.querySelector("[data-file-time]");
 
   if (nameNode) nameNode.textContent = fileName;
   if (typeNode) typeNode.textContent = fileType;
   if (titleNode) titleNode.textContent = fileName.replace(/\.[^.]+$/, "");
+  if (timeNode) {
+    /* 更新时间统一 YYYY-MM-DD；调用方可用 ?time= 传真实时间，缺省取当天 */
+    const pad = function (n) {
+      return String(n).padStart(2, "0");
+    };
+    const now = new Date();
+    const today = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate());
+    timeNode.textContent = (params.get("time") || "").trim() || today;
+  }
   document.title = fileName + " · 湖北社科数据信息联盟";
 })();
