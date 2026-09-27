@@ -86,16 +86,13 @@
   gap: var(--spacing-2);
 }
 
-/* 分享者头像：沿用工作台用户区的深底圆形，内里放用户图标而非文字首字 */
+/* 分享者标记：只显示人形图标，不加深色圆底；容器不再占 28px，
+   由图标自身定尺寸，与用户名的间距即 --spacing-2 */
 .reader-bar__avatar {
   display: grid;
-  width: 28px;
-  height: 28px;
   flex: 0 0 auto;
   place-items: center;
-  border-radius: 50%;
-  background: var(--foreground);
-  color: var(--on-dark);
+  color: var(--text-secondary);
 }
 
 .reader-bar__avatar .icon {
