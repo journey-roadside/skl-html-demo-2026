@@ -836,11 +836,11 @@
     color var(--duration-fast) var(--ease-out);
 }
 
+/* 开启态只用底色与文字色区分，不改字重（改字重会让按钮宽度跳动） */
 .project-detail__mode.is-on {
   border-color: color-mix(in srgb, var(--accent-strong) 40%, transparent);
   background: var(--accent-soft);
   color: var(--accent-active);
-  font-weight: var(--font-weight-semibold);
 }
 
 .project-detail__mode .workbench-icon {

@@ -1063,18 +1063,17 @@
   font-weight: 400;
 }
 
+/* hover / is-on 只用底色与文字色区分，不改字重（改字重会让按钮宽度跳动） */
 .mode-switch:hover {
   border-color: var(--border-strong);
   background: var(--surface-hover);
   color: var(--foreground);
-  font-weight: 600;
 }
 
 .mode-switch.is-on {
   border-color: rgba(251, 129, 71, 0.4);
   background: var(--accent-soft);
   color: var(--accent-active);
-  font-weight: 600;
 }
 
 .mode-switch .icon {
