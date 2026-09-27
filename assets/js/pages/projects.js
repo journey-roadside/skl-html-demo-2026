@@ -816,6 +816,9 @@
     createButton.addEventListener("click", openCreateDialog);
     if (sidebarCreateButton) sidebarCreateButton.addEventListener("click", openCreateDialog);
 
+    /* 其它页面的「新建项目」入口带 ?create=1 跳过来，落地即弹出新建弹窗 */
+    if (location.search.indexOf("create=1") !== -1) openCreateDialog();
+
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       const title = titleInput.value.trim();

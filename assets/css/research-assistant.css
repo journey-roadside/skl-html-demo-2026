@@ -947,7 +947,6 @@
 .composer-add-menu-list button:hover {
   background: var(--surface-hover);
   color: var(--foreground);
-  font-weight: 600;
 }
 
 .composer-tool {
@@ -1025,8 +1024,15 @@
   color: #fff;
 }
 
-.composer-send:hover {
+.composer-send:not(:disabled):hover {
   background: var(--primary-hover);
+}
+
+/* 输入框为空时禁用（与项目详情提交按钮同款外观） */
+.composer-send:disabled {
+  background: var(--section);
+  color: var(--text-secondary);
+  cursor: default;
 }
 
 .composer-bottom {

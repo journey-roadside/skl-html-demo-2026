@@ -200,17 +200,8 @@
   }
 }
 
-@media (min-width: 75rem) {
-  .agent-square-scroll {
-    padding-inline: var(--spacing-10);
-  }
-
-  .agent-square-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-
+/* 宽屏也保持一行两个卡片（原先 75rem 起改三列，已按要求取消；
+   该断点原本只剩一条与 56.25rem 重复的 padding 规则，一并移除） */
 
 .agent-square-detail {
   display: none;

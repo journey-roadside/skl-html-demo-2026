@@ -249,13 +249,16 @@
   }
 
   function autoGrowTextarea() {
-    const { textarea } = getElements();
+    const { textarea, sendButton } = getElements();
     if (!textarea) return;
     const maxHeight = 180;
     textarea.style.height = "auto";
     const nextHeight = Math.min(textarea.scrollHeight, maxHeight);
     textarea.style.height = `${nextHeight}px`;
     textarea.style.overflowY = textarea.scrollHeight > maxHeight ? "auto" : "hidden";
+    /* 输入框为空时禁用发送按钮（与项目详情提交按钮一致）；
+       输入、插入推荐问句、发送后清空都会走到这里 */
+    if (sendButton) sendButton.disabled = !textarea.value.trim();
   }
 
   function addAttachment(name, meta) {
@@ -457,6 +460,8 @@
     if (!thread) return;
     const config = getLandingConfig();
     const animate = Boolean(options.animate);
+    /* 页面初次打开不聚焦输入框，避免 composer-shell 一进页面就高亮 */
+    const focusComposer = options.focus !== false;
 
     if (state.managingHistory) setHistoryManageMode(false);
     stopSpeechPlayback();
@@ -535,7 +540,7 @@
         window.SKApp.showToast(button.dataset.recommendationToast);
       });
     });
-    if (textarea) textarea.focus();
+    if (focusComposer && textarea) textarea.focus();
     if (textarea) textarea.placeholder = config.placeholder;
   }
   function showDemoConversation() {
@@ -1174,7 +1179,8 @@
     window.addEventListener("resize", closeHistoryItemMenu);
 
     document.querySelectorAll("[data-new-conversation]").forEach((button) => {
-      button.addEventListener("click", createNewConversation);
+      /* 真实点击才聚焦输入框：v4.js 初始化时会以程序化 click 触发本按钮 */
+      button.addEventListener("click", (event) => createNewConversation({ focus: event.isTrusted }));
     });
 
     document.addEventListener("click", (event) => {
@@ -1573,21 +1579,10 @@
       }
 
       const modifier = event.ctrlKey || event.metaKey;
-      if (!modifier || event.repeat || event.defaultPrevented) return;
+      /* 带 Alt 的组合（Ctrl+Alt+B/K/J）由壳层的全站快捷键处理，这里只留本页的 Ctrl+J */
+      if (!modifier || event.altKey || event.repeat || event.defaultPrevented) return;
 
       const key = event.key.toLowerCase();
-      if (key === "b") {
-        event.preventDefault();
-        document.querySelector("[data-sidebar-collapse]")?.click();
-        return;
-      }
-
-      if (key === "k") {
-        event.preventDefault();
-        createNewConversation();
-        return;
-      }
-
       if (key === "j") {
         event.preventDefault();
         if (historySearchModal && !historySearchModal.hidden) {
@@ -1617,7 +1612,7 @@
         thread.children,
       ).filter((element) => element.classList.contains("message"));
     }
-    createNewConversation();
+    createNewConversation({ focus: false });
     if (promptParam) {
       const { textarea } = getElements();
       if (textarea) {

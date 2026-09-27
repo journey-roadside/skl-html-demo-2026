@@ -5,18 +5,18 @@
   const SHELL_SIDEBAR = `    <header class="workbench-header">
       <input class="visually-hidden workbench-sidebar__state" type="checkbox" id="workbench-sidebar-state">
       <div class="workbench-header__top">
-        <label class="workbench-brand__mark" for="workbench-sidebar-state" aria-label="展开侧边栏">
+        <label class="workbench-brand__mark" for="workbench-sidebar-state" aria-label="展开侧边栏" data-rail-tip="展开侧边栏（Ctrl+Alt+B）">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect width="18" height="18" x="3" y="3" rx="2"></rect>
             <path d="M9 3v18"></path>
             <path d="m14 9 3 3-3 3"></path>
           </svg>
         </label>
-        <a class="workbench-brand__home" href="../index.html" aria-label="返回湖北社科数据信息联盟首页">
+        <div class="workbench-brand__home">
           <span class="workbench-brand__name">湖北社科数据信息联盟</span>
           <span class="workbench-brand__en">SOCIAL SCIENCE UNION</span>
-        </a>
-        <label class="workbench-sidebar__toggle" for="workbench-sidebar-state" aria-label="收起侧边栏">
+        </div>
+        <label class="workbench-sidebar__toggle" for="workbench-sidebar-state" aria-label="收起侧边栏" data-rail-tip="收起侧边栏（Ctrl+Alt+B）">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect width="18" height="18" x="3" y="3" rx="2"></rect>
             <path d="M9 3v18"></path>
@@ -25,7 +25,7 @@
       </div>
 
       <nav class="workbench-nav" aria-label="产品导航">
-        <a class="workbench-nav__link" href="./knowledge-alliance.html">
+        <a class="workbench-nav__link" href="./knowledge-alliance.html" data-rail-tip="知识联盟" aria-label="知识联盟">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M12 7v14"></path>
             <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 .4-.8A7 7 0 0 1 12 4a7 7 0 0 1 9.6-.8 1 1 0 0 1 .4.8v13a1 1 0 0 1-1 1"></path>
@@ -33,7 +33,7 @@
           </svg>
           <span>知识联盟</span>
         </a>
-        <a class="workbench-nav__link" href="./research-assistant.html">
+        <a class="workbench-nav__link" href="./research-assistant.html" data-rail-tip="社科助手" aria-label="社科助手">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="m12 3-1.9 5.1L5 10l5.1 1.9L12 17l1.9-5.1L19 10l-5.1-1.9z"></path>
             <path d="M5 3v4"></path>
@@ -43,7 +43,7 @@
           </svg>
           <span>社科助手</span>
         </a>
-        <a class="workbench-nav__link" href="./my-knowledge.html">
+        <a class="workbench-nav__link" href="./my-knowledge.html" data-rail-tip="我的知识" aria-label="我的知识">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
             <path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"></path>
@@ -78,18 +78,25 @@
           </summary>
           <div class="workbench-agent-list">
           <div class="workbench-agent-row">
-            <a class="workbench-agent" href="./agent-square.html#agent-research" data-agent-menu-trigger>
-              <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 8V4H8"></path>
-              <rect width="16" height="12" x="4" y="8" rx="2"></rect>
-              <path d="M2 14h2"></path>
-              <path d="M20 14h2"></path>
-              <path d="M15 13v2"></path>
-              <path d="M9 13v2"></path>
-            </svg>
+            <a class="workbench-agent" href="./agent-square.html#agent-research" data-agent-menu-trigger data-rail-tip="智能体" aria-label="智能体">
+              <svg class="workbench-icon workbench-agent__icon--expanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 8V4H8"></path>
+                <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                <path d="M2 14h2"></path>
+                <path d="M20 14h2"></path>
+                <path d="M15 13v2"></path>
+                <path d="M9 13v2"></path>
+              </svg>
+              <svg class="workbench-icon workbench-agent__icon--collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m19 5 3-3"></path>
+                <path d="m2 22 3-3"></path>
+                <path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path>
+                <path d="M7.5 13.5 10 11"></path>
+                <path d="M10.5 16.5 13 14"></path>
+                <path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path>
+              </svg>
               <span class="workbench-agent__name">荆楚智研</span>
             </a>
-            <a class="workbench-agent__tag" href="./research-assistant.html?agent=research">加入对话</a>
           </div>
           <div class="workbench-agent-row">
             <a class="workbench-agent" href="./agent-square.html#agent-review">
@@ -103,12 +110,11 @@
             </svg>
               <span class="workbench-agent__name">荆楚智审</span>
             </a>
-            <a class="workbench-agent__tag" href="./research-assistant.html?agent=review">加入对话</a>
           </div>
           </div>
         </details>
         <div class="workbench-agent-menu" id="workbench-agent-menu" role="menu" hidden>
-          <button class="workbench-agent-menu__item" type="button" role="menuitem">
+          <a class="workbench-agent-menu__item" role="menuitem" href="./agent-square.html#agent-research">
             <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M12 8V4H8"></path>
               <rect width="16" height="12" x="4" y="8" rx="2"></rect>
@@ -118,9 +124,8 @@
               <path d="M9 13v2"></path>
             </svg>
             <span class="workbench-agent__name">荆楚智研</span>
-            <span class="workbench-agent__tag">加入对话</span>
-          </button>
-          <button class="workbench-agent-menu__item" type="button" role="menuitem">
+          </a>
+          <a class="workbench-agent-menu__item" role="menuitem" href="./agent-square.html#agent-review">
             <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M12 8V4H8"></path>
               <rect width="16" height="12" x="4" y="8" rx="2"></rect>
@@ -130,29 +135,46 @@
               <path d="M9 13v2"></path>
             </svg>
             <span class="workbench-agent__name">荆楚智审</span>
-            <span class="workbench-agent__tag">加入对话</span>
-          </button>
+          </a>
+          <div class="workbench-agent-menu__separator" role="separator"></div>
+          <a class="workbench-agent-menu__item" href="./agent-square.html" role="menuitem">
+            <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m19 5 3-3"></path>
+              <path d="m2 22 3-3"></path>
+              <path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path>
+              <path d="M7.5 13.5 10 11"></path>
+              <path d="M10.5 16.5 13 14"></path>
+              <path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path>
+            </svg>
+            <span class="workbench-agent__name">智能体广场</span>
+          </a>
         </div>
       </section>
 
       <div class="workbench-rail-actions" aria-label="折叠侧栏快捷入口">
-        <button class="workbench-rail-action" type="button" aria-label="项目">
+        <a class="workbench-rail-action" href="./projects.html" aria-label="项目列表" data-rail-tip="项目">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m19 5 3-3"></path>
-            <path d="m2 22 3-3"></path>
-            <path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path>
-            <path d="M7.5 13.5 10 11"></path>
-            <path d="M10.5 16.5 13 14"></path>
-            <path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path>
+            <path d="M8 6h13"></path>
+            <path d="M8 12h13"></path>
+            <path d="M8 18h13"></path>
+            <path d="M3 6h.01"></path>
+            <path d="M3 12h.01"></path>
+            <path d="M3 18h.01"></path>
           </svg>
-        </button>
-        <a class="workbench-rail-action" href="research-assistant.html" aria-label="新建社科助手对话">
+        </a>
+        <a class="workbench-rail-action" href="research-assistant.html" aria-label="新建社科助手对话" data-rail-tip="新建对话（Ctrl+Alt+K）">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
             <path d="M8 12h8"></path>
             <path d="M12 8v8"></path>
           </svg>
         </a>
+        <button class="workbench-rail-action" type="button" aria-label="搜索会话" data-rail-tip="会话搜索（Ctrl+Alt+J）" data-dialog-search-open>
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+        </button>
       </div>
 
       <div class="workbench-scroll">
@@ -557,19 +579,32 @@
               </svg>
               <span class="workbench-section__summary-spacer" aria-hidden="true"></span>
               <span class="workbench-section__actions">
-                <button class="workbench-section__action" type="button" data-summary-action aria-label="搜索对话">
+                <button class="workbench-section__action" type="button" data-summary-action data-dialog-search-open aria-label="搜索对话">
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.3-4.3"></path>
                   </svg>
                 </button>
-                <button class="workbench-section__action" type="button" data-summary-action aria-label="管理对话">
+                <button class="workbench-section__action" type="button" data-summary-action data-dialog-manage-toggle aria-label="管理对话">
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="m3 17 2 2 4-4"></path>
                     <path d="m3 7 2 2 4-4"></path>
                     <path d="M13 6h8"></path>
                     <path d="M13 12h8"></path>
                     <path d="M13 18h8"></path>
+                  </svg>
+                </button>
+                <button class="workbench-section__action workbench-dialog-manage-only" type="button" data-summary-action data-dialog-manage-archive aria-label="归档选中对话">
+                  <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect width="20" height="5" x="2" y="3" rx="1"></rect>
+                    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"></path>
+                    <path d="M10 12h4"></path>
+                  </svg>
+                </button>
+                <button class="workbench-section__action workbench-dialog-manage-only" type="button" data-summary-action data-dialog-manage-exit aria-label="取消管理">
+                  <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
                   </svg>
                 </button>
                 <a class="workbench-section__action" href="./research-assistant.html" aria-label="新建对话">
@@ -815,6 +850,20 @@
           </details>
         </section>
       </div>
+
+      <div class="workbench-dialog-manage-actions" data-dialog-manage-actions hidden>
+        <button type="button" data-dialog-manage-delete disabled>
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>删除</span>
+          <strong data-dialog-manage-count></strong>
+        </button>
+      </div>
+
+      <div class="workbench-row-menu" id="workbench-row-menu" role="menu" aria-label="列表操作" hidden></div>
     </header>`;
   const SHELL_USER = `    <footer class="workbench-user">
       <div class="workbench-user__row">
@@ -877,14 +926,14 @@
         </div>
         <div class="workbench-user-menu__divider" aria-hidden="true"></div>
         <div class="workbench-user-menu__group">
-          <button type="button" role="menuitem">
+          <a role="menuitem" href="../index.html">
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="9"></circle>
               <path d="M12 16v-4"></path>
               <path d="M12 8h.01"></path>
             </svg>
             <span>关于我们</span>
-          </button>
+          </a>
           <button type="button" role="menuitem">
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="9"></circle>
@@ -927,43 +976,76 @@
           </button>
         </div>
       </section>
+
+      <dialog class="workbench-search" data-dialog-search aria-labelledby="workbenchSearchTitle">
+        <div class="workbench-search__head">
+          <h2 class="workbench-search__title" id="workbenchSearchTitle">搜索对话</h2>
+          <button class="workbench-search__close" type="button" data-dialog-search-close aria-label="关闭搜索">
+            <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <input class="workbench-search__input" type="search" data-dialog-search-input placeholder="输入会话标题搜索" aria-label="输入会话标题搜索">
+        <div class="workbench-search__list" data-dialog-search-list></div>
+      </dialog>
+
+      <dialog class="workbench-confirm" data-dialog-confirm aria-labelledby="workbenchConfirmTitle">
+        <h2 class="workbench-confirm__title" id="workbenchConfirmTitle" data-dialog-confirm-title>删除</h2>
+        <p class="workbench-confirm__desc" data-dialog-confirm-desc></p>
+        <div class="workbench-confirm__actions">
+          <button class="workbench-confirm__button" type="button" data-dialog-confirm-cancel>取消</button>
+          <button class="workbench-confirm__button workbench-confirm__button--danger" type="button" data-dialog-confirm-ok>删除</button>
+        </div>
+      </dialog>
+
+      <dialog class="workbench-confirm" data-dialog-prompt aria-labelledby="workbenchPromptTitle">
+        <h2 class="workbench-confirm__title" id="workbenchPromptTitle" data-dialog-prompt-title>重命名</h2>
+        <input class="workbench-prompt__input" type="text" data-dialog-prompt-input aria-label="名称">
+        <div class="workbench-confirm__actions">
+          <button class="workbench-confirm__button" type="button" data-dialog-prompt-cancel>取消</button>
+          <button class="workbench-confirm__button workbench-confirm__button--primary" type="button" data-dialog-prompt-ok>确定</button>
+        </div>
+      </dialog>
     </footer>`;
 
   const shell = document.querySelector(".workbench-shell");
   if (!shell) return;
 
-  /* 壳层随页面状态：导航高亮、对话入口形态、项目新建入口 */
+  /* 壳层随页面状态：导航高亮、项目新建入口 */
   const applyShellState = function () {
     const page = (window.location.pathname.split("/").pop() || "").toLowerCase();
 
-    document.querySelectorAll(".workbench-nav__link").forEach(function (link) {
-      const isActive = (link.getAttribute("href") || "").replace("./", "") === page;
-      link.classList.toggle("is-active", isActive);
-      if (isActive) {
-        link.setAttribute("aria-current", "page");
-      } else {
-        link.removeAttribute("aria-current");
-      }
-    });
+    /* 导航项与 rail 上"跳到某页"的入口按当前页高亮；
+       收起态的「新建对话」是动作入口（点了开新会话），不给选中态 */
+    document
+      .querySelectorAll('.workbench-nav__link, .workbench-rail-action[href]:not([href="research-assistant.html"])')
+      .forEach(function (link) {
+        const isActive = (link.getAttribute("href") || "").replace("./", "") === page;
+        link.classList.toggle("is-active", isActive);
+        if (isActive) {
+          link.setAttribute("aria-current", "page");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
 
-    /* 智能体广场与项目列表把对话入口渲染为无跳转按钮，其余页面保持链接 */
-    if (page === "agent-square.html" || page === "projects.html") {
-      const rail = document.querySelector('.workbench-rail-action[href="research-assistant.html"]');
-      if (rail) {
-        const button = document.createElement("button");
-        button.className = rail.className;
-        button.type = "button";
-        button.setAttribute("aria-label", "对话");
-        button.innerHTML = rail.innerHTML;
-        rail.replaceWith(button);
+    const create = document.querySelector('.workbench-section__action[aria-label="新建项目"]');
+    if (create) {
+      if (page === "projects.html") {
+        create.setAttribute("data-project-create-trigger", "");
+      } else {
+        /* 新建项目弹窗只在项目列表页（projects.js 仅该页加载）：跳转过去并由该页打开弹窗 */
+        create.addEventListener("click", function () {
+          window.location.href = "./projects.html?create=1";
+        });
       }
     }
 
     if (page === "projects.html") {
       const summary = document.querySelector('.workbench-section__action[href="./projects.html"]');
       if (summary) summary.setAttribute("aria-current", "page");
-      const create = document.querySelector('.workbench-section__action[aria-label="新建项目"]');
-      if (create) create.setAttribute("data-project-create-trigger", "");
     }
   };
 
@@ -1000,18 +1082,52 @@
     }
   };
 
+  /* 提示气泡用真实元素承载（不用 <span>：收起态 .workbench-nav__link > span 的
+     overflow: hidden 会把指向箭头裁掉；伪元素又不可靠） */
+  document.querySelectorAll("[data-rail-tip]").forEach(function (el) {
+    const tip = document.createElement("div");
+    tip.className = "workbench-tip";
+    tip.setAttribute("aria-hidden", "true");
+    tip.textContent = el.getAttribute("data-rail-tip");
+    el.appendChild(tip);
+  });
+
+  /* 收起侧栏的图标提示（样式在 workbench-shell.css）：点击后立即收起，指针离开再恢复 */
+  document.addEventListener("click", function (event) {
+    const tip = event.target.closest("[data-rail-tip]");
+    if (!tip || tip.classList.contains("is-tip-off")) return;
+    tip.classList.add("is-tip-off");
+    tip.addEventListener("mouseleave", function () {
+      tip.classList.remove("is-tip-off");
+    }, { once: true });
+  });
+
   if (sidebarState) {
     sidebarState.checked = readSidebarCollapsed();
     sidebarState.addEventListener("change", function () {
       saveSidebarCollapsed(sidebarState.checked);
+      syncActiveAgent(); /* 收起/展开会改变可见的智能体入口，需重算选中态 */
     });
   }
 
   const syncActiveAgent = function () {
     const isAgentSquarePage = window.location.pathname.endsWith("/agent-square.html");
-    document.querySelectorAll('.workbench-agent[href*="agent-square.html#"]').forEach(function (link) {
-      const linkHash = new URL(link.href, window.location.href).hash;
-      link.classList.toggle("is-active", isAgentSquarePage && linkHash === window.location.hash);
+    const links = Array.prototype.slice.call(
+      document.querySelectorAll('.workbench-agent[href*="agent-square.html#"]')
+    );
+    if (!links.length) return;
+
+    const hash = window.location.hash;
+    const matched = links.find(function (link) {
+      return new URL(link.href, window.location.href).hash === hash;
+    });
+
+    links.forEach(function (link, index) {
+      /* 匹配项高亮；收起侧栏只显示第一行，匹配项不可见时由可见的第一行承担选中态
+         （例如收起态下从二级菜单点「荆楚智审」进入 #agent-review） */
+      const isActive =
+        isAgentSquarePage && (link === matched || (index === 0 && (!matched || !matched.offsetWidth)));
+      link.classList.toggle("is-active", isActive);
     });
   };
 
@@ -1175,6 +1291,14 @@
     if (restoreFocus) messageTrigger.focus({ preventScroll: true });
   };
 
+  if (userTrigger && userMenu) {
+    /* 用户菜单开合由壳层单源接管：此前仅 main.js 绑定，projects / agent-square 点头像无反应 */
+    userTrigger.addEventListener("click", function (event) {
+      event.stopPropagation();
+      setUserMenuOpen(userMenu.hidden, false);
+    });
+  }
+
   if (userMenu) {
     userMenu.addEventListener("click", function (event) {
       if (event.target.closest("button")) setUserMenuOpen(false, false);
@@ -1208,6 +1332,354 @@
     updateMessageState();
   }
 
+  /* 通用弹窗：确认（删除 / 归档 / 移出）与重命名 */
+  const dialogList = document.querySelector(".workbench-dialogs");
+  const dialogManageCount = document.querySelector("[data-dialog-manage-count]");
+  const dialogManageActions = document.querySelector("[data-dialog-manage-actions]");
+  const dialogManageToggle = document.querySelector("[data-dialog-manage-toggle]");
+  const dialogManageDelete = document.querySelector("[data-dialog-manage-delete]");
+  const dialogConfirm = document.querySelector("[data-dialog-confirm]");
+  const dialogConfirmTitle = document.querySelector("[data-dialog-confirm-title]");
+  const dialogConfirmDesc = document.querySelector("[data-dialog-confirm-desc]");
+  const dialogConfirmOk = document.querySelector("[data-dialog-confirm-ok]");
+  const dialogPrompt = document.querySelector("[data-dialog-prompt]");
+  const dialogPromptTitle = document.querySelector("[data-dialog-prompt-title]");
+  const dialogPromptInput = document.querySelector("[data-dialog-prompt-input]");
+  const rowMenu = document.querySelector("#workbench-row-menu");
+  let confirmCallback = null;
+  let promptCallback = null;
+  let menuTarget = null;
+
+  const askConfirm = function (options) {
+    if (!dialogConfirm || typeof dialogConfirm.showModal !== "function") return;
+    if (dialogConfirmTitle) dialogConfirmTitle.textContent = options.title || "确认";
+    if (dialogConfirmDesc) dialogConfirmDesc.textContent = options.desc || "";
+    if (dialogConfirmOk) dialogConfirmOk.textContent = options.okText || "确认";
+    confirmCallback = options.onOk || null;
+    dialogConfirm.showModal();
+  };
+
+  const askPrompt = function (options) {
+    if (!dialogPrompt || typeof dialogPrompt.showModal !== "function") return;
+    if (dialogPromptTitle) dialogPromptTitle.textContent = options.title || "重命名";
+    if (dialogPromptInput) dialogPromptInput.value = options.value || "";
+    promptCallback = options.onOk || null;
+    dialogPrompt.showModal();
+    dialogPromptInput?.focus();
+    dialogPromptInput?.select();
+  };
+
+  document.querySelector("[data-dialog-confirm-ok]")?.addEventListener("click", function () {
+    dialogConfirm?.close();
+    const run = confirmCallback;
+    confirmCallback = null;
+    if (run) run();
+  });
+
+  document.querySelector("[data-dialog-confirm-cancel]")?.addEventListener("click", function () {
+    confirmCallback = null;
+    dialogConfirm?.close();
+  });
+
+  document.querySelector("[data-dialog-prompt-ok]")?.addEventListener("click", function () {
+    const value = dialogPromptInput ? dialogPromptInput.value.trim() : "";
+    dialogPrompt?.close();
+    const run = promptCallback;
+    promptCallback = null;
+    if (run && value) run(value);
+  });
+
+  document.querySelector("[data-dialog-prompt-cancel]")?.addEventListener("click", function () {
+    promptCallback = null;
+    dialogPrompt?.close();
+  });
+
+  /* 列表行三点菜单：项目（一级）/ 项目内会话（二级）/ 会话列表三类共用 */
+  const ROW_MENU_ITEMS = {
+    project: [["rename", "重命名"], ["delete", "删除"]],
+    child: [["rename", "重命名"], ["delete", "删除"], ["remove", "移出项目"]],
+    dialog: [["rename", "重命名"], ["delete", "删除"], ["archive", "归档"]]
+  };
+
+  const rowKind = function (button) {
+    if (button.closest(".workbench-project__child-row")) return "child";
+    if (button.closest(".workbench-project")) return "project";
+    if (button.closest(".workbench-dialog-row")) return "dialog";
+    return null;
+  };
+
+  const ROW_SELECTORS = {
+    project: [".workbench-project", ".workbench-project__title"],
+    child: [".workbench-project__child-row", ".workbench-project__child"],
+    dialog: [".workbench-dialog-row", ".workbench-dialog__title"]
+  };
+
+  const rowRefs = function (kind, button) {
+    const selectors = ROW_SELECTORS[kind];
+    const row = button.closest(selectors[0]);
+    return row ? { row: row, title: row.querySelector(selectors[1]) } : null;
+  };
+
+  const closeRowMenu = function () {
+    if (!rowMenu) return;
+    rowMenu.hidden = true;
+    rowMenu.classList.remove("is-open");
+    rowMenu.textContent = "";
+    menuTarget = null;
+  };
+
+  const openRowMenu = function (button) {
+    if (!rowMenu) return;
+    const kind = rowKind(button);
+    if (!kind) return;
+    rowMenu.innerHTML = ROW_MENU_ITEMS[kind]
+      .map(function (item) {
+        return (
+          '<button class="workbench-row-menu__item" type="button" role="menuitem" data-row-action="' +
+          item[0] + '">' + item[1] + "</button>"
+        );
+      })
+      .join("");
+    rowMenu.hidden = false;
+    rowMenu.classList.add("is-open");
+    const rect = button.getBoundingClientRect();
+    const menuRect = rowMenu.getBoundingClientRect();
+    rowMenu.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - menuRect.width - 8)) + "px";
+    rowMenu.style.top = Math.min(rect.bottom + 4, window.innerHeight - menuRect.height - 8) + "px";
+    menuTarget = button;
+  };
+
+  /* 移出项目：二级会话转为独立会话，落到「对话」列表 */
+  const moveRowToDialogs = function (row, name) {
+    if (!dialogList) return;
+    const item = document.createElement("div");
+    item.className = "workbench-dialog-row";
+    const title = document.createElement("button");
+    title.type = "button";
+    title.className = "workbench-dialog__title";
+    title.textContent = name;
+    const action = document.createElement("button");
+    action.type = "button";
+    action.className = "workbench-row-action";
+    action.setAttribute("aria-label", "更多操作：" + name);
+    action.innerHTML =
+      '<svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">' +
+      '<circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg>';
+    item.appendChild(title);
+    item.appendChild(action);
+    dialogList.appendChild(item);
+    row.remove();
+    window.SKApp?.showToast?.("已移出项目");
+  };
+
+  const runRowAction = function (action, button) {
+    if (!button) return;
+    const kind = rowKind(button);
+    const refs = kind ? rowRefs(kind, button) : null;
+    if (!refs || !refs.title) return;
+    const name = refs.title.textContent.trim();
+
+    if (action === "rename") {
+      askPrompt({
+        title: "重命名",
+        value: name,
+        onOk: function (value) {
+          refs.title.textContent = value;
+          window.SKApp?.showToast?.("已重命名为“" + value + "”");
+        }
+      });
+      return;
+    }
+
+    if (action === "delete") {
+      askConfirm({
+        title: "删除",
+        okText: "删除",
+        desc: "确认删除“" + name + "”？删除后无法恢复。",
+        onOk: function () {
+          refs.row.remove();
+          window.SKApp?.showToast?.("已删除“" + name + "”");
+        }
+      });
+      return;
+    }
+
+    if (action === "remove") {
+      askConfirm({
+        title: "移出项目",
+        okText: "移出",
+        desc: "确认将“" + name + "”移出当前项目？",
+        onOk: function () {
+          moveRowToDialogs(refs.row, name);
+        }
+      });
+      return;
+    }
+
+    if (action === "archive") {
+      askConfirm({
+        title: "归档",
+        okText: "归档",
+        desc: "确认归档“" + name + "”？",
+        onOk: function () {
+          refs.row.remove();
+          window.SKApp?.showToast?.("已归档“" + name + "”");
+        }
+      });
+    }
+  };
+
+  document.addEventListener("click", function (event) {
+    const actionButton = event.target.closest(".workbench-row-action");
+    if (actionButton && actionButton.closest(".workbench-shell")) {
+      event.preventDefault();
+      openRowMenu(actionButton);
+      return;
+    }
+    const menuItem = event.target.closest(".workbench-row-menu__item");
+    if (menuItem && menuItem.closest("#workbench-row-menu")) {
+      const action = menuItem.getAttribute("data-row-action");
+      const button = menuTarget; /* 先留一份：closeRowMenu 会清空 menuTarget */
+      closeRowMenu();
+      runRowAction(action, button);
+    }
+  });
+
+  const selectedDialogs = function () {
+    return Array.prototype.slice.call(document.querySelectorAll(".workbench-dialog-row.is-selected"));
+  };
+
+  const syncDialogManage = function () {
+    const count = selectedDialogs().length;
+    /* 计数显示在「删除」文字旁边；未选中时不显示数字 */
+    if (dialogManageCount) dialogManageCount.textContent = count ? String(count) : "";
+    if (dialogManageDelete) dialogManageDelete.disabled = count === 0;
+  };
+
+  const setDialogManageMode = function (open) {
+    if (!dialogList) return;
+    dialogList.classList.toggle("is-managing", open);
+    selectedDialogs().forEach(function (row) {
+      row.classList.remove("is-selected");
+    });
+    if (dialogManageActions) dialogManageActions.hidden = !open;
+    if (dialogManageToggle) dialogManageToggle.setAttribute("aria-pressed", String(open));
+    syncDialogManage();
+  };
+
+  const runBatchDialogAction = function (action) {
+    const rows = selectedDialogs();
+    if (!rows.length) return;
+    const isArchive = action === "archive";
+    askConfirm({
+      title: isArchive ? "归档对话" : "删除对话",
+      okText: isArchive ? "归档" : "删除",
+      desc: (isArchive ? "确认归档选中的 " : "确认删除选中的 ") + rows.length + " 个对话？" + (isArchive ? "" : "删除后无法恢复。"),
+      onOk: function () {
+        rows.forEach(function (row) {
+          row.remove();
+        });
+        window.SKApp?.showToast?.(
+          (isArchive ? "已归档 " : "已删除 ") + rows.length + " 个对话"
+        );
+        setDialogManageMode(false);
+      }
+    });
+  };
+
+  if (dialogList) {
+    dialogList.addEventListener("click", function (event) {
+      if (!dialogList.classList.contains("is-managing")) return;
+      const row = event.target.closest(".workbench-dialog-row");
+      if (!row) return;
+      event.preventDefault();
+      row.classList.toggle("is-selected");
+      syncDialogManage();
+    });
+  }
+
+  if (dialogManageToggle && dialogList) {
+    dialogManageToggle.addEventListener("click", function () {
+      setDialogManageMode(!dialogList.classList.contains("is-managing"));
+    });
+  }
+
+  /* 顶部操作栏的 × 与底部「取消」都用于退出管理模式 */
+  document.querySelectorAll("[data-dialog-manage-exit]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      setDialogManageMode(false);
+    });
+  });
+
+  dialogManageDelete?.addEventListener("click", function () {
+    runBatchDialogAction("delete");
+  });
+
+  /* 顶部操作栏（管理态）的归档：批量归档选中对话 */
+  document.querySelector("[data-dialog-manage-archive]")?.addEventListener("click", function () {
+    runBatchDialogAction("archive");
+  });
+
+  /* 会话搜索：弹窗内按标题实时过滤当前对话列表 */
+  const dialogSearch = document.querySelector("[data-dialog-search]");
+  const dialogSearchInput = document.querySelector("[data-dialog-search-input]");
+  const dialogSearchList = document.querySelector("[data-dialog-search-list]");
+
+  const renderDialogSearch = function (keyword) {
+    if (!dialogSearchList || !dialogList) return;
+    const word = (keyword || "").trim().toLowerCase();
+    const titles = Array.prototype.map.call(
+      dialogList.querySelectorAll(".workbench-dialog__title"),
+      function (title) {
+        return title.textContent.trim();
+      }
+    );
+    const matched = word
+      ? titles.filter(function (title) {
+          return title.toLowerCase().indexOf(word) !== -1;
+        })
+      : titles;
+
+    dialogSearchList.textContent = "";
+    if (!matched.length) {
+      const empty = document.createElement("p");
+      empty.className = "workbench-search__empty";
+      empty.textContent = "没有匹配的对话";
+      dialogSearchList.appendChild(empty);
+      return;
+    }
+    matched.forEach(function (title) {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "workbench-search__item";
+      item.textContent = title;
+      dialogSearchList.appendChild(item);
+    });
+  };
+
+  /* 入口有两处：会话区块的搜索按钮、收起侧栏 rail 上的搜索按钮 */
+  document.querySelectorAll("[data-dialog-search-open]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      if (!dialogSearch) return;
+      renderDialogSearch("");
+      if (dialogSearchInput) dialogSearchInput.value = "";
+      if (typeof dialogSearch.showModal === "function") dialogSearch.showModal();
+      dialogSearchInput?.focus();
+    });
+  });
+
+  dialogSearchInput?.addEventListener("input", function () {
+    renderDialogSearch(dialogSearchInput.value);
+  });
+
+  dialogSearchList?.addEventListener("click", function (event) {
+    if (event.target.closest(".workbench-search__item")) dialogSearch?.close();
+  });
+
+  document.querySelector("[data-dialog-search-close]")?.addEventListener("click", function () {
+    dialogSearch?.close();
+  });
+
   document.addEventListener("click", function (event) {
     if (userMenu && !userMenu.hidden && !userMenu.contains(event.target) && !userTrigger?.contains(event.target)) {
       setUserMenuOpen(false, false);
@@ -1215,12 +1687,50 @@
     if (messagePanel && !messagePanel.hidden && !messagePanel.contains(event.target) && !messageTrigger?.contains(event.target)) {
       setMessageCenterOpen(false, false);
     }
+    if (rowMenu && !rowMenu.hidden && !rowMenu.contains(event.target) && !event.target.closest(".workbench-row-action")) {
+      closeRowMenu();
+    }
+  });
+
+  /* 全站快捷键：Ctrl+Alt+B 收起/展开侧栏、Ctrl+Alt+K 新建会话、Ctrl+Alt+J 会话搜索 */
+  document.addEventListener("keydown", function (event) {
+    if (!(event.ctrlKey || event.metaKey) || !event.altKey || event.repeat || event.defaultPrevented) return;
+    const key = event.key.toLowerCase();
+
+    if (key === "b" && sidebarState) {
+      event.preventDefault();
+      sidebarState.checked = !sidebarState.checked;
+      sidebarState.dispatchEvent(new Event("change", { bubbles: true }));
+      return;
+    }
+
+    if (key === "k") {
+      event.preventDefault();
+      const newConversation = document.querySelector("[data-new-conversation]");
+      if (newConversation) {
+        newConversation.click();
+        return;
+      }
+      /* 其它页面没有会话区，跳到工作台（落地即新会话） */
+      window.location.href = "./research-assistant.html";
+      return;
+    }
+
+    if (key === "j") {
+      event.preventDefault();
+      if (dialogSearch && dialogSearch.open) {
+        dialogSearch.close();
+        return;
+      }
+      document.querySelector("[data-dialog-search-open]")?.click();
+    }
   });
 
   document.addEventListener("keydown", function (event) {
     if (event.key !== "Escape") return;
     if (userMenu && !userMenu.hidden) setUserMenuOpen(false, true);
     if (messagePanel && !messagePanel.hidden) setMessageCenterOpen(false, true);
+    if (rowMenu && !rowMenu.hidden) closeRowMenu();
   });
 
     document.querySelectorAll(".workbench-dialog__title").forEach(function (button) {

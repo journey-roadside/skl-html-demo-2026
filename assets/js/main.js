@@ -51,35 +51,6 @@
     window.SKApp.closeDrawer = () => setOpen(false);
   }
 
-  function initUserMenu() {
-    const trigger = document.querySelector("[data-user-menu-trigger]");
-    const menu = document.querySelector("[data-user-menu]");
-    const messagePanel = document.querySelector("[data-message-center]");
-    const messageTrigger = document.querySelector("[data-message-center-open]");
-    if (!trigger || !menu) return;
-
-    const setOpen = (open) => {
-      menu.hidden = !open;
-      trigger.setAttribute("aria-expanded", String(open));
-    };
-
-    trigger.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const nextOpen = menu.hidden;
-      setOpen(nextOpen);
-      if (nextOpen && messagePanel) {
-        messagePanel.hidden = true;
-        messageTrigger?.setAttribute("aria-expanded", "false");
-        messageTrigger?.classList.remove("is-active");
-      }
-    });
-
-    document.addEventListener("click", (event) => {
-      if (menu.hidden || menu.contains(event.target)) return;
-      setOpen(false);
-    });
-  }
-
   function initReveal() {
     const items = document.querySelectorAll(".reveal");
     if (!items.length) return;
@@ -230,7 +201,6 @@
   document.addEventListener("DOMContentLoaded", () => {
     initHeader();
     initMobileDrawer();
-    initUserMenu();
     initReveal();
     initSectionNav();
     initPlaceholderLinks();

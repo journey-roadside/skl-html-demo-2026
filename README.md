@@ -118,11 +118,16 @@ html-demo/
 - 页面切换、筛选、排序、分页、弹窗、Toast 和划词工具均为前端静态交互，数据使用页面内模拟数据。
 - 登录态：`localStorage["sheke-demo-user"]`，由 `assets/js/auth.js` 管理。
 - 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`，由 `assets/js/pages/workbench.js` 管理。
-- 壳层注入：`workbench.js` 先注入侧栏与用户区，再按 `location.pathname` 推导激活导航、对话入口形态和 `data-project-create-trigger`，页面无需声明自身状态。
+- 壳层注入：`workbench.js` 先注入侧栏与用户区，再按 `location.pathname` 推导激活导航和 `data-project-create-trigger`，页面无需声明自身状态。
+- 收起侧栏的快捷入口：项目列表（→ `projects.html`）与对话（→ `research-assistant.html`）在 5 个页面均为可跳转链接，行为一致。
+- 用户菜单：开合、点击外部关闭与 `Esc` 关闭统一由 `assets/js/pages/workbench.js` 绑定，5 个页面行为一致（`main.js` 不再重复绑定）。
+- 对话列表管理：点「对话」区块的管理按钮进入管理模式，可单选/多选后删除或归档；顶部同行提供「归档」与「取消」（取消退出管理模式）。逻辑同样在 `workbench.js`，5 个页面通用。
+- 列表行三点菜单：项目（一级）含重命名 / 删除，项目内会话（二级）含重命名 / 删除 / 移出项目，会话列表含重命名 / 删除 / 归档；重命名、删除、归档、移出均弹二次确认，重命名弹窗预填当前名称。
+- 对话搜索：点「对话」区块的搜索按钮弹出搜索框，按会话标题实时过滤当前列表；结果默认露出 5 条，超出可滚动查看。
 - 主题设置：`localStorage["sheke-v4-theme"]`，支持浅色、深色和跟随系统，由 `assets/js/v4.js` 管理。
 - 共享收藏：`localStorage["sheke-v4-community-favorites"]`，由共享社区和我的知识共享。
 - 项目资料上传：仅记录文件名、大小和类型并保留在当前会话内存中，刷新后不保留；文件不落盘、不上传服务端。
-- 快捷键：`Ctrl+K` 新建会话，`Ctrl+B` 收起或展开侧栏。
+- 全站快捷键（5 个页面通用，由 `workbench.js` 绑定）：`Ctrl+Alt+B` 收起 / 展开侧栏、`Ctrl+Alt+K` 新建会话、`Ctrl+Alt+J` 会话搜索；社科智研页另有 `Ctrl+J` 搜索历史记录。
 - 工作台与页面间通过统一外壳（workbench-shell / workbench.js）切换，不显示独立标签页。
 - 未接入的真实功能统一使用 Toast 提示，避免误跳转。
 
@@ -144,7 +149,6 @@ html-demo/
 - 文件上传、下载、共享审核、分析报告和精读内容均为模拟流程。
 - V5 起 `social-research-home`、`account-center`、`reader`、`shared-community`、`social-review`、`deep-research` 等 V4 独立页面已整合进官网首页、工作台或智能体广场，原文件不再随 V5 站点提供（可在 `v4/` 归档查阅）。
 - V3 保留在 `v3/`、V4 保留在 `v4/`，其页面结构和资源引用保持归档状态。
-- 项目列表与智能体广场两页只加载 `workbench.js`，侧栏用户区的展开动作未接线（`main.js` / `v4.js` 才绑定 `[data-user-menu-trigger]`），点头像不会弹出用户菜单。此为重构前既有的问题，本次未改动。
 
 仓库分支为 `main`，远端为：
 

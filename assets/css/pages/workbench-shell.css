@@ -65,7 +65,7 @@
 .workbench-brand__home {
   display: grid;
   min-width: 0;
-  flex: 1 1 auto;
+  flex: 0 1 auto; /* 只让标题文字可点：不占满整行 */
   gap: 0;
   padding: 4px 0;
   border-radius: var(--radius-sm);
@@ -89,6 +89,7 @@
   width: 28px;
   height: 28px;
   flex: 0 0 auto;
+  margin-left: auto; /* 标题不再撑满整行后，靠 auto 把收起按钮留在右缘 */
   place-items: center;
   border-radius: var(--radius-sm);
   color: var(--muted-foreground);
@@ -172,40 +173,21 @@
   min-width: 0;
 }
 
-.workbench-agent__tag {
-  flex: 0 0 auto;
-  overflow: visible;
-  padding: 1px 6px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-  background: var(--surface-hover);
-  color: var(--muted-foreground);
-  font-size: 10px;
-  line-height: 14px;
-  opacity: 0;
-  pointer-events: none;
-  text-overflow: clip;
-  transition:
-    background var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out),
-    opacity var(--duration-fast) var(--ease-out),
-    visibility var(--duration-fast) var(--ease-out);
-  visibility: hidden;
-}
-
 .workbench-agent-row .workbench-agent {
   width: 100%;
 }
 
-.workbench-agent-row .workbench-agent__tag {
-  position: absolute;
-  top: 50%;
-  right: 4px;
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  transform: translateY(-50%);
+/* 荆楚智研入口双图标：展开态与智审一致（机器人），收起态用广场图标（插头） */
+.workbench-agent__icon--collapsed {
+  display: none;
+}
+
+.workbench-shell:has(.workbench-sidebar__state:checked) .workbench-agent__icon--expanded {
+  display: none;
+}
+
+.workbench-shell:has(.workbench-sidebar__state:checked) .workbench-agent__icon--collapsed {
+  display: block;
 }
 
 .workbench-nav__link.is-active {
@@ -336,6 +318,13 @@
   text-align: left;
 }
 
+/* 智能体广场入口：与上方智能体项之间的横向分隔线（两侧通栏） */
+.workbench-agent-menu__separator {
+  height: 1px;
+  margin: 4px -4px;
+  background: var(--border-strong);
+}
+
 .workbench-rail-actions {
   display: none;
   gap: 3px;
@@ -349,6 +338,12 @@
   place-items: center;
   border-radius: var(--radius-sm);
   color: var(--muted-foreground);
+}
+
+/* 当前页对应的 rail 入口（与导航项选中态同色） */
+.workbench-rail-action.is-active {
+  background: var(--surface-hover);
+  color: var(--accent-active);
 }
 
 .workbench-scroll {
@@ -381,6 +376,12 @@
 }
 
 .workbench-project__title.is-active {
+  color: var(--accent-active);
+}
+
+/* 选中项目时，左侧文件夹图标与标题同色 */
+.workbench-project__row:has(.workbench-project__title.is-active) .workbench-project__folder,
+.workbench-project__row:has(.workbench-project__title.is-active) .workbench-project__chevron {
   color: var(--accent-active);
 }
 
@@ -627,15 +628,6 @@
 }
 
 @media (hover: hover) {
-  .workbench-agent-row:hover .workbench-agent__tag,
-  .workbench-agent-menu__item:hover .workbench-agent__tag {
-    border-color: #1a1a1a;
-    background: #1a1a1a;
-    color: #fcfaf8;
-    opacity: 1;
-    pointer-events: auto;
-    visibility: visible;
-  }
 
   .workbench-nav__link:hover,
   .workbench-agent:hover,
@@ -645,6 +637,7 @@
   .workbench-sidebar__toggle:hover,
   .workbench-user__profile:hover,
   .workbench-project__child:hover,
+  .workbench-project__row:hover,
   .workbench-dialog__title:hover,
   .workbench-user__messages:hover {
     background: var(--surface-hover);
@@ -652,6 +645,7 @@
   }
 
   .workbench-nav__link.is-active:hover,
+  .workbench-rail-action.is-active:hover,
   .workbench-agent.is-active:hover {
     background: var(--accent-soft);
     color: var(--accent-active);
@@ -709,7 +703,6 @@
 
   .workbench-shell:has(.workbench-sidebar__state:checked) .workbench-header {
     padding-inline: 10px;
-    overflow: visible;
   }
 
   .workbench-shell:has(.workbench-sidebar__state:checked) .workbench-header__top {
@@ -740,10 +733,6 @@
   }
 
   .workbench-shell:has(.workbench-sidebar__state:checked) .workbench-agent-list .workbench-agent-row:nth-child(n + 2) {
-    display: none;
-  }
-
-  .workbench-shell:has(.workbench-sidebar__state:checked) .workbench-agent-list .workbench-agent__tag {
     display: none;
   }
 
@@ -833,7 +822,8 @@
   }
 
   .workbench-header {
-    overflow: hidden;
+    /* 不裁：气泡要弹出到侧栏右侧 */
+    overflow: visible;
     border-right: 1px solid var(--border);
   }
 
@@ -883,6 +873,12 @@
   opacity: 1;
 }
 
+/* 选中态下图标跟随强调色（上面这条把 rail 图标钉成了 foreground） */
+.workbench-rail-action.is-active .workbench-icon,
+.workbench-agent.is-active .workbench-icon {
+  color: var(--accent-active);
+}
+
 @media (min-width: 56.25rem) {
   .workbench-scroll {
     gap: 0;
@@ -893,10 +889,6 @@
     display: contents;
   }
 
-  .workbench-scroll > .workbench-section--scroll:first-of-type .workbench-projects {
-    margin-bottom: var(--spacing-2);
-  }
-
   .workbench-scroll > .workbench-section--scroll > .workbench-section__details > .workbench-section__summary {
     position: sticky;
     z-index: 2;
@@ -904,8 +896,13 @@
     background: var(--background);
   }
 
+  /* 间距落在摘要上而非面板：面板收起时不生成盒子，间距会丢（一个 8px、一个 0）。
+     用 padding-top 而非 margin-top：margin 会把吸顶阈值和静止位置错开 8px（滚动时标题栏跳动），
+     且缝隙是透的、列表文字会从两个吸顶标题之间穿过 */
   .workbench-scroll > .workbench-section--scroll:last-of-type > .workbench-section__details > .workbench-section__summary {
     top: 30px;
+    min-height: calc(30px + var(--spacing-2));
+    padding-top: var(--spacing-2);
   }
 }
 
@@ -988,7 +985,7 @@
   gap: 2px;
 }
 
-.workbench-user-menu__group > button {
+.workbench-user-menu__group > :is(button, a) {
   display: grid;
   width: 100%;
   min-height: 36px;
@@ -1002,7 +999,7 @@
   text-align: left;
 }
 
-.workbench-user-menu__group > button:hover {
+.workbench-user-menu__group > :is(button, a):hover {
   background: var(--surface-hover);
   color: var(--foreground);
 }
@@ -1117,4 +1114,357 @@
     left: calc(100% + 8px);
     width: 220px;
   }
+}
+
+/* 收起侧栏的图标提示：黑底白字 + 圆角 + 指向箭头；点击后由 workbench.js 加 .is-tip-off 收起。
+   顶部收纳/展开按钮在两种状态下都提示（收起按钮只在展开态可见） */
+@media (hover: hover) {
+  .workbench-shell:has(.workbench-sidebar__state:checked) [data-rail-tip],
+  .workbench-shell :is(.workbench-brand__mark, .workbench-sidebar__toggle)[data-rail-tip] {
+    position: relative;
+  }
+
+  .workbench-tip {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 12px);
+    z-index: 40;
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    background: #1a1a1a;
+    color: #fcfaf8;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.4;
+    white-space: nowrap;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .workbench-tip::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    border: 3px solid transparent;
+    border-right-color: #1a1a1a;
+    transform: translateY(-50%);
+  }
+
+  .workbench-shell:has(.workbench-sidebar__state:checked) [data-rail-tip]:hover:not(.is-tip-off) .workbench-tip,
+  .workbench-shell :is(.workbench-brand__mark, .workbench-sidebar__toggle)[data-rail-tip]:hover:not(.is-tip-off) .workbench-tip {
+    display: block;
+  }
+
+  .workbench-dialog-manage-actions button:not(:disabled):hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+}
+
+/* 对话列表：管理模式（单选/多选、计数、删除） */
+
+/* 顶部操作栏：管理态下「管理」让位给「取消」（取消是唯一的退出入口） */
+.workbench-dialog-manage-only {
+  display: none;
+}
+
+.workbench-shell:has(.workbench-dialogs.is-managing) .workbench-dialog-manage-only {
+  display: grid;
+}
+
+.workbench-shell:has(.workbench-dialogs.is-managing) [data-dialog-manage-toggle] {
+  display: none;
+}
+
+/* 管理模式下隐藏"…"操作，行左侧出现勾选圈 */
+.workbench-dialogs.is-managing .workbench-row-action {
+  display: none;
+}
+
+.workbench-dialogs.is-managing .workbench-dialog__title {
+  position: relative;
+  padding-left: 26px;
+}
+
+.workbench-dialogs.is-managing .workbench-dialog__title::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+/* 管理模式下：移入与选中都不改背景/文字色，选中只用勾选圈 + 文字加粗表达 */
+.workbench-dialogs.is-managing .workbench-dialog__title:hover,
+.workbench-dialogs.is-managing .workbench-dialog-row.is-selected .workbench-dialog__title {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.workbench-dialogs.is-managing .workbench-dialog-row.is-selected .workbench-dialog__title {
+  font-weight: var(--font-weight-semibold);
+}
+
+.workbench-dialogs.is-managing .workbench-dialog-row.is-selected .workbench-dialog__title::before {
+  content: "✓";
+  display: grid;
+  place-items: center;
+  border-color: var(--accent-active);
+  background: var(--accent-active);
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* 底部操作条：侧栏 flex 最后一格，始终贴底（不随列表滚动、列表变短也不上浮） */
+.workbench-dialog-manage-actions {
+  display: grid;
+  flex: 0 0 auto;
+  grid-auto-flow: column;
+  border-top: 1px solid var(--border);
+  background: var(--background);
+}
+
+.workbench-dialog-manage-actions button {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.workbench-dialog-manage-actions button + button {
+  border-left: 1px solid var(--border);
+}
+
+.workbench-dialog-manage-actions button:disabled {
+  color: var(--disabled);
+  cursor: default;
+}
+
+/* 左侧「删除」用选中态强调色（与勾选圈同色），并带上选中数量 */
+.workbench-dialog-manage-actions button:first-child:not(:disabled) {
+  color: var(--accent-active);
+}
+
+.workbench-dialog-manage-actions strong {
+  font-weight: var(--font-weight-medium);
+}
+
+.workbench-dialog-manage-actions strong:empty {
+  display: none;
+}
+
+.workbench-dialog-manage-actions .workbench-icon {
+  width: 15px;
+  height: 15px;
+}
+
+/* 列表行三点菜单（项目 / 项目内会话 / 会话列表共用） */
+.workbench-row-menu {
+  display: none;
+}
+
+.workbench-row-menu.is-open {
+  position: fixed;
+  z-index: 60;
+  display: grid;
+  min-width: 132px;
+  gap: 1px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--background);
+  box-shadow: var(--shadow-hover);
+}
+
+.workbench-row-menu__item {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  color: var(--foreground);
+  font-size: 13px;
+  text-align: left;
+}
+
+/* 重命名弹窗的输入框 */
+.workbench-prompt__input {
+  width: 100%;
+  min-height: 36px;
+  margin-bottom: 18px;
+  padding: 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--foreground);
+  font-size: 13px;
+}
+
+.workbench-prompt__input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* 会话搜索弹窗：输入框 + 结果列表（默认露出 5 条，超出滚动且不隐藏滚动条） */
+.workbench-search {
+  width: min(90vw, 340px);
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  box-shadow: var(--shadow-modal);
+  color: var(--foreground);
+}
+
+.workbench-search::backdrop {
+  background: var(--overlay);
+}
+
+.workbench-search__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.workbench-search__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.workbench-search__close {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+}
+
+.workbench-search__close:hover {
+  background: var(--surface-hover);
+  color: var(--foreground);
+}
+
+.workbench-search__close .workbench-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.workbench-search__input {
+  width: 100%;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--foreground);
+  font-size: 13px;
+}
+
+.workbench-search__input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.workbench-search__list {
+  max-height: 180px; /* 36px × 5 条 */
+  margin-top: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.workbench-search__item {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  color: var(--foreground);
+  font-size: 13px;
+  text-align: left;
+}
+
+.workbench-search__item:hover {
+  background: var(--surface-hover);
+}
+
+.workbench-search__empty {
+  margin: 12px 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* 删除二次确认弹窗 */
+.workbench-confirm {
+  width: min(90vw, 320px);
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  box-shadow: var(--shadow-modal);
+  color: var(--foreground);
+}
+
+.workbench-confirm::backdrop {
+  background: var(--overlay);
+}
+
+.workbench-confirm__title {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.workbench-confirm__desc {
+  margin: 0 0 18px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.workbench-confirm__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.workbench-confirm__button {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--foreground);
+  font-size: 13px;
+}
+
+.workbench-confirm__button:hover {
+  background: var(--surface-hover);
+}
+
+.workbench-confirm__button--danger {
+  border-color: transparent;
+  background: var(--destructive);
+  color: #fff;
+}
+
+.workbench-confirm__button--primary {
+  border-color: transparent;
+  background: var(--primary);
+  color: #fff;
 }
