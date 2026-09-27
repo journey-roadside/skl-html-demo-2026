@@ -140,7 +140,7 @@
   gap: var(--spacing-2);
   padding: 0 var(--spacing-3);
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--card);
   color: var(--text-secondary);
   transition:
@@ -352,7 +352,7 @@
   margin-top: var(--spacing-2);
   padding: 0 var(--spacing-3);
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--card);
   color: var(--foreground);
   font: inherit;
@@ -892,7 +892,7 @@
   gap: var(--spacing-2);
   padding: 0 var(--spacing-3);
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--card);
   color: var(--text-secondary);
   transition:
