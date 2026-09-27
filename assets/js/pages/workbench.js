@@ -917,18 +917,24 @@
         </div>
         <div class="workbench-user-menu__divider" aria-hidden="true"></div>
         <div class="workbench-user-menu__group">
-          <button type="button" role="menuitem">
+          <div class="workbench-user-menu__row">
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="8" cy="8" r="4"></circle>
               <circle cx="16" cy="16" r="4"></circle>
               <path d="M11 11l2 2"></path>
             </svg>
             <span>积分余额</span>
+            <button class="workbench-user-menu__refresh" type="button" data-user-points-refresh aria-label="刷新积分余额">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                <path d="M21 3v5h-5"></path>
+              </svg>
+            </button>
             <span class="workbench-user-menu__points" data-user-points>
               <strong>268</strong>
               <span class="skeleton" aria-hidden="true"></span>
             </span>
-          </button>
+          </div>
           <button type="button" role="menuitem">
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="8" r="4"></circle>
@@ -1349,7 +1355,22 @@
   }, { once: true });
 
   const userPoints = document.querySelector("[data-user-points]");
+  const userPointsRefresh = document.querySelector("[data-user-points-refresh]");
   let userPointsTimer = 0;
+
+  /* 加载态：数值换成骨架；刷新按钮同步收起，避免加载中重复点击 */
+  const setUserPointsLoading = function (loading) {
+    window.clearTimeout(userPointsTimer);
+    if (!userPoints) return;
+
+    userPoints.classList.toggle("is-loading", loading);
+    userPointsRefresh?.classList.toggle("is-visible", !loading);
+    if (loading) {
+      userPointsTimer = window.setTimeout(function () {
+        setUserPointsLoading(false);
+      }, 700);
+    }
+  };
 
   const setUserMenuOpen = function (open, restoreFocus) {
     if (!userTrigger || !userMenu) return;
@@ -1361,17 +1382,7 @@
       messageTrigger?.setAttribute("aria-expanded", "false");
     }
     /* 每次打开都重跑一次积分加载态 */
-    if (userPoints) {
-      window.clearTimeout(userPointsTimer);
-      if (open) {
-        userPoints.classList.add("is-loading");
-        userPointsTimer = window.setTimeout(function () {
-          userPoints.classList.remove("is-loading");
-        }, 700);
-      } else {
-        userPoints.classList.remove("is-loading");
-      }
-    }
+    setUserPointsLoading(open);
     if (restoreFocus) userTrigger.focus({ preventScroll: true });
   };
 
@@ -1398,6 +1409,14 @@
   if (userMenu) {
     userMenu.addEventListener("click", function (event) {
       if (event.target.closest("button")) setUserMenuOpen(false, false);
+    });
+  }
+
+  if (userPointsRefresh) {
+    /* 阻止冒泡：菜单容器「点到 button 就收起」的规则不会命中刷新按钮 */
+    userPointsRefresh.addEventListener("click", function (event) {
+      event.stopPropagation();
+      setUserPointsLoading(true);
     });
   }
 
