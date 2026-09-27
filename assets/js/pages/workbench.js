@@ -1353,11 +1353,18 @@
   let promptCallback = null;
   let menuTarget = null;
 
+  /* variant：danger（默认，破坏性操作）| primary（非破坏性操作）
+     与项目详情的约定一致：删除用危险色，移出 / 归档用主色 */
   const askConfirm = function (options) {
     if (!dialogConfirm || typeof dialogConfirm.showModal !== "function") return;
     if (dialogConfirmTitle) dialogConfirmTitle.textContent = options.title || "确认";
     if (dialogConfirmDesc) dialogConfirmDesc.textContent = options.desc || "";
-    if (dialogConfirmOk) dialogConfirmOk.textContent = options.okText || "确认";
+    if (dialogConfirmOk) {
+      dialogConfirmOk.textContent = options.okText || "确认";
+      const isPrimary = options.variant === "primary";
+      dialogConfirmOk.classList.toggle("workbench-confirm__button--primary", isPrimary);
+      dialogConfirmOk.classList.toggle("workbench-confirm__button--danger", !isPrimary);
+    }
     confirmCallback = options.onOk || null;
     dialogConfirm.showModal();
   };
@@ -1517,6 +1524,7 @@
       askConfirm({
         title: "移出项目",
         okText: "移出",
+        variant: "primary",
         desc: "确认将“" + name + "”移出当前项目？",
         onOk: function () {
           moveRowToDialogs(refs.row, name);
@@ -1529,6 +1537,7 @@
       askConfirm({
         title: "归档",
         okText: "归档",
+        variant: "primary",
         desc: "确认归档“" + name + "”？",
         onOk: function () {
           refs.row.remove();
@@ -1584,6 +1593,7 @@
     askConfirm({
       title: isArchive ? "归档对话" : "删除对话",
       okText: isArchive ? "归档" : "删除",
+      variant: isArchive ? "primary" : "danger",
       desc: (isArchive ? "确认归档选中的 " : "确认删除选中的 ") + rows.length + " 个对话？" + (isArchive ? "" : "删除后无法恢复。"),
       onOk: function () {
         rows.forEach(function (row) {
