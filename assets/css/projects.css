@@ -1144,7 +1144,9 @@
   }
 
   .project-detail__icon-button:hover,
-  .project-detail__mode:hover {
+  /* 已选中的按钮不再响应移入：与社科助手 .mode-switch 的交互一致
+     （那边靠 .is-on 排在 :hover 之后取胜，这里用 :not(.is-on) 显式排除，不依赖源码顺序） */
+  .project-detail__mode:not(.is-on):hover {
     background: var(--surface-hover);
     color: var(--foreground);
   }
