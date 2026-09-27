@@ -86,6 +86,7 @@
   gap: var(--spacing-2);
 }
 
+/* 分享者头像：沿用工作台用户区的深底圆形，内里放用户图标而非文字首字 */
 .reader-bar__avatar {
   display: grid;
   width: 28px;
@@ -95,9 +96,11 @@
   border-radius: 50%;
   background: var(--foreground);
   color: var(--on-dark);
-  font-size: var(--font-size-xxs);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1;
+}
+
+.reader-bar__avatar .icon {
+  width: 16px;
+  height: 16px;
 }
 
 .reader-bar__owner-name {
