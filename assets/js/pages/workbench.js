@@ -980,7 +980,10 @@
 
       <dialog class="workbench-search" data-dialog-search aria-labelledby="workbenchSearchTitle">
         <div class="workbench-search__head">
-          <h2 class="workbench-search__title" id="workbenchSearchTitle">搜索对话</h2>
+          <div class="workbench-search__headings">
+            <h2 class="workbench-search__title" id="workbenchSearchTitle">搜索对话</h2>
+            <p class="workbench-search__desc">输入关键词查找当前工作台中的会话</p>
+          </div>
           <button class="workbench-search__close" type="button" data-dialog-search-close aria-label="关闭搜索">
             <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
               <path d="M18 6 6 18"></path>
@@ -988,7 +991,13 @@
             </svg>
           </button>
         </div>
-        <input class="workbench-search__input" type="search" data-dialog-search-input placeholder="输入会话标题搜索" aria-label="输入会话标题搜索">
+        <label class="workbench-search__field">
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+          <input class="workbench-search__input" type="search" data-dialog-search-input placeholder="输入会话标题搜索" aria-label="输入会话标题搜索" autocomplete="off">
+        </label>
         <div class="workbench-search__list" data-dialog-search-list></div>
       </dialog>
 
@@ -1648,17 +1657,18 @@
   const renderDialogSearch = function (keyword) {
     if (!dialogSearchList || !dialogList) return;
     const word = (keyword || "").trim().toLowerCase();
-    const titles = Array.prototype.map.call(
+    /* 带上当前会话的选中态，搜索结果里保留同一标记 */
+    const entries = Array.prototype.map.call(
       dialogList.querySelectorAll(".workbench-dialog__title"),
       function (title) {
-        return title.textContent.trim();
+        return { name: title.textContent.trim(), active: title.classList.contains("is-active") };
       }
     );
     const matched = word
-      ? titles.filter(function (title) {
-          return title.toLowerCase().indexOf(word) !== -1;
+      ? entries.filter(function (entry) {
+          return entry.name.toLowerCase().indexOf(word) !== -1;
         })
-      : titles;
+      : entries;
 
     dialogSearchList.textContent = "";
     if (!matched.length) {
@@ -1668,11 +1678,12 @@
       dialogSearchList.appendChild(empty);
       return;
     }
-    matched.forEach(function (title) {
+    matched.forEach(function (entry) {
       const item = document.createElement("button");
       item.type = "button";
       item.className = "workbench-search__item";
-      item.textContent = title;
+      if (entry.active) item.classList.add("is-active");
+      item.textContent = entry.name;
       dialogSearchList.appendChild(item);
     });
   };

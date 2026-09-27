@@ -1337,9 +1337,10 @@
   box-shadow: 0 0 0 3px var(--accent);
 }
 
-/* 会话搜索弹窗：输入框 + 结果列表（默认露出 5 条，超出滚动且不隐藏滚动条） */
+/* 会话搜索弹窗：标题 + 说明 + 带图标输入框 + 分隔线列表
+   尺寸按设计稿：宽 520px、内边距 28px、输入框 44px、行高 45px（默认露出 5 条） */
 .workbench-search {
-  width: min(90vw, 340px);
+  width: min(calc(100vw - 32px), 32.5rem);
   padding: var(--modal-pad);
   border: 1px solid var(--border);
   border-radius: var(--radius-modal);
@@ -1354,9 +1355,10 @@
 
 .workbench-search__head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: var(--modal-head-gap);
-  margin-bottom: 10px;
+  margin-bottom: var(--spacing-5);
 }
 
 .workbench-search__title {
@@ -1365,11 +1367,17 @@
   font-weight: var(--font-weight-semibold);
 }
 
+.workbench-search__desc {
+  margin: var(--spacing-1) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xxs);
+}
+
 .workbench-search__close {
   display: grid;
-  width: 24px;
-  height: 24px;
-  margin-left: auto;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
   place-items: center;
   border-radius: var(--radius-sm);
   color: var(--muted-foreground);
@@ -1381,19 +1389,36 @@
 }
 
 .workbench-search__close .workbench-icon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
+}
+
+/* 输入框：左侧内嵌放大镜 */
+.workbench-search__field {
+  position: relative;
+  display: block;
+}
+
+.workbench-search__field > .workbench-icon {
+  position: absolute;
+  top: 50%;
+  left: var(--spacing-3);
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .workbench-search__input {
   width: 100%;
-  min-height: 36px;
-  padding: 0 10px;
+  min-height: 2.75rem;
+  padding: 0 var(--spacing-3) 0 2.375rem;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--modal-surface);
   color: var(--foreground);
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   transition:
     border-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
@@ -1407,8 +1432,8 @@
 }
 
 .workbench-search__list {
-  max-height: 180px; /* 36px × 5 条 */
-  margin-top: 8px;
+  max-height: 225px; /* 45px × 5 条 */
+  margin-top: var(--spacing-3);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -1416,12 +1441,23 @@
 .workbench-search__item {
   display: block;
   width: 100%;
-  min-height: 36px;
-  padding: 0 8px;
-  border-radius: var(--radius-sm);
-  color: var(--foreground);
-  font-size: 13px;
+  min-height: 45px;
+  padding: 0 var(--spacing-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
   text-align: left;
+}
+
+.workbench-search__item:last-child {
+  border-bottom: 0;
+}
+
+/* 当前会话：与侧栏一致的选中态（浅橙底 + 强调色文字） */
+.workbench-search__item.is-active {
+  background: var(--accent-soft);
+  color: var(--accent-active);
+  font-weight: var(--font-weight-medium);
 }
 
 .workbench-search__item:hover {
@@ -1429,9 +1465,9 @@
 }
 
 .workbench-search__empty {
-  margin: 12px 0;
+  margin: var(--spacing-5) 0;
   color: var(--muted-foreground);
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   text-align: center;
 }
 
