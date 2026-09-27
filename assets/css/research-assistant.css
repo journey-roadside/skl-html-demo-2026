@@ -870,6 +870,11 @@
   padding: 10px 12px 0;
 }
 
+/* 没有附件时不占位，否则空行会把输入框顶下来 10px */
+.attachment-row:empty {
+  display: none;
+}
+
 .attachment-chip {
   display: inline-flex;
   min-height: 30px;
