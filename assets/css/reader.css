@@ -145,6 +145,8 @@
 .reader-content {
   flex: 1;
   overflow-y: auto;
+  /* 深色底衬托白色纸张；半透明是叠在页面底色之上的结果 */
+  background: var(--reader-backdrop);
   padding: var(--spacing-8) var(--spacing-6) var(--spacing-12);
 }
 

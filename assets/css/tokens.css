@@ -118,6 +118,9 @@
   --shadow-modal: 0 24px 80px rgba(31, 35, 41, 0.24);
   --shadow-toast: 0 10px 30px rgba(31, 35, 41, 0.2);
 
+  /* 文件查看页内容区底色：白色纸张需要深底衬托，design-system 未覆盖此场景 */
+  --reader-backdrop: rgba(0, 0, 0, 0.5);
+
   /* Modal：全站弹窗统一的框，取值以 design-system 为准
      （DESIGN.md §4.6：内边距 28px、圆角 24px、遮罩 rgba(31,35,41,.45)、阴影 --shadow-modal）
      圆角复用 --radius-modal；各页按角色自定宽度 */
