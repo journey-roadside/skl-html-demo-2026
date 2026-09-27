@@ -1,0 +1,132 @@
+/* ============ 文件查看页（pages/file-viewer.html） ============
+   上下结构：顶部工具条 + 下方内容栏；不挂工作台壳层，故样式自成一页 */
+
+.file-viewer-body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  /* 底色用 --surface，白色纸张才浮得起来 */
+  background: var(--surface);
+}
+
+.file-viewer-bar {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-6);
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+
+.file-viewer-bar__file {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.file-viewer-bar__name {
+  overflow: hidden;
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-viewer-bar__type {
+  flex: 0 0 auto;
+}
+
+.file-viewer-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: auto;
+}
+
+.file-viewer-action {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.file-viewer-action .icon {
+  width: 17px;
+  height: 17px;
+}
+
+@media (hover: hover) {
+  .file-viewer-action:hover {
+    border-color: var(--border);
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+}
+
+.file-viewer-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-8) var(--spacing-6) var(--spacing-12);
+}
+
+.file-viewer-sheet {
+  max-width: 52rem;
+  margin-inline: auto;
+  padding: var(--spacing-12) var(--spacing-10);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+}
+
+.file-viewer-sheet__title {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.file-viewer-sheet__meta {
+  margin: var(--spacing-3) 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-xxs);
+}
+
+.file-viewer-sheet h3 {
+  margin: var(--spacing-8) 0 0;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+.file-viewer-sheet p {
+  margin: var(--spacing-3) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.9;
+}
+
+@media (max-width: 575.98px) {
+  .file-viewer-bar {
+    padding-inline: var(--spacing-4);
+  }
+
+  .file-viewer-content {
+    padding: var(--spacing-4) var(--spacing-4) var(--spacing-8);
+  }
+
+  .file-viewer-sheet {
+    padding: var(--spacing-6) var(--spacing-5);
+  }
+}
