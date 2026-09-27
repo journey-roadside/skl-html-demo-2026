@@ -1251,8 +1251,8 @@
   cursor: default;
 }
 
-/* 左侧「删除」用选中态强调色（与勾选圈同色），并带上选中数量 */
-.workbench-dialog-manage-actions button:first-child:not(:disabled) {
+/* 「删除」用选中态强调色（与勾选圈同色），并带上选中数量；「归档」保持次级色 */
+.workbench-dialog-manage-actions [data-dialog-manage-delete]:not(:disabled) {
   color: var(--accent-active);
 }
 

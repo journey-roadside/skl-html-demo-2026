@@ -594,13 +594,6 @@
                     <path d="M13 18h8"></path>
                   </svg>
                 </button>
-                <button class="workbench-section__action workbench-dialog-manage-only" type="button" data-summary-action data-dialog-manage-archive aria-label="归档选中对话">
-                  <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect width="20" height="5" x="2" y="3" rx="1"></rect>
-                    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"></path>
-                    <path d="M10 12h4"></path>
-                  </svg>
-                </button>
                 <button class="workbench-section__action workbench-dialog-manage-only" type="button" data-summary-action data-dialog-manage-exit aria-label="取消管理">
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
                     <path d="M18 6 6 18"></path>
@@ -852,6 +845,14 @@
       </div>
 
       <div class="workbench-dialog-manage-actions" data-dialog-manage-actions hidden>
+        <button type="button" data-dialog-manage-archive disabled>
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect width="20" height="5" x="2" y="3" rx="1"></rect>
+            <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"></path>
+            <path d="M10 12h4"></path>
+          </svg>
+          <span>归档</span>
+        </button>
         <button type="button" data-dialog-manage-delete disabled>
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M3 6h18"></path>
@@ -1338,6 +1339,7 @@
   const dialogManageActions = document.querySelector("[data-dialog-manage-actions]");
   const dialogManageToggle = document.querySelector("[data-dialog-manage-toggle]");
   const dialogManageDelete = document.querySelector("[data-dialog-manage-delete]");
+  const dialogManageArchive = document.querySelector("[data-dialog-manage-archive]");
   const dialogConfirm = document.querySelector("[data-dialog-confirm]");
   const dialogConfirmTitle = document.querySelector("[data-dialog-confirm-title]");
   const dialogConfirmDesc = document.querySelector("[data-dialog-confirm-desc]");
@@ -1554,6 +1556,7 @@
     /* 计数显示在「删除」文字旁边；未选中时不显示数字 */
     if (dialogManageCount) dialogManageCount.textContent = count ? String(count) : "";
     if (dialogManageDelete) dialogManageDelete.disabled = count === 0;
+    if (dialogManageArchive) dialogManageArchive.disabled = count === 0;
   };
 
   const setDialogManageMode = function (open) {
@@ -1615,8 +1618,8 @@
     runBatchDialogAction("delete");
   });
 
-  /* 顶部操作栏（管理态）的归档：批量归档选中对话 */
-  document.querySelector("[data-dialog-manage-archive]")?.addEventListener("click", function () {
+  /* 底部操作条的归档：批量归档选中对话（与「删除」同行，位于其左侧） */
+  dialogManageArchive?.addEventListener("click", function () {
     runBatchDialogAction("archive");
   });
 
