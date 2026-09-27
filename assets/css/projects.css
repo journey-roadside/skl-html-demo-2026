@@ -359,10 +359,13 @@
     box-shadow var(--duration-fast) var(--ease-out);
 }
 
+/* 聚焦态与「社科助手」输入框一致：
+   .research-assistant-page .composer-shell:has(.composer-textarea:focus)
+   → 边框实心 --accent-strong，外环 3px --accent */
 .projects-dialog__input:focus-visible {
   outline: 0;
-  border-color: color-mix(in srgb, var(--accent-strong) 40%, transparent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 .projects-dialog__actions {
