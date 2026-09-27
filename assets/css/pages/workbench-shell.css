@@ -1073,7 +1073,9 @@
   height: 12px;
   transform: translateY(-50%);
   opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease-out);
+  /* 这里刻意不写过渡：骨架绝对定位、绘制在数值之上，
+     若让它慢慢淡出，底下已经显形的数值会被米色罩住 150ms，
+     看上去就是「分值的颜色在变」。消失必须是瞬时的 */
 }
 
 .workbench-user-menu__points.is-loading strong {
@@ -1083,6 +1085,8 @@
 
 .workbench-user-menu__points.is-loading .skeleton {
   opacity: 1;
+  /* 只在出现时淡入——此刻底下的数值还是隐藏的，不会串色 */
+  transition: opacity var(--duration-fast) var(--ease-out);
 }
 
 .workbench-user-menu__group strong {
