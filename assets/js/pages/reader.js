@@ -55,4 +55,27 @@
   if (ownerNode) ownerNode.textContent = ownerName;
   if (timeNode) timeNode.textContent = normalizeTime(params.get("time"));
   document.title = fileName + " · 湖北社科数据信息联盟";
+
+  /* 回到顶部：滚到第二页（第二张纸顶到滚动区顶部）才出现。
+     用 rect 差值判断而非 offsetTop —— 后者相对 offsetParent，布局一改就失效 */
+  const content = document.querySelector(".reader-content");
+  const toTop = document.querySelector("[data-reader-to-top]");
+  const pages = content ? content.querySelectorAll(".reader-sheet") : [];
+
+  if (content && toTop && pages.length > 1) {
+    const isPastFirstPage = function () {
+      const contentTop = content.getBoundingClientRect().top;
+      return pages[1].getBoundingClientRect().top <= contentTop + 1;
+    };
+    const syncToTop = function () {
+      toTop.classList.toggle("is-visible", isPastFirstPage());
+    };
+
+    content.addEventListener("scroll", syncToTop, { passive: true });
+    toTop.addEventListener("click", function () {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      content.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    });
+    syncToTop();
+  }
 })();

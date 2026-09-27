@@ -196,6 +196,45 @@
   line-height: 1.9;
 }
 
+/* 回到顶部：深底上的白色圆钮，用 visibility 而非只降透明度——
+   隐藏时要同时退出 Tab 顺序与无障碍树 */
+.reader-to-top {
+  position: fixed;
+  z-index: 20;
+  right: var(--spacing-6);
+  bottom: var(--spacing-6);
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-hover);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    visibility var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.reader-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.reader-to-top .icon {
+  width: 18px;
+  height: 18px;
+}
+
+@media (hover: hover) {
+  .reader-to-top:hover {
+    color: var(--foreground);
+  }
+}
+
 @media (max-width: 575.98px) {
   .reader-bar {
     padding-inline: var(--spacing-4);
