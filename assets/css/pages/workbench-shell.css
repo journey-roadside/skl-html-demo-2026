@@ -1394,10 +1394,15 @@
   background: var(--modal-surface);
   color: var(--foreground);
   font-size: 13px;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
+/* 聚焦态与重命名输入框一致：边框实心 --accent-strong，外环 3px --accent */
 .workbench-search__input:focus {
-  border-color: var(--primary);
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
   outline: none;
 }
 

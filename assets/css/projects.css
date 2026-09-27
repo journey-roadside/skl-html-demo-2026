@@ -170,9 +170,12 @@
   color: var(--text-secondary);
 }
 
+/* 聚焦态与「社科助手」输入框一致：
+   .research-assistant-page .composer-shell:has(.composer-textarea:focus)
+   → 边框实心 --accent-strong，外环 3px --accent */
 .projects-search:focus-within {
-  border-color: color-mix(in srgb, var(--accent-strong) 40%, transparent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 
@@ -721,9 +724,10 @@
     box-shadow var(--duration-fast) var(--ease-out);
 }
 
+/* 提问输入区：与「社科助手」输入框同一套聚焦样式（卡片阴影为其静止态自带） */
 .project-detail__composer:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-card);
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent), var(--shadow-card);
 }
 
 .project-detail__textarea {

@@ -89,13 +89,17 @@
   background: var(--card);
   color: var(--foreground);
   font-size: var(--font-size-xs);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
+/* 聚焦态与重命名输入框一致：边框实心 --accent-strong，外环 3px --accent */
 .knowledge-search input:focus,
 .knowledge-doc-search input:focus {
   outline: none;
   border-color: var(--accent-strong);
-  box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-card);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 .knowledge-header-actions .btn {
