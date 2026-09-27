@@ -13,8 +13,9 @@
 | V4 | 2026-09-16 | 重构工作台、我的知识、共享社区、社科智审和精读工具；恢复社科智联官网首页并接入产品门户 |
 | V4.1 | 2026-09-16 | 20260916-调整项目结构并重构门户首页：社科智联官网作为根 `index.html`，产品门户和工作台迁入 `pages/`，补齐资源并统一页面入口与相对路径 |
 | V5 | 2026-09-23 | 大重构：定位升级为「湖北社科数据信息联盟」官网首页；重写门户首页（双智能体入口 / 研究能力 / 联盟共建）；新增智能体广场、知识联盟、项目列表；引入统一工作台壳（workbench-shell / workbench.js），页面导航收归前端壳；设计令牌 tokens.css 扩展重写 |
+| V5.1 | 2026-09-27 | 项目详情增强：对话项三点菜单（移出项目 / 删除）、项目资料支持本地上传与删除、资料项改双行布局并隐藏扩展名、列表一屏 5 项滚动、格式筛选新增「全部」默认项 |
 
-当前根目录以 V5 为主版本：
+当前根目录以 V5.1 为主版本：
 
 - `index.html` 为「湖北社科数据信息联盟」官网首页。
 - `pages/knowledge-alliance.html` 为知识联盟（工作台底座）。
@@ -41,7 +42,7 @@ python -m http.server 8080
 | `index.html` | 湖北社科数据信息联盟官网 | 品牌首屏、最新动态、双智能体入口（荆楚智研 / 荆楚智审）、研究能力、联盟共建、关于与二维码 |
 | `pages/knowledge-alliance.html` | 知识联盟（工作台底座） | 共享文件浏览、文件信息、相关文件与共享审核入口 |
 | `pages/agent-square.html` | 智能体广场 | 荆楚智研、荆楚智审双智能体：概述、适用场景、核心能力、使用边界与快速开始（#agent-research / #agent-review 锚点） |
-| `pages/projects.html` | 项目列表 | 课题示例、项目详情、对话、创建 / 重命名项目 |
+| `pages/projects.html` | 项目列表 | 课题示例、项目详情、对话、创建 / 重命名项目；对话项三点菜单（移出项目 / 删除）、项目资料本地上传与删除、格式筛选含「全部」 |
 | `pages/research-assistant.html` | 社科智研工作台 | 用户信息、通用设置、帮助与反馈及政策脉络等研究模块 |
 | `pages/my-knowledge.html` | 我的知识 | 文件上传、重命名、删除与共享审核 |
 
@@ -84,7 +85,6 @@ html-demo/
 │  │  ├─ auth.js               # 登录、注册和退出
 │  │  ├─ portal-home.js        # 官网首页交互
 │  │  ├─ app-shell.js          # 侧栏、设置和快捷键
-│  │  ├─ agent-square.js       # 智能体广场逻辑
 │  │  ├─ knowledge-alliance.js # 知识联盟逻辑
 │  │  ├─ projects.js           # 项目列表逻辑
 │  │  ├─ research-assistant.js # 工作台会话交互
@@ -118,6 +118,7 @@ html-demo/
 - 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`，由 `assets/js/app-shell.js` 管理。
 - 主题设置：`localStorage["sheke-v4-theme"]`，支持浅色、深色和跟随系统，由 `assets/js/v4.js` 管理。
 - 共享收藏：`localStorage["sheke-v4-community-favorites"]`，由共享社区和我的知识共享。
+- 项目资料上传：仅记录文件名、大小和类型并保留在当前会话内存中，刷新后不保留；文件不落盘、不上传服务端。
 - 快捷键：`Ctrl+K` 新建会话，`Ctrl+B` 收起或展开侧栏。
 - 工作台与页面间通过统一外壳（workbench-shell / workbench.js）切换，不显示独立标签页。
 - 未接入的真实功能统一使用 Toast 提示，避免误跳转。
