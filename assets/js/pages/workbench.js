@@ -1064,13 +1064,18 @@
   /* 壳层随页面状态：导航高亮、项目新建入口 */
   const applyShellState = function () {
     const page = (window.location.pathname.split("/").pop() || "").toLowerCase();
+    /* 从其它页面点「设置」跳过来时带 from=来源页：设置是全局入口，
+       导航保持高亮来源页，而不是跳到哪页就显示哪页 */
+    const params = new URLSearchParams(window.location.search);
+    const navPage =
+      params.get("settings") === "1" && params.get("from") ? params.get("from").toLowerCase() : page;
 
     /* 导航项与 rail 上"跳到某页"的入口按当前页高亮；
        收起态的「新建对话」是动作入口（点了开新会话），不给选中态 */
     document
       .querySelectorAll('.workbench-nav__link, .workbench-rail-action[href]:not([href="research-assistant.html"])')
       .forEach(function (link) {
-        const isActive = (link.getAttribute("href") || "").replace("./", "") === page;
+        const isActive = (link.getAttribute("href") || "").replace("./", "") === navPage;
         link.classList.toggle("is-active", isActive);
         if (isActive) {
           link.setAttribute("aria-current", "page");
@@ -1096,11 +1101,12 @@
       if (summary) summary.setAttribute("aria-current", "page");
     }
 
-    /* 设置区块只在社科智研工作台存在（由 v4.js 渲染）：本页没有就跳转过去并由该页打开 */
+    /* 设置区块只在社科智研工作台存在（由 v4.js 渲染）：本页没有就跳转过去并由该页打开，
+       带上 from 让侧栏继续保持当前页的选中态 */
     if (!document.querySelector("[data-settings-view]")) {
       document.querySelectorAll("[data-settings-open]").forEach(function (button) {
         button.addEventListener("click", function () {
-          window.location.href = "./research-assistant.html?settings=1";
+          window.location.href = "./research-assistant.html?settings=1&from=" + encodeURIComponent(page);
         });
       });
     }
