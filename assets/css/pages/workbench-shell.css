@@ -1269,7 +1269,8 @@
   height: 15px;
 }
 
-/* 列表行三点菜单（项目 / 项目内会话 / 会话列表共用） */
+/* 列表行三点菜单（项目 / 项目内会话 / 会话列表共用）
+   视觉参照「我的知识」列表卡片的 .knowledge-card-menu，两处保持一致 */
 .workbench-row-menu {
   display: none;
 }
@@ -1278,12 +1279,12 @@
   position: fixed;
   z-index: 60;
   display: grid;
-  min-width: 132px;
-  gap: 1px;
-  padding: 4px;
+  min-width: 138px;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: var(--background);
+  background: var(--card);
   box-shadow: var(--shadow-hover);
 }
 
@@ -1291,11 +1292,23 @@
   display: flex;
   min-height: 34px;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 var(--spacing-3);
   border-radius: var(--radius-sm);
-  color: var(--foreground);
-  font-size: 13px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xxs);
   text-align: left;
+}
+
+@media (hover: hover) {
+  .workbench-row-menu__item:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+}
+
+/* 删除项用危险色（顺序在 hover 之后，悬停时保持红色） */
+.workbench-row-menu__item[data-row-action="delete"] {
+  color: var(--destructive);
 }
 
 /* 重命名弹窗的输入框 */
