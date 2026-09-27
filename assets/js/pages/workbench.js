@@ -924,7 +924,10 @@
               <path d="M11 11l2 2"></path>
             </svg>
             <span>积分余额</span>
-            <strong>268</strong>
+            <span class="workbench-user-menu__points" data-user-points>
+              <strong>268</strong>
+              <span class="skeleton" aria-hidden="true"></span>
+            </span>
           </button>
           <button type="button" role="menuitem">
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -932,8 +935,10 @@
               <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
             </svg>
             <span>账号中心</span>
-            <svg class="workbench-user-menu__trailing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="m9 18 6-6-6-6"></path>
+            <svg class="workbench-user-menu__trailing workbench-user-menu__trailing--external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 3h6v6"></path>
+              <path d="M10 14 21 3"></path>
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
             </svg>
           </button>
           <button type="button" role="menuitem" data-settings-open>
@@ -1343,6 +1348,9 @@
     updateMessageState();
   }, { once: true });
 
+  const userPoints = document.querySelector("[data-user-points]");
+  let userPointsTimer = 0;
+
   const setUserMenuOpen = function (open, restoreFocus) {
     if (!userTrigger || !userMenu) return;
 
@@ -1351,6 +1359,18 @@
     if (open && messagePanel) {
       messagePanel.hidden = true;
       messageTrigger?.setAttribute("aria-expanded", "false");
+    }
+    /* 每次打开都重跑一次积分加载态 */
+    if (userPoints) {
+      window.clearTimeout(userPointsTimer);
+      if (open) {
+        userPoints.classList.add("is-loading");
+        userPointsTimer = window.setTimeout(function () {
+          userPoints.classList.remove("is-loading");
+        }, 700);
+      } else {
+        userPoints.classList.remove("is-loading");
+      }
     }
     if (restoreFocus) userTrigger.focus({ preventScroll: true });
   };

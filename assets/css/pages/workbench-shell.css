@@ -1020,6 +1020,34 @@
   height: 13px;
 }
 
+/* 积分余额：数值与骨架叠在同一格，打开菜单时先显示骨架再露出数值 */
+.workbench-user-menu__points {
+  position: relative;
+  display: grid;
+  min-width: 2.5rem;
+  justify-items: end;
+}
+
+.workbench-user-menu__points > * {
+  grid-area: 1 / 1;
+}
+
+.workbench-user-menu__points .skeleton {
+  width: 100%;
+  height: 12px;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.workbench-user-menu__points.is-loading strong {
+  /* 用 opacity 而非 visibility：数值始终在无障碍树中可读 */
+  opacity: 0;
+}
+
+.workbench-user-menu__points.is-loading .skeleton {
+  opacity: 1;
+}
+
 .workbench-user-menu__group strong {
   color: var(--foreground);
   font-family: var(--font-mono);
