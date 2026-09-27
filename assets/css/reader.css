@@ -1,19 +1,19 @@
 /* ============ 文件查看页（pages/reader.html） ============
    上下结构：顶部工具条 + 下方内容栏；不挂工作台壳层，故样式自成一页 */
 
+/* 整页锁在视口内：滚动只发生在内容区，顶栏是普通的 flex 首项，天然不随内容滚动 */
 .reader-body {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   flex-direction: column;
+  overflow: hidden;
   /* 底色用 --surface，白色纸张才浮得起来 */
   background: var(--surface);
 }
 
 .reader-bar {
-  position: sticky;
-  z-index: 10;
-  top: 0;
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: var(--spacing-4);
   padding: var(--spacing-3) var(--spacing-6);
@@ -142,17 +142,37 @@
   }
 }
 
+/* 唯一的滚动容器：min-height:0 让它能在 flex 列里收缩并产生内部滚动 */
 .reader-content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   /* 深色底衬托白色纸张；半透明是叠在页面底色之上的结果 */
   background: var(--reader-backdrop);
-  padding: var(--spacing-8) var(--spacing-6) var(--spacing-12);
+  padding: var(--spacing-8) var(--spacing-6) var(--spacing-10);
+}
+
+/* 一页 = 一张纸 + 纸下的页码，模拟 PDF 逐页查看 */
+.reader-page {
+  display: grid;
+  justify-items: center;
+  gap: var(--spacing-3);
+}
+
+.reader-page + .reader-page {
+  margin-top: var(--spacing-8);
+}
+
+.reader-page__label {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: var(--font-size-xxs);
 }
 
 .reader-sheet {
+  width: 100%;
   max-width: 52rem;
-  margin-inline: auto;
+  /* 页高下限：内容少时也是一整页，而不是随内容缩成一条 */
+  min-height: 34rem;
   padding: var(--spacing-12) var(--spacing-10);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -201,6 +221,7 @@
   }
 
   .reader-sheet {
+    min-height: 0;
     padding: var(--spacing-6) var(--spacing-5);
   }
 }
