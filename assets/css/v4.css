@@ -703,22 +703,22 @@
 
 .research-modal-mask {
   position: fixed;
-  z-index: 190;
+  z-index: var(--modal-z-mask);
   inset: 0;
-  background: rgba(31, 35, 41, 0.46);
+  background: var(--modal-backdrop);
   opacity: 0;
   transition: opacity var(--duration-default) var(--ease-out);
 }
 
 .research-modal {
   position: fixed;
-  z-index: 200;
+  z-index: var(--modal-z-box);
   top: 50%;
   left: 50%;
   width: min(460px, calc(100vw - 32px));
   overflow: hidden;
   border-radius: var(--radius-modal);
-  background: var(--card);
+  background: var(--modal-surface);
   box-shadow: var(--shadow-modal);
   opacity: 0;
   transform: translate(-50%, -46%) scale(0.97);
@@ -740,13 +740,13 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--spacing-5);
-  padding: var(--spacing-6) var(--spacing-6) var(--spacing-4);
+  gap: var(--modal-head-gap);
+  padding: var(--modal-pad-head);
   border-bottom: 1px solid var(--border);
 }
 
 .research-modal-head h2 {
-  font-size: var(--font-size-lg);
+  font-size: var(--modal-title-size);
 }
 
 .research-modal-head p {
@@ -768,7 +768,7 @@
 }}
 
 .research-modal-body {
-  padding: var(--spacing-5) var(--spacing-6);
+  padding: var(--modal-pad-body);
 }
 
 .research-modal-field {
@@ -805,7 +805,7 @@
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-3);
-  padding: var(--spacing-4) var(--spacing-6) var(--spacing-6);
+  padding: var(--modal-pad-actions);
   border-top: 1px solid var(--border);
 }
 
@@ -1908,13 +1908,7 @@
 
 .dark .user-menu,
 .dark .app-sidebar-message-center,
-.dark .history-search-modal,
-.dark .history-dialog,
-.dark .settings-modal,
-.dark .feedback-modal,
-.dark .research-modal,
 .dark .research-item-menu,
-.dark .auth-modal,
 .dark .settings-select-menu {
   border-color: var(--border);
   background: var(--card);
@@ -2133,15 +2127,4 @@
 .dark .settings-profile-avatar {
   background: var(--terminal-surface);
   color: var(--terminal-text);
-}
-
-.dark .auth-mask,
-.dark .settings-mask,
-.dark .feedback-mask,
-.dark .history-search-mask,
-.dark .history-dialog-mask,
-.dark .research-modal-mask {
-  background: rgba(0, 0, 0, 0.72);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
 }

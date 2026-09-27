@@ -359,22 +359,22 @@
 
 .auth-mask {
   position: fixed;
-  z-index: 90;
+  z-index: var(--modal-z-mask);
   inset: 0;
-  background: rgba(31, 35, 41, 0.46);
+  background: var(--modal-backdrop);
   opacity: 0;
   transition: opacity var(--duration-default) var(--ease-out);
 }
 
 .auth-modal {
   position: fixed;
-  z-index: 100;
+  z-index: var(--modal-z-box);
   top: 50%;
   left: 50%;
   width: min(440px, calc(100vw - 32px));
-  padding: var(--spacing-8);
+  padding: var(--modal-pad);
   border-radius: var(--radius-modal);
-  background: var(--card);
+  background: var(--modal-surface);
   box-shadow: var(--shadow-modal);
   opacity: 0;
   transform: translate(-50%, -46%) scale(0.97);
@@ -400,8 +400,8 @@
 }
 
 .auth-title {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
+  font-size: var(--modal-title-size);
+  font-weight: var(--font-weight-semibold);
 }
 
 .auth-subtitle {
@@ -699,7 +699,7 @@
 .auth-modal {
   max-height: calc(100vh - 28px);
   overflow-y: auto;
-  padding: var(--spacing-6) var(--spacing-5);
+  padding: var(--modal-pad) var(--spacing-5);
 }
 
 .footer-grid {
@@ -745,7 +745,6 @@
   .auth-modal {
     max-height: none;
     overflow-y: visible;
-    padding: 28px;
   }
 
   .footer-grid {

@@ -137,6 +137,7 @@ html-demo/
 - `pages/` 页面引用资源使用 `../assets/`，返回官网首页使用 `../index.html`。
 - 社科智研工作台入口为 `pages/research-assistant.html`，业务页面中的"新建会话"和"设置"均指向该文件。
 - 颜色、圆角、阴影、动效和风险状态优先使用 `tokens.css` 变量，不直接写重复魔法值。
+- 弹窗统一由 `tokens.css` 的 `--modal-*` 令牌驱动：表面色 `--modal-surface`、遮罩 `--modal-backdrop`、层级 `--modal-z-mask` / `--modal-z-box`、头/体/尾内边距 `--modal-pad-head` / `--modal-pad-body` / `--modal-pad-actions`（单层内容区用 `--modal-pad`）、标题字号 `--modal-title-size`、头部间距 `--modal-head-gap`；圆角与阴影复用 `--radius-modal` / `--shadow-modal`。新增弹窗不要写死 `#fff`，也不要自造遮罩色或层级，否则深色模式会失效。
 - 图标通过 `data-icon="name"` 声明，由 `icons.js` 注入，不在页面内联 SVG。
 - 页面级样式和脚本使用 `assets/css/<page>.css`、`assets/js/<page>.js`，公共逻辑不要复制到页面脚本。
 - 侧栏与用户区结构只在 `assets/js/pages/workbench.js` 的 `SHELL_SIDEBAR` / `SHELL_USER` 模板中维护，页面里不要复制这段结构；页面间的壳层差异由 `applyShellState()` 按路径推导，不要写回页面。

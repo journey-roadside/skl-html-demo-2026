@@ -118,6 +118,19 @@
   --shadow-modal: 0 24px 80px rgba(31, 35, 41, 0.24);
   --shadow-toast: 0 10px 30px rgba(31, 35, 41, 0.2);
 
+  /* Modal：全站弹窗统一的框（表面 / 遮罩 / 层级 / 内边距 / 标题）
+     圆角复用 --radius-modal，阴影复用 --shadow-modal；各页按角色自定宽度 */
+  --modal-surface: var(--card);
+  --modal-backdrop: var(--overlay);
+  --modal-z-mask: 190;
+  --modal-z-box: 200;
+  --modal-pad: var(--spacing-6);
+  --modal-pad-head: var(--spacing-6) var(--spacing-6) var(--spacing-4);
+  --modal-pad-body: var(--spacing-4) var(--spacing-6);
+  --modal-pad-actions: var(--spacing-4) var(--spacing-6) var(--spacing-6);
+  --modal-head-gap: var(--spacing-5);
+  --modal-title-size: var(--font-size-lg);
+
   /* Motion */
   --duration-fast: 150ms;
   --duration-default: 200ms;

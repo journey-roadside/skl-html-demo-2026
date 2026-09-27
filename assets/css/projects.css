@@ -309,22 +309,22 @@
   width: min(calc(100% - var(--spacing-8)), 28rem);
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  background: var(--card);
+  border-radius: var(--radius-modal);
+  background: var(--modal-surface);
   color: var(--foreground);
   box-shadow: var(--shadow-modal);
 }
 
 .projects-dialog::backdrop {
-  background: var(--overlay);
+  background: var(--modal-backdrop);
 }
 
 .projects-dialog__form {
-  padding: var(--spacing-6);
+  padding: var(--modal-pad);
 }
 
 .projects-dialog__title {
-  font-size: var(--font-size-lg);
+  font-size: var(--modal-title-size);
   font-weight: var(--font-weight-semibold);
 }
 

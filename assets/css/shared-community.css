@@ -821,23 +821,23 @@
 
 .community-modal-mask {
   position: fixed;
-  z-index: 190;
+  z-index: var(--modal-z-mask);
   inset: 0;
-  background: rgba(31, 35, 41, 0.5);
+  background: var(--modal-backdrop);
   opacity: 0;
   transition: opacity var(--duration-default) var(--ease-out);
 }
 
 .community-modal {
   position: fixed;
-  z-index: 200;
+  z-index: var(--modal-z-box);
   top: 50%;
   left: 50%;
   width: min(560px, calc(100vw - 32px));
   max-height: calc(100vh - 40px);
   overflow-y: auto;
   border-radius: var(--radius-modal);
-  background: var(--card);
+  background: var(--modal-surface);
   box-shadow: var(--shadow-modal);
   opacity: 0;
   transform: translate(-50%, -46%) scale(0.97);
@@ -859,13 +859,13 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--spacing-5);
-  padding: var(--spacing-6) var(--spacing-8) var(--spacing-5);
+  gap: var(--modal-head-gap);
+  padding: var(--modal-pad-head);
   border-bottom: 1px solid var(--border);
 }
 
 .community-modal-head h2 {
-  font-size: var(--font-size-xl);
+  font-size: var(--modal-title-size);
 }
 
 .community-modal-head p {
@@ -889,7 +889,7 @@
 .community-share-form {
   display: grid;
   gap: var(--spacing-4);
-  padding: var(--spacing-6) var(--spacing-8) var(--spacing-8);
+  padding: var(--modal-pad-body);
 }
 
 .community-source-field {
@@ -992,8 +992,8 @@
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-3);
-  margin: var(--spacing-1) calc(-1 * var(--spacing-8)) calc(-1 * var(--spacing-8));
-  padding: var(--spacing-5) var(--spacing-8) var(--spacing-6);
+  margin: var(--spacing-1) calc(-1 * var(--spacing-6)) calc(-1 * var(--spacing-4));
+  padding: var(--modal-pad-actions);
   border-top: 1px solid var(--border);
 }
 
@@ -1133,7 +1133,7 @@
     left: 0;
     width: 100%;
     max-height: 88vh;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-radius: var(--radius-modal) var(--radius-modal) 0 0;
     transform: translateY(100%);
   }
 
@@ -1153,7 +1153,6 @@
 
 .dark .community-card,
 .dark .community-select-list,
-.dark .community-modal,
 .dark .community-related-card {
   border-color: var(--border);
   background: var(--card);
@@ -1167,12 +1166,6 @@
   border-color: var(--border-strong);
   background: var(--surface);
   color: var(--foreground);
-}
-
-.dark .community-modal-mask {
-  background: rgba(0, 0, 0, 0.72);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
 }
 
 .dark .community-scroll {

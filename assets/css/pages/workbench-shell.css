@@ -1306,7 +1306,7 @@
   padding: 0 10px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  background: #fff;
+  background: var(--modal-surface);
   color: var(--foreground);
   font-size: 13px;
 }
@@ -1319,28 +1319,28 @@
 /* 会话搜索弹窗：输入框 + 结果列表（默认露出 5 条，超出滚动且不隐藏滚动条） */
 .workbench-search {
   width: min(90vw, 340px);
-  padding: 16px;
+  padding: var(--modal-pad);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: #fff;
+  border-radius: var(--radius-modal);
+  background: var(--modal-surface);
   box-shadow: var(--shadow-modal);
   color: var(--foreground);
 }
 
 .workbench-search::backdrop {
-  background: var(--overlay);
+  background: var(--modal-backdrop);
 }
 
 .workbench-search__head {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--modal-head-gap);
   margin-bottom: 10px;
 }
 
 .workbench-search__title {
   margin: 0;
-  font-size: 15px;
+  font-size: var(--modal-title-size);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -1370,7 +1370,7 @@
   padding: 0 10px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  background: #fff;
+  background: var(--modal-surface);
   color: var(--foreground);
   font-size: 13px;
 }
@@ -1412,21 +1412,21 @@
 /* 删除二次确认弹窗 */
 .workbench-confirm {
   width: min(90vw, 320px);
-  padding: 20px;
+  padding: var(--modal-pad);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: #fff;
+  border-radius: var(--radius-modal);
+  background: var(--modal-surface);
   box-shadow: var(--shadow-modal);
   color: var(--foreground);
 }
 
 .workbench-confirm::backdrop {
-  background: var(--overlay);
+  background: var(--modal-backdrop);
 }
 
 .workbench-confirm__title {
   margin: 0 0 8px;
-  font-size: 15px;
+  font-size: var(--modal-title-size);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -1448,7 +1448,7 @@
   padding: 0 14px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  background: #fff;
+  background: var(--modal-surface);
   color: var(--foreground);
   font-size: 13px;
 }

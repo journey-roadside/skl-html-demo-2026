@@ -238,15 +238,6 @@ section[id] {
   background: var(--foreground);
 }
 
-.portal-drawer-mask {
-  position: fixed;
-  z-index: 70;
-  inset: 0;
-  background: rgba(20, 20, 20, 0.4);
-  -webkit-backdrop-filter: blur(3px);
-  backdrop-filter: blur(3px);
-}
-
 .portal-drawer {
   position: fixed;
   z-index: 71;
@@ -1447,37 +1438,6 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 20px); }
 .footer-divider { display: inline-block; margin: 0 12px; color: rgba(255, 255, 255, .35); }
 .footer-bottom a { color: inherit; transition: color var(--dur-fast) var(--ease-out); }
 .footer-bottom a:hover { color: #fff; }
-
-/* ============ 登录弹窗 ============ */
-.modal-mask { position: fixed; inset: 0; z-index: 80; background: rgba(31, 35, 41, .45); opacity: 0; transition: opacity var(--dur-mid) var(--ease-out); }
-.modal-mask.is-visible { opacity: 1; }
-.modal {
-  position: fixed; z-index: 90; top: 50%; left: 50%;
-  width: min(440px, calc(100vw - 32px));
-  background: #fff; border-radius: var(--radius-modal);
-  padding: 28px; box-shadow: var(--shadow-modal);
-  opacity: 0; transform: translate(-50%, -46%) scale(.97);
-  transition: opacity var(--dur-mid) var(--ease-out), transform var(--dur-slow) var(--ease-out);
-}
-.modal.is-open { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-.modal-head h3 { font-size: 20px; font-weight: 600; }
-.modal-close { width: 32px; height: 32px; border-radius: 50%; font-size: 20px; color: var(--text-2); display: grid; place-items: center; }
-.modal-close:hover { background: var(--surface-hover); color: var(--text); }
-.modal-tabs { display: flex; gap: 6px; background: var(--surface); padding: 4px; border-radius: 999px; margin: 18px 0 22px; }
-.tab { flex: 1; height: 34px; border-radius: 999px; font-size: 14px; color: var(--text-2); transition: all var(--dur-fast) var(--ease-out); }
-.tab.is-active { background: #fff; color: var(--text); font-weight: 500; box-shadow: 0 1px 4px rgba(31, 35, 41, .08); }
-.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-.field > span { font-size: 13px; font-weight: 500; color: var(--text-2); }
-.field input {
-  height: 44px; padding: 0 14px; font: 15px var(--body); color: var(--text);
-  border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: #fff;
-  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
-}
-.field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.field-row { display: flex; gap: 10px; }
-.field-row input { flex: 1; min-width: 0; }
-.modal-hint { margin-top: 14px; font-size: 12px; color: var(--muted); text-align: center; }
 
 /* ============ Toast ============ */
 .toast {
