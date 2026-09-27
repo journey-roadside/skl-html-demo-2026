@@ -649,11 +649,19 @@ body.app-body {
   width: 42px;
   height: 24px;
   align-items: center;
+  cursor: pointer;
 }
 
 .settings-switch input {
   position: absolute;
   opacity: 0;
+}
+
+/* 原生 checkbox 是 opacity:0 隐藏的，焦点环必须画在自绘轨道上，
+   否则键盘操作时没有任何可见指示 */
+.settings-switch input:focus-visible + span {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 .settings-switch span {
