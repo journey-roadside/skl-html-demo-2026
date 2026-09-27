@@ -1397,10 +1397,11 @@
   });
 
   /* 列表行三点菜单：项目（一级）/ 项目内会话（二级）/ 会话列表三类共用 */
+  /* 破坏性操作（删除）一律排在最后，避免误触 */
   const ROW_MENU_ITEMS = {
     project: [["rename", "重命名"], ["delete", "删除"]],
-    child: [["rename", "重命名"], ["delete", "删除"], ["remove", "移出项目"]],
-    dialog: [["rename", "重命名"], ["delete", "删除"], ["archive", "归档"]]
+    child: [["rename", "重命名"], ["remove", "移出项目"], ["delete", "删除"]],
+    dialog: [["rename", "重命名"], ["archive", "归档"], ["delete", "删除"]]
   };
 
   const rowKind = function (button) {
