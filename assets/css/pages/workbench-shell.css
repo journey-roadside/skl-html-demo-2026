@@ -1005,12 +1005,12 @@
 }
 
 .workbench-user-menu__icon,
-.workbench-user-menu__arrow {
+.workbench-user-menu__trailing {
   width: 16px;
   height: 16px;
 }
 
-.workbench-user-menu__arrow {
+.workbench-user-menu__trailing {
   color: var(--muted-foreground);
 }
 

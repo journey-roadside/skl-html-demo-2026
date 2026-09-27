@@ -932,7 +932,7 @@
               <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
             </svg>
             <span>账号中心</span>
-            <svg class="workbench-user-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="workbench-user-menu__trailing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="m9 18 6-6-6-6"></path>
             </svg>
           </button>
@@ -949,6 +949,9 @@
               <path d="M17 16h6"></path>
             </svg>
             <span>设置</span>
+            <svg class="workbench-user-menu__trailing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m9 18 6-6-6-6"></path>
+            </svg>
           </button>
         </div>
         <div class="workbench-user-menu__divider" aria-hidden="true"></div>
@@ -961,6 +964,11 @@
               <path d="M12 2a15 15 0 0 0 0 20"></path>
             </svg>
             <span>官网</span>
+            <svg class="workbench-user-menu__trailing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 3h6v6"></path>
+              <path d="M10 14 21 3"></path>
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            </svg>
           </a>
           <button type="button" role="menuitem">
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -969,6 +977,11 @@
               <path d="M12 17h.01"></path>
             </svg>
             <span>帮助中心</span>
+            <svg class="workbench-user-menu__trailing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 3h6v6"></path>
+              <path d="M10 14 21 3"></path>
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            </svg>
           </button>
           <button type="button" role="menuitem" data-feedback-open>
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
