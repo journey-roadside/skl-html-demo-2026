@@ -1328,10 +1328,13 @@
     box-shadow var(--duration-fast) var(--ease-out);
 }
 
+/* 聚焦态与「社科助手」输入框一致：
+   .research-assistant-page .composer-shell:has(.composer-textarea:focus)
+   → 边框实心 --accent-strong，外环 3px --accent */
 .workbench-prompt__input:focus {
   outline: 0;
-  border-color: color-mix(in srgb, var(--accent-strong) 40%, transparent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 /* 会话搜索弹窗：输入框 + 结果列表（默认露出 5 条，超出滚动且不隐藏滚动条） */
