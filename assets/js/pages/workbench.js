@@ -964,7 +964,7 @@
               <path d="M12 2a15 15 0 0 0 0 20"></path>
             </svg>
             <span>官网</span>
-            <svg class="workbench-user-menu__trailing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="workbench-user-menu__trailing workbench-user-menu__trailing--external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M15 3h6v6"></path>
               <path d="M10 14 21 3"></path>
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -977,7 +977,7 @@
               <path d="M12 17h.01"></path>
             </svg>
             <span>帮助中心</span>
-            <svg class="workbench-user-menu__trailing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="workbench-user-menu__trailing workbench-user-menu__trailing--external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M15 3h6v6"></path>
               <path d="M10 14 21 3"></path>
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>

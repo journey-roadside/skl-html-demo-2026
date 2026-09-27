@@ -1014,6 +1014,12 @@
   color: var(--muted-foreground);
 }
 
+/* external-link 的墨迹占满 18×18 视框，同尺寸下比箭头（墨迹 6×12）重约 4 倍，单独收小 */
+.workbench-user-menu__trailing--external {
+  width: 13px;
+  height: 13px;
+}
+
 .workbench-user-menu__group strong {
   color: var(--foreground);
   font-family: var(--font-mono);
