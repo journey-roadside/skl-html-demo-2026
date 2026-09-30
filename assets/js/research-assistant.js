@@ -8,6 +8,8 @@
     managingHistory: false,
     selectedAgent: null,
     selectedHistoryItems: new Set(),
+    /* 未登录时点发送：先弹登录窗，登录成功后接着把这条消息发出去 */
+    pendingSubmit: false,
   };
   const NEW_CHAT_PLACEHOLDER = "输入你的社科研究问题，或上传资料开始研究";
   const CONTINUE_CHAT_PLACEHOLDER = "继续追问，或上传资料作为研究依据";
@@ -111,8 +113,6 @@
     syncAgentControls();
     if (document.querySelector(".new-chat")) createNewConversation({ animate });
   }
-  let feedbackMask;
-  let feedbackModal;
   let historySearchMask;
   let historySearchModal;
   let historyItemMenu;
@@ -288,17 +288,10 @@
     }
     thread.querySelector(".new-chat")?.remove();
 
-    const config = state.selectedAgent ? AGENT_CONFIGS[state.selectedAgent] : null;
-    const assistantName = config?.controlLabel || "社科研究助手";
-    const assistantMark = config?.mark || "智";
     const article = document.createElement("article");
     article.className = `message message-${role}`;
     if (role === "user") article.dataset.questionTime = formatQuestionTime();
     article.innerHTML = `
-      <div class="message-author">
-        <span class="message-author-mark">${role === "user" ? "研" : assistantMark}</span>
-        <span>${role === "user" ? "陌生的研究员" : assistantName}</span>
-      </div>
       <div class="message-body">
         ${
           role === "user"
@@ -343,18 +336,11 @@
   function createSkeletonMessage() {
     const { thread } = getElements();
     if (!thread) return null;
-    const config = state.selectedAgent ? AGENT_CONFIGS[state.selectedAgent] : null;
-    const assistantName = config?.controlLabel || "社科研究助手";
-    const assistantMark = config?.mark || "智";
     const article = document.createElement("article");
     article.className = "message message-ai skeleton-message";
     article.setAttribute("aria-busy", "true");
     article.setAttribute("aria-label", "正在生成回答");
     article.innerHTML = `
-      <div class="message-author">
-        <span class="message-author-mark">${assistantMark}</span>
-        <span>${assistantName}</span>
-      </div>
       <div class="message-body">
         <div class="skeleton skeleton-line"></div>
         <div class="skeleton skeleton-line"></div>
@@ -383,6 +369,13 @@
     if (!content) {
       window.SKApp.showToast("请输入研究问题");
       textarea.focus();
+      return;
+    }
+
+    /* 未登录：先登录/注册，成功后自动续发（内容留在输入框里） */
+    if (!window.SKAuth?.getUser()) {
+      state.pendingSubmit = true;
+      window.SKAuth?.open?.();
       return;
     }
 
@@ -444,6 +437,39 @@
     if (sendButton) sendButton.hidden = false;
     if (stopButton) stopButton.hidden = true;
     window.SKApp.showToast("已停止生成");
+  }
+
+  /* 通用设置里的「推荐管理」开关：关闭后首页不显示「更多社科研究工具」（标题 + 两张卡片）。
+     选择记在本地，刷新或下次打开沿用 */
+  const RECOMMEND_KEY = "sheke-settings-recommend";
+
+  function readRecommendSetting() {
+    try {
+      return localStorage.getItem(RECOMMEND_KEY) !== "off";
+    } catch (error) {
+      /* 隐私模式下读不到，按默认开启 */
+      return true;
+    }
+  }
+
+  function saveRecommendSetting(enabled) {
+    try {
+      localStorage.setItem(RECOMMEND_KEY, enabled ? "on" : "off");
+    } catch (error) {
+      /* 写不了就只在本页生效 */
+    }
+  }
+
+  function recommendationsEnabled() {
+    const input = document.querySelector("[data-settings-recommend]");
+    return input ? input.checked : readRecommendSetting();
+  }
+
+  function syncRecommendationsVisibility() {
+    const enabled = recommendationsEnabled();
+    document.querySelectorAll(".new-chat-recommendations").forEach(function (node) {
+      node.hidden = !enabled;
+    });
   }
 
   function createNewConversation(options = {}) {
@@ -530,6 +556,7 @@
     `;
     newChat.append(recommendations);
     thread.append(newChat);
+    syncRecommendationsVisibility();
     window.SKIcons.hydrate(recommendations);
     animateNewChatTitle(newChat.querySelector("[data-new-chat-title]"), config.title, animate);
     syncAgentControls();
@@ -666,6 +693,15 @@
 
     if (sendButton) sendButton.addEventListener("click", sendMessage);
     if (stopButton) stopButton.addEventListener("click", stopGeneration);
+
+    /* 登录 / 注册成功后接上刚才那次提交；登出也会派发该事件，用 getUser() 兜住。
+       中途把输入清空、后来又登录的，不再补发 */
+    document.addEventListener("sk:auth-changed", () => {
+      if (!state.pendingSubmit || !window.SKAuth?.getUser()) return;
+      state.pendingSubmit = false;
+      if (!textarea.value.trim()) return;
+      sendMessage();
+    });
 
     document.querySelectorAll("[data-file-trigger]").forEach((button) => {
       button.addEventListener("click", () => fileInput && fileInput.click());
@@ -989,7 +1025,6 @@
     historyDialog.querySelectorAll("[data-history-dialog-close]").forEach((button) => {
       button.addEventListener("click", closeHistoryDialog);
     });
-    historyDialogMask.addEventListener("click", closeHistoryDialog);
   }
 
   function openHistoryDialog(options) {
@@ -1316,10 +1351,8 @@
     });
 
     document.addEventListener("click", (event) => {
-      if (
-        event.target.closest("[data-history-search-close]") ||
-        event.target === historySearchMask
-      ) {
+      /* 只认关闭按钮：点遮罩不关（全站统一） */
+      if (event.target.closest("[data-history-search-close]")) {
         closeHistorySearch();
       }
     });
@@ -1394,96 +1427,7 @@
     input.addEventListener("blur", () => finishEditing(true));
   }
 
-  function createFeedbackModal() {
-    feedbackMask = document.createElement("div");
-    feedbackMask.className = "feedback-mask";
-    feedbackMask.dataset.feedbackMask = "";
-    feedbackMask.hidden = true;
-
-    feedbackModal = document.createElement("section");
-    feedbackModal.className = "feedback-modal";
-    feedbackModal.dataset.feedbackModal = "";
-    feedbackModal.setAttribute("role", "dialog");
-    feedbackModal.setAttribute("aria-modal", "true");
-    feedbackModal.setAttribute("aria-labelledby", "feedbackTitle");
-    feedbackModal.hidden = true;
-    feedbackModal.innerHTML = `
-      <div class="feedback-head">
-        <div>
-          <h2 id="feedbackTitle">提交问题反馈</h2>
-          <p>请说明这条回答存在的问题，反馈将进入人工核查。</p>
-        </div>
-        <button class="feedback-close" type="button" data-feedback-close aria-label="关闭反馈">
-          <span data-icon="x"></span>
-        </button>
-      </div>
-      <form class="feedback-form" data-feedback-form>
-        <div class="feedback-type-grid">
-          <label class="feedback-type"><input type="radio" name="feedback-type" value="内容不准确" checked>内容不准确</label>
-          <label class="feedback-type"><input type="radio" name="feedback-type" value="来源不足">来源不足</label>
-          <label class="feedback-type"><input type="radio" name="feedback-type" value="理解偏差">理解偏差</label>
-          <label class="feedback-type"><input type="radio" name="feedback-type" value="其他问题">其他问题</label>
-        </div>
-        <label class="field">
-          <span class="field-label">补充说明</span>
-          <textarea class="feedback-textarea" placeholder="请描述具体问题、希望调整的内容或建议补充的资料。" data-feedback-detail></textarea>
-        </label>
-        <div class="feedback-actions">
-          <button class="btn btn-outline" type="button" data-feedback-close>取消</button>
-          <button class="btn btn-primary" type="submit">提交反馈</button>
-        </div>
-      </form>
-    `;
-
-    document.body.append(feedbackMask, feedbackModal);
-    window.SKIcons.hydrate(feedbackModal);
-
-    feedbackModal.querySelector("[data-feedback-form]").addEventListener("submit", (event) => {
-      event.preventDefault();
-      const detail = feedbackModal.querySelector("[data-feedback-detail]");
-      if (detail.value.trim().length < 4) {
-        window.SKApp.showToast("请补充具体问题说明");
-        detail.focus();
-        return;
-      }
-      detail.value = "";
-      closeFeedback();
-      window.SKApp.showToast("反馈已提交，感谢你的补充");
-    });
-  }
-
-  function openFeedback() {
-    feedbackMask.hidden = false;
-    feedbackModal.hidden = false;
-    requestAnimationFrame(() => {
-      feedbackMask.classList.add("is-open");
-      feedbackModal.classList.add("is-open");
-    });
-    document.body.classList.add("is-locked");
-  }
-
-  function closeFeedback() {
-    feedbackMask.classList.remove("is-open");
-    feedbackModal.classList.remove("is-open");
-    document.body.classList.remove("is-locked");
-    window.setTimeout(() => {
-      feedbackMask.hidden = true;
-      feedbackModal.hidden = true;
-    }, 220);
-  }
-
-  function initFeedback() {
-    createFeedbackModal();
-    document.addEventListener("click", (event) => {
-      if (event.target.closest("[data-feedback-open]")) {
-        openFeedback();
-        return;
-      }
-      if (event.target.closest("[data-feedback-close]") || event.target === feedbackMask) {
-        closeFeedback();
-      }
-    });
-  }
+  /* 问题反馈弹窗已收归壳层（assets/js/pages/workbench.js），全站共用一份实现 */
 
   function updateSpeechButton(button) {
     if (activeSpeechButton && activeSpeechButton !== button) {
@@ -1577,20 +1521,6 @@
         closeHistorySearch();
         return;
       }
-
-      const modifier = event.ctrlKey || event.metaKey;
-      /* 带 Alt 的组合（Ctrl+Alt+B/K/J）由壳层的全站快捷键处理，这里只留本页的 Ctrl+J */
-      if (!modifier || event.altKey || event.repeat || event.defaultPrevented) return;
-
-      const key = event.key.toLowerCase();
-      if (key === "j") {
-        event.preventDefault();
-        if (historySearchModal && !historySearchModal.hidden) {
-          historySearchModal.querySelector("[data-history-search-input]").focus();
-        } else {
-          openHistorySearch();
-        }
-      }
     });
   }
 
@@ -1603,7 +1533,6 @@
     initComposer();
     initPanels();
     initHistoryAndActions();
-    initFeedback();
     initMessageSpeech();
     initKeyboardShortcuts();
     const { thread } = getElements();
@@ -1612,7 +1541,15 @@
         thread.children,
       ).filter((element) => element.classList.contains("message"));
     }
+    /* 「推荐管理」：先按上次记下的选择回填开关，再建首页（推荐区据此显隐） */
+    const recommendInput = document.querySelector("[data-settings-recommend]");
+    if (recommendInput) recommendInput.checked = readRecommendSetting();
     createNewConversation({ focus: false });
+    /* 开关一动：写回本地，并让已经在屏幕上的首页推荐区跟着显隐 */
+    recommendInput?.addEventListener("change", function () {
+      saveRecommendSetting(this.checked);
+      syncRecommendationsVisibility();
+    });
     if (promptParam) {
       const { textarea } = getElements();
       if (textarea) {

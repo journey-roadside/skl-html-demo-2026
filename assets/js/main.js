@@ -114,8 +114,17 @@
 
     window.clearTimeout(state.toastTimer);
     toast.textContent = message;
+    /* 用 popover 进浏览器顶层：弹窗遮罩、原生 <dialog> 都在顶层，只有顶层盖得住 */
+    toast.setAttribute("popover", "manual");
+    toast.showPopover?.();
     toast.classList.add("is-visible");
-    state.toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 2400);
+    state.toastTimer = window.setTimeout(() => {
+      toast.classList.remove("is-visible");
+      /* 等淡出走完再退出顶层，否则看不到过渡；期间来了新提示就别退 */
+      window.setTimeout(() => {
+        if (!toast.classList.contains("is-visible")) toast.hidePopover?.();
+      }, 200);
+    }, 2400);
   }
 
   function initPlaceholderLinks() {

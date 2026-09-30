@@ -36,8 +36,7 @@
   const resourceUploadForm = document.querySelector("[data-resource-upload-form]");
   const resourceUploadInput = document.querySelector("[data-resource-upload-input]");
   const resourceUploadList = document.querySelector("[data-resource-upload-list]");
-  const resourceUploadCancel = document.querySelector("[data-resource-upload-cancel]");
-  const resourceUploadConfirm = document.querySelector("[data-resource-upload-confirm]");
+  const resourceUploadCancels = document.querySelectorAll("[data-resource-upload-cancel]");
   const actionDialog = document.querySelector("[data-project-action-dialog]");
   const actionForm = document.querySelector("[data-project-action-form]");
   const actionTitle = document.querySelector("[data-project-action-title]");
@@ -715,11 +714,10 @@
   let pendingUploadFiles = [];
 
   const renderPendingUploadFiles = function () {
-    if (!resourceUploadList || !resourceUploadConfirm) return;
+    if (!resourceUploadList) return;
 
     resourceUploadList.replaceChildren();
     resourceUploadList.hidden = pendingUploadFiles.length === 0;
-    resourceUploadConfirm.disabled = pendingUploadFiles.length === 0;
 
     pendingUploadFiles.forEach(function (file, index) {
       const row = document.createElement("li");
@@ -753,11 +751,11 @@
       resourceUploadDialog.showModal();
     });
 
-    if (resourceUploadCancel) {
-      resourceUploadCancel.addEventListener("click", function () {
+    resourceUploadCancels.forEach(function (button) {
+      button.addEventListener("click", function () {
         resourceUploadDialog.close();
       });
-    }
+    });
 
     if (resourceUploadInput) {
       resourceUploadInput.addEventListener("change", function () {
@@ -785,7 +783,10 @@
 
     resourceUploadForm.addEventListener("submit", function (event) {
       event.preventDefault();
-      if (!pendingUploadFiles.length) return;
+      if (!pendingUploadFiles.length) {
+        window.SKApp?.showToast?.("请先选择要上传的文件");
+        return;
+      }
 
       if (resourceList) {
         // 倒序 prepend，保持先选中的文件排在上方
@@ -827,15 +828,31 @@
     };
 
     createButton.addEventListener("click", openCreateDialog);
-    if (sidebarCreateButton) sidebarCreateButton.addEventListener("click", openCreateDialog);
+    if (sidebarCreateButton) {
+      sidebarCreateButton.addEventListener("click", function () {
+        /* 未登录时不开新建弹窗：交给 auth.js 的 [data-auth-open] 弹登录框 */
+        if (!window.SKAuth?.getUser()) return;
+        openCreateDialog();
+      });
+    }
 
-    /* 其它页面的「新建项目」入口带 ?create=1 跳过来，落地即弹出新建弹窗 */
-    if (location.search.indexOf("create=1") !== -1) openCreateDialog();
+    /* 其它页面的「新建项目」入口带 ?create=1 跳过来，落地即弹出新建弹窗（未登录不弹） */
+    if (location.search.indexOf("create=1") !== -1 && window.SKAuth?.getUser()) openCreateDialog();
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       const title = titleInput.value.trim();
       if (!title) return;
+
+      /* 重名校验：同名项目（含已归档的）已存在就不建，避免列表里出现两个一样的名字 */
+      const duplicated = getCards().some(function (card) {
+        return card.dataset.title.trim() === title;
+      });
+      if (duplicated) {
+        window.SKApp?.showToast?.("项目名称已存在，请换一个名称");
+        titleInput.focus();
+        return;
+      }
 
       const card = cardTemplate.content.firstElementChild.cloneNode(true);
       const now = new Date();
@@ -900,6 +917,16 @@
       if (pendingAction === "rename") {
         const nextTitle = actionInput.value.trim();
         if (!nextTitle) return;
+
+        /* 与创建同一条重名校验：撞上别人的名字就不改（自己原名不算重名，含已归档项目） */
+        const duplicated = getCards().some(function (card) {
+          return card !== pendingCard && card.dataset.title.trim() === nextTitle;
+        });
+        if (duplicated) {
+          window.SKApp?.showToast?.("项目名称已存在，请换一个名称");
+          actionInput.focus();
+          return;
+        }
 
         pendingCard.dataset.title = nextTitle;
         const titleNode = pendingCard.querySelector(".projects-card__title");

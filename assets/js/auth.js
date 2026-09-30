@@ -6,8 +6,13 @@
   let mask;
   let logoutConfirmMask;
   let logoutConfirmModal;
+  /* 演示环境统一密码：手机号任意填，密码只认这一个 */
+  const DEMO_PASSWORD = "123";
+  /* 密码规则（演示）：3–20 位字母 / 数字 / 半角符号；空格（含首尾）、中文、其他非 ASCII 字符都不合规 */
+  const PASSWORD_PATTERN = /^[\x21-\x7E]{3,20}$/;
   let pendingTarget = null;
   let countdownTimer = 0;
+  let logoutRedirect = "";
 
   function readUser() {
     try {
@@ -41,11 +46,14 @@
     modal.innerHTML = `
       <div class="auth-head">
         <div>
-          <h2 class="auth-title" id="authTitle">登录社科智研</h2>
-          <p class="auth-subtitle">使用手机号登录后进入研究工作台</p>
+          <h2 class="auth-title" id="authTitle">登录</h2>
+          <p class="auth-subtitle">使用手机号登录后进入工作台</p>
         </div>
         <button class="auth-close" type="button" data-auth-close aria-label="关闭">
-          <span data-icon="x"></span>
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
         </button>
       </div>
       <div class="auth-tabs" role="tablist" aria-label="登录注册切换">
@@ -66,19 +74,32 @@
         </label>
         <label class="field">
           <span class="field-label">密码</span>
-          <input type="password" autocomplete="current-password" placeholder="请输入密码" data-auth-password>
+          <span class="field-password">
+            <input type="password" autocomplete="current-password" placeholder="请输入密码" data-auth-password>
+            <button class="password-toggle" type="button" data-password-toggle aria-label="显示密码" aria-pressed="false">
+              <svg class="password-toggle__eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg class="password-toggle__eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"></path>
+                <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path>
+                <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"></path>
+                <path d="m2 2 20 20"></path>
+              </svg>
+            </button>
+          </span>
         </label>
         <label class="auth-checkbox">
           <input type="checkbox" data-auth-agreement>
           <span>我已阅读并同意<button class="auth-legal-link" type="button" data-auth-legal-toast="用户协议链接后续接入">用户协议</button>和<button class="auth-legal-link" type="button" data-auth-legal-toast="隐私政策链接后续接入">隐私政策</button></span>
         </label>
         <button class="btn btn-primary auth-submit" type="submit">登录</button>
-        <p class="auth-hint">演示环境：输入任意 11 位手机号即可登录</p>
+        <p class="auth-hint">演示环境：任意 11 位手机号，密码 123 即可登录</p>
       </form>
     `;
 
     document.body.append(mask, modal);
-    window.SKIcons.hydrate(modal);
 
     modal.querySelectorAll("[data-auth-legal-toast]").forEach((button) => {
       button.addEventListener("click", (event) => {
@@ -87,6 +108,23 @@
         window.SKApp.showToast(button.dataset.authLegalToast);
       });
     });
+
+    /* 手机号只收数字：输入或粘贴时把非数字字符直接删掉（含全角/字母/符号） */
+    modal.querySelector("[data-auth-phone]").addEventListener("input", (event) => {
+      const input = event.target;
+      const cleaned = input.value.replace(/\D/g, "");
+      if (cleaned !== input.value) input.value = cleaned;
+    });
+  }
+
+  /* 密码明文 / 隐藏切换：图标、无障碍语义与 input.type 一处改 */
+  function setPasswordVisible(show) {
+    const input = modal.querySelector("[data-auth-password]");
+    const toggle = modal.querySelector("[data-password-toggle]");
+    input.type = show ? "text" : "password";
+    toggle.classList.toggle("is-on", show);
+    toggle.setAttribute("aria-label", show ? "隐藏密码" : "显示密码");
+    toggle.setAttribute("aria-pressed", String(show));
   }
 
   function setMode(mode) {
@@ -99,11 +137,14 @@
 
     const isRegister = mode === "register";
     modal.querySelector("[data-auth-code-field]").hidden = !isRegister;
-    modal.querySelector("[data-auth-password]").autocomplete = isRegister ? "new-password" : "current-password";
-    modal.querySelector(".auth-title").textContent = isRegister ? "注册社科智研账号" : "登录社科智研";
+    const passwordField = modal.querySelector("[data-auth-password]");
+    passwordField.autocomplete = isRegister ? "new-password" : "current-password";
+    passwordField.placeholder = isRegister ? "输入3-20位字母、数字、符号组成密码" : "请输入密码";
+    setPasswordVisible(false);
+    modal.querySelector(".auth-title").textContent = isRegister ? "注册账号" : "登录";
     modal.querySelector(".auth-subtitle").textContent = isRegister
       ? "完成手机号验证后即可创建账号"
-      : "使用手机号登录后进入研究工作台";
+      : "使用手机号登录后进入工作台";
     modal.querySelector(".auth-submit").textContent = isRegister ? "创建账号并登录" : "登录";
   }
 
@@ -124,13 +165,19 @@
       modal.classList.add("is-open");
     });
     document.body.classList.add("is-locked");
-    window.SKApp?.setFocusTrap(modal, { initial: modal.querySelector("[data-auth-phone]") });
+    /* 不主动聚焦手机号输入框：焦点落在弹窗首个可聚焦元素（右上角关闭钮），
+       Tab 顺序照常，键盘用户不会被直接丢进表单。
+       官网首页没有焦点陷阱（SKApp.setFocusTrap 只在 main.js 里），手动搬到同一个位置 */
+    if (window.SKApp?.setFocusTrap) {
+      window.SKApp.setFocusTrap(modal);
+    } else {
+      modal.querySelector(".auth-close")?.focus({ preventScroll: true });
+    }
     setMode("login");
-    window.setTimeout(() => modal.querySelector("[data-auth-phone]").focus(), 50);
   }
 
   function closeModal() {
-    window.SKApp?.releaseFocusTrap(modal);
+    window.SKApp?.releaseFocusTrap?.(modal);
     mask.classList.remove("is-open");
     modal.classList.remove("is-open");
     document.body.classList.remove("is-locked");
@@ -152,10 +199,14 @@
     document.querySelectorAll("[data-user-phone]").forEach((node) => {
       node.textContent = user ? user.phone : "";
     });
-    document.querySelectorAll("[data-sidebar-user-label]").forEach((node) => {
-      node.textContent = user ? "未知研究员" : "";
-    });
+    /* [data-sidebar-user-label] 由壳层统一刷（workbench.js 的 syncAuthState），这里不再写第二遍 */
     document.dispatchEvent(new CustomEvent("sk:auth-changed", { detail: user }));
+  }
+
+  /* 11 位纯数字脱敏成 139****2222；其他输入原样保留（账户中心换绑不限格式） */
+  function formatPhone(raw) {
+    const value = String(raw || "").trim();
+    return /^\d{11}$/.test(value) ? `${value.slice(0, 3)}****${value.slice(-4)}` : value;
   }
 
   function signIn(phone, profile) {
@@ -164,7 +215,7 @@
 
     writeUser({
       ...profile,
-      phone: `${cleanPhone.slice(0, 3)}****${cleanPhone.slice(-4)}`,
+      phone: formatPhone(cleanPhone),
     });
     renderUser();
     return true;
@@ -178,11 +229,34 @@
   function completeLogin(target) {
     const phoneInput = modal.querySelector("[data-auth-phone]");
     const phone = phoneInput.value.replace(/\D/g, "");
+    const passwordInput = modal.querySelector("[data-auth-password]");
+    const password = passwordInput.value;
+    const codeInput = modal.querySelector("[data-auth-code-field] input");
     const agreement = modal.querySelector("[data-auth-agreement]");
 
     if (phone.length !== 11) {
       window.SKApp.showToast("请输入 11 位手机号");
       phoneInput.focus();
+      return;
+    }
+
+    if (!PASSWORD_PATTERN.test(password)) {
+      window.SKApp.showToast("密码不合规");
+      passwordInput.focus();
+      return;
+    }
+
+    /* 演示环境密码统一为 123（弹窗底部有说明），对不上就是账号密码错误 */
+    if (password !== DEMO_PASSWORD) {
+      window.SKApp.showToast("账号或密码错误");
+      passwordInput.focus();
+      return;
+    }
+
+    /* 验证码只在注册模式出现；演示环境任意 6 位数字都算对 */
+    if (modal.dataset.mode === "register" && !/^\d{6}$/.test(codeInput.value.replace(/\D/g, ""))) {
+      window.SKApp.showToast("验证码输入错误");
+      codeInput.focus();
       return;
     }
 
@@ -195,17 +269,23 @@
     closeModal();
 
     if (target && target.url && !target.placeholder) {
-      window.SKApp.showToast("登录成功");
+      notifySuccess("登录成功");
       window.setTimeout(() => {
         window.location.href = target.url;
       }, 120);
     } else if (target && target.label && target.label !== "账号中心") {
       window.SKApp.showToast(`${target.label}将在下一阶段生成`);
     } else if (target && target.label === "账号中心") {
-      window.SKApp.showToast("登录成功");
+      notifySuccess("登录成功");
     } else {
-      window.SKApp.showToast("登录成功");
+      notifySuccess("登录成功");
     }
+  }
+
+  /* 事后成功类提示：页面可以通过 SKApp.silentSuccess 关掉（官网首页就不要这类） */
+  function notifySuccess(message) {
+    if (window.SKApp && window.SKApp.silentSuccess) return;
+    window.SKApp.showToast(message);
   }
 
   function startCountdown(button) {
@@ -245,16 +325,18 @@
           <p class="auth-subtitle">确认退出当前账号？</p>
         </div>
         <button class="auth-close" type="button" data-logout-confirm-close aria-label="关闭">
-          <span data-icon="x"></span>
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
         </button>
       </div>
       <div class="logout-confirm-actions">
         <button class="btn btn-outline" type="button" data-logout-confirm-close>取消</button>
-        <button class="btn btn-primary danger" type="button" data-logout-confirm-submit>退出登录</button>
+        <button class="btn btn-primary danger" type="button" data-logout-confirm-submit>确定</button>
       </div>
     `;
     document.body.append(logoutConfirmMask, logoutConfirmModal);
-    window.SKIcons.hydrate(logoutConfirmModal);
   }
 
   function openLogoutConfirm() {
@@ -266,12 +348,12 @@
       logoutConfirmModal.classList.add("is-open");
     });
     document.body.classList.add("is-locked");
-    window.SKApp?.setFocusTrap(logoutConfirmModal, { initial: logoutConfirmModal.querySelector("[data-logout-confirm-submit]") });
+    window.SKApp?.setFocusTrap?.(logoutConfirmModal, { initial: logoutConfirmModal.querySelector("[data-logout-confirm-submit]") });
   }
 
   function closeLogoutConfirm() {
     if (!logoutConfirmModal || logoutConfirmModal.hidden) return;
-    window.SKApp?.releaseFocusTrap(logoutConfirmModal);
+    window.SKApp?.releaseFocusTrap?.(logoutConfirmModal);
     logoutConfirmMask.classList.remove("is-open");
     logoutConfirmModal.classList.remove("is-open");
     document.body.classList.remove("is-locked");
@@ -284,11 +366,44 @@
   document.addEventListener("DOMContentLoaded", () => {
     createModal();
     createLogoutConfirm();
+    /* 先挂上 window.SKAuth 再 renderUser()：renderUser 会派发 sk:auth-changed，
+       壳层（workbench.js）在那个事件里读 SKAuth 判断登录态，晚挂就会一律读成未登录 */
+    window.SKAuth = {
+      getUser: readUser,
+      signIn,
+      signOut,
+      refresh: renderUser,
+      /* 只改已有用户的部分字段（如用户名），不动手机号；未登录返回 false */
+      setProfile: function (patch) {
+        const user = readUser();
+        if (!user) return false;
+        writeUser(Object.assign({}, user, patch || {}));
+        renderUser();
+        return true;
+      },
+      /* 换绑手机号：入参是明文号码，与登录同一套脱敏规则；未登录或空值返回 false */
+      changePhone: function (rawPhone) {
+        const value = String(rawPhone || "").trim();
+        const user = readUser();
+        if (!user || !value) return false;
+        writeUser(Object.assign({}, user, {
+          phone: formatPhone(value),
+        }));
+        renderUser();
+        return true;
+      },
+      /* 复用登录框里那套 60s 倒计时，供账号中心的短信验证调用 */
+      sendSmsCode: startCountdown,
+      open: openModal,
+      close: closeModal,
+    };
     renderUser();
 
     document.addEventListener("click", (event) => {
       const authOpen = event.target.closest("[data-auth-open]");
       if (authOpen) {
+        /* 已登录时不拦：把点击还给元素自己（链接照常跳转、按钮走原行为） */
+        if (readUser()) return;
         event.preventDefault();
         openModal(authOpen.dataset.destination || null);
         return;
@@ -313,8 +428,17 @@
         return;
       }
 
-      if (event.target.closest("[data-auth-close]") || event.target === mask) {
+      /* 只认关闭按钮：点遮罩不关（全站统一） */
+      if (event.target.closest("[data-auth-close]")) {
         closeModal();
+        return;
+      }
+
+      const passwordToggle = event.target.closest("[data-password-toggle]");
+      if (passwordToggle) {
+        const input = modal.querySelector("[data-auth-password]");
+        setPasswordVisible(input.type === "password");
+        input.focus();
         return;
       }
 
@@ -340,11 +464,13 @@
       if (logout) {
         const userMenu = logout.closest("[data-user-menu]");
         if (userMenu) userMenu.hidden = true;
+        /* 带 data-logout-redirect 的入口（账户中心）确认退出后跳走 */
+        logoutRedirect = logout.dataset.logoutRedirect || "";
         openLogoutConfirm();
         return;
       }
 
-      if (event.target.closest("[data-logout-confirm-close]") || event.target === logoutConfirmMask) {
+      if (event.target.closest("[data-logout-confirm-close]")) {
         closeLogoutConfirm();
         return;
       }
@@ -352,14 +478,25 @@
       if (event.target.closest("[data-logout-confirm-submit]")) {
         signOut();
         closeLogoutConfirm();
-        window.SKApp.showToast("已退出登录");
+        if (logoutRedirect) {
+          window.location.href = logoutRedirect;
+          return;
+        }
+        notifySuccess("已退出登录");
       }
     });
 
+    /* Esc 关闭自绘弹窗（原生 <dialog> 由浏览器自己处理）：先退确认框，再退登录框 */
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && logoutConfirmModal && !logoutConfirmModal.hidden) {
+      if (event.key !== "Escape") return;
+      if (logoutConfirmModal && !logoutConfirmModal.hidden) {
         event.preventDefault();
         closeLogoutConfirm();
+        return;
+      }
+      if (modal && !modal.hidden) {
+        event.preventDefault();
+        closeModal();
       }
     });
 
@@ -367,14 +504,5 @@
       event.preventDefault();
       completeLogin(pendingTarget);
     });
-
-    window.SKAuth = {
-      getUser: readUser,
-      signIn,
-      signOut,
-      refresh: renderUser,
-      open: openModal,
-      close: closeModal,
-    };
   });
 })();

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="湖北社科数据信息联盟账户中心。">
+  <meta name="theme-color" content="#fcfaf8">
+  <title>账户中心 · 湖北社科数据信息联盟</title>
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/auth-modal.css">
+  <link rel="stylesheet" href="../assets/css/account-center.css">
+</head>
+<body class="account-body">
+
+  <div class="account-page">
+    <aside class="account-sidebar">
+      <h1 class="account-sidebar__title">账户中心</h1>
+
+      <nav class="account-nav" role="tablist" aria-orientation="vertical" aria-label="账户中心导航">
+        <button class="account-nav__item is-active" type="button" role="tab" id="accountTabOverview" aria-controls="accountPanelOverview" aria-selected="true" data-account-tab="overview"><span data-icon="monitor"></span>个人总览</button>
+        <button class="account-nav__item" type="button" role="tab" id="accountTabProfile" aria-controls="accountPanelProfile" aria-selected="false" data-account-tab="profile"><span data-icon="user-round"></span>账户信息</button>
+        <button class="account-nav__item" type="button" role="tab" id="accountTabPoints" aria-controls="accountPanelPoints" aria-selected="false" data-account-tab="points"><span data-icon="coins"></span>积分中心</button>
+        <button class="account-nav__item" type="button" role="tab" id="accountTabTasks" aria-controls="accountPanelTasks" aria-selected="false" data-account-tab="tasks"><span data-icon="list-checks"></span>任务中心</button>
+        <button class="account-nav__item" type="button" role="tab" id="accountTabMessages" aria-controls="accountPanelMessages" aria-selected="false" data-account-tab="messages"><span data-icon="bell"></span>消息中心</button>
+      </nav>
+
+      <!-- 用户区固定在菜单底部：头像 + 名称，右侧退出登录；确认退出后跳回官网首页 -->
+      <div class="account-user">
+        <span class="account-user__avatar" aria-hidden="true">研</span>
+        <span class="account-user__name" data-account-name>陌生研究员</span>
+        <button class="account-user__logout" type="button" data-auth-logout data-logout-redirect="../index.html" aria-label="退出登录">
+          <span data-icon="log-out"></span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- 内容在右栏内居中，宽度对齐设置页的 820px -->
+    <main class="account-main">
+      <div class="account-main__inner">
+        <section class="account-panel" role="tabpanel" id="accountPanelOverview" aria-labelledby="accountTabOverview" data-account-panel="overview">
+          <div class="account-overview__head">
+            <h2 class="account-overview__name"><span data-account-name>陌生研究员</span> 的 研究工作</h2>
+            <p class="account-overview__stat">已经陪伴你 611 天，聊了 94次，最近连续 0 天</p>
+          </div>
+
+          <!-- 活跃度日历：格子由 account-center.js 按近 12 个月生成 -->
+          <div class="account-heatmap">
+            <h3 class="account-heatmap__title">您的研究活跃度</h3>
+            <div class="account-heatmap__grid" data-account-heatmap aria-hidden="true"></div>
+            <div class="account-heatmap__months" data-account-heatmap-months aria-hidden="true"></div>
+          </div>
+
+          <!-- 积分用量：数值为演示数据，柱子由 account-center.js 生成 -->
+          <section class="account-usage">
+            <h3 class="account-usage__title">积分用量</h3>
+            <div class="account-usage__meta">
+              <p class="account-usage__note">所有日期均按 GMT+8 时间显示，数据可能有 5 分钟延迟。<span data-icon="info"></span></p>
+              <div class="account-filter" data-filter>
+                <button class="account-filter__trigger" type="button" data-filter-trigger aria-haspopup="listbox" aria-expanded="false">
+                  <span class="account-filter__label">时间维度</span>
+                  <span class="account-filter__divider" aria-hidden="true"></span>
+                  <span class="account-filter__value" data-filter-value>近 30 天</span>
+                  <span data-icon="chevron-down"></span>
+                </button>
+                <div class="account-filter__menu" role="listbox" aria-label="时间维度" data-filter-menu hidden>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="今天">今天<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="昨天">昨天<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="近 7 天">近 7 天<span data-icon="check"></span></button>
+                  <button class="account-filter__option is-selected" type="button" role="option" aria-selected="true" data-filter-option="近 30 天">近 30 天<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="本月">本月<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="上月">上月<span data-icon="check"></span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="account-usage__grid">
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">积分总额</p>
+                <p class="account-stat-card__value">710</p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">订阅积分</p>
+                <p class="account-stat-card__value">0</p>
+                <button class="btn btn-primary account-stat-card__action" type="button" data-subscribe-open>去订阅</button>
+              </div>
+            </div>
+
+            <div class="account-bar-chart">
+              <div class="account-bar-chart__head">
+                <h4 class="account-bar-chart__title">消费积分 <span>119</span></h4>
+              </div>
+              <div class="account-bar-chart__plot">
+                <div class="account-bar-chart__axis" aria-hidden="true"><span>70</span><span>35</span><span>0</span></div>
+                <div class="account-bar-chart__bars" data-usage-bars role="img" aria-label="9 月 1 日至 9 月 30 日每日消费积分柱状图"></div>
+              </div>
+              <div class="account-bar-chart__ticks" aria-hidden="true"><span>9/1</span><span>9/11</span><span>9/20</span><span>9/30</span></div>
+            </div>
+          </section>
+
+          <!-- 知识贡献：四张统计卡，单位「篇」跟在数值右侧 -->
+          <section class="account-contribution">
+            <div class="account-contribution__head">
+              <h3>知识贡献</h3>
+              <div class="account-contribution__filters">
+                <div class="account-filter" data-filter>
+                  <button class="account-filter__trigger" type="button" data-filter-trigger aria-haspopup="listbox" aria-expanded="false">
+                    <span class="account-filter__label">类型</span>
+                    <span class="account-filter__divider" aria-hidden="true"></span>
+                    <span class="account-filter__value" data-filter-value>全部</span>
+                    <span data-icon="chevron-down"></span>
+                  </button>
+                  <div class="account-filter__menu" role="listbox" aria-label="知识类型" data-filter-menu hidden>
+                    <button class="account-filter__option is-selected" type="button" role="option" aria-selected="true" data-filter-option="全部">全部<span data-icon="check"></span></button>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="产出">产出<span data-icon="check"></span></button>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="共享">共享<span data-icon="check"></span></button>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="收藏">收藏<span data-icon="check"></span></button>
+                  </div>
+                </div>
+
+                <div class="account-filter" data-filter>
+                  <button class="account-filter__trigger" type="button" data-filter-trigger aria-haspopup="listbox" aria-expanded="false">
+                    <span class="account-filter__label">时间维度</span>
+                    <span class="account-filter__divider" aria-hidden="true"></span>
+                    <span class="account-filter__value" data-filter-value>近 30 天</span>
+                    <span data-icon="chevron-down"></span>
+                  </button>
+                  <div class="account-filter__menu" role="listbox" aria-label="时间维度" data-filter-menu hidden>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="今天">今天<span data-icon="check"></span></button>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="昨天">昨天<span data-icon="check"></span></button>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="近 7 天">近 7 天<span data-icon="check"></span></button>
+                    <button class="account-filter__option is-selected" type="button" role="option" aria-selected="true" data-filter-option="近 30 天">近 30 天<span data-icon="check"></span></button>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="本月">本月<span data-icon="check"></span></button>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="上月">上月<span data-icon="check"></span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="account-contribution__grid">
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">知识总量</p>
+                <p class="account-stat-card__value">96<small>篇</small></p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">产出知识</p>
+                <p class="account-stat-card__value">46<small>篇</small></p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">共享知识</p>
+                <p class="account-stat-card__value">32<small>篇</small></p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">收藏知识</p>
+                <p class="account-stat-card__value">18<small>篇</small></p>
+              </div>
+            </div>
+
+            <!-- 知识趋势：右上角切换文档 / 浏览两套数据，柱子由 account-center.js 生成 -->
+            <div class="account-bar-chart">
+              <div class="account-bar-chart__head">
+                <h4 class="account-bar-chart__title">知识趋势</h4>
+                <div class="account-trend-switch" role="tablist" aria-label="趋势数据类型">
+                  <button class="account-trend-switch__item is-active" type="button" role="tab" aria-selected="true" data-trend-tab="docs">文档</button>
+                  <button class="account-trend-switch__item" type="button" role="tab" aria-selected="false" data-trend-tab="views">浏览</button>
+                </div>
+              </div>
+              <div class="account-bar-chart__plot">
+                <div class="account-bar-chart__axis" aria-hidden="true" data-trend-axis><span>40</span><span>20</span><span>0</span></div>
+                <div class="account-bar-chart__bars" data-trend-bars role="img" aria-label="近 30 天文档数量柱状趋势图"></div>
+              </div>
+              <div class="account-bar-chart__ticks" aria-hidden="true">
+                <span>9/1</span><span>9/11</span><span>9/20</span><span>9/30</span>
+              </div>
+            </div>
+          </section>
+        </section>
+        <section class="account-panel" role="tabpanel" id="accountPanelProfile" aria-labelledby="accountTabProfile" data-account-panel="profile" hidden>
+          <h2 class="account-profile__name">账户信息</h2>
+          <p class="account-profile__desc">查看并维护账号资料、登录方式与注册信息</p>
+
+          <h3 class="account-info__title">个人信息</h3>
+          <div class="account-info-card">
+            <div class="account-info-row">
+              <span class="account-info-row__label">用户名</span>
+              <span class="account-info-row__value" data-account-name>陌生研究员</span>
+              <button class="account-info-row__action" type="button" data-username-open>编辑</button>
+            </div>
+            <div class="account-info-row">
+              <span class="account-info-row__label">工作单位</span>
+              <button class="account-info-row__link" type="button" data-placeholder="单位认证">未认证用户单位</button>
+            </div>
+          </div>
+
+          <h3 class="account-info__title">账户安全</h3>
+          <div class="account-info-card">
+            <div class="account-info-row">
+              <span class="account-info-row__label">账户 ID</span>
+              <span class="account-info-row__value">
+                <span data-account-id>2100762628079063042</span>
+                <button class="account-info-row__copy" type="button" data-copy-account-id aria-label="复制账户 ID">
+                  <span data-icon="copy"></span>
+                </button>
+              </span>
+            </div>
+            <div class="account-info-row">
+              <span class="account-info-row__label">密码</span>
+              <span class="account-info-row__value">******</span>
+              <button class="account-info-row__action" type="button" data-password-open>重置</button>
+            </div>
+            <div class="account-info-row">
+              <span class="account-info-row__label">手机号</span>
+              <span class="account-info-row__value" data-user-phone>未绑定手机号</span>
+              <button class="account-info-row__action" type="button" data-phone-open>更换</button>
+            </div>
+          </div>
+
+          <h3 class="account-info__title">其他信息</h3>
+          <div class="account-info-card">
+            <div class="account-info-row">
+              <span class="account-info-row__label">注册时间</span>
+              <span class="account-info-row__value">2026-09-18 09:43:35</span>
+            </div>
+          </div>
+        </section>
+        <section class="account-panel" role="tabpanel" id="accountPanelPoints" aria-labelledby="accountTabPoints" data-account-panel="points" hidden>
+          <h2 class="account-profile__name">积分中心</h2>
+          <p class="account-profile__desc">查看积分余额、分项消耗与获取规则</p>
+
+          <!-- 积分总览：数值与侧栏用户菜单、设置页同源（成长 268 + 订阅 4000 = 4268） -->
+          <section class="account-points-section">
+            <h3 class="account-info__title">积分总览</h3>
+            <div class="account-stat-grid">
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">积分余额</p>
+                <p class="account-stat-card__value">4268</p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">成长积分</p>
+                <p class="account-stat-card__value">268</p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">订阅积分</p>
+                <p class="account-stat-card__value">4000<small>本期 0/4000</small></p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">历史消耗积分</p>
+                <p class="account-stat-card__value">1240</p>
+              </div>
+            </div>
+
+            <!-- 获取侧：总获取 = 任务 + 共享 + 下载 -->
+            <div class="account-stat-grid">
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">总获取</p>
+                <p class="account-stat-card__value">1280</p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">任务获取</p>
+                <p class="account-stat-card__value">620</p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">共享获取</p>
+                <p class="account-stat-card__value">420</p>
+              </div>
+              <div class="account-stat-card">
+                <p class="account-stat-card__label">下载获取</p>
+                <p class="account-stat-card__value">240</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 积分趋势：模式（消耗 / 获取）与时间维度由 account-center.js 联动渲染 -->
+          <section class="account-points-section">
+            <div class="account-section-head">
+              <h3 class="account-info__title">积分趋势</h3>
+              <div class="account-section-head__controls">
+                <div class="account-trend-switch" role="tablist" aria-label="积分趋势类型">
+                  <button class="account-trend-switch__item is-active" type="button" role="tab" aria-selected="true" data-points-trend-mode="spend">积分消耗</button>
+                  <button class="account-trend-switch__item" type="button" role="tab" aria-selected="false" data-points-trend-mode="gain">积分获取</button>
+                </div>
+
+                <div class="account-filter" data-filter data-points-trend-filter>
+                  <button class="account-filter__trigger" type="button" data-filter-trigger aria-haspopup="listbox" aria-expanded="false">
+                    <span class="account-filter__label">时间维度</span>
+                    <span class="account-filter__divider" aria-hidden="true"></span>
+                    <span class="account-filter__value" data-filter-value>近 30 天</span>
+                    <span data-icon="chevron-down"></span>
+                  </button>
+                  <div class="account-filter__menu" role="listbox" aria-label="时间维度" data-filter-menu hidden>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="近 7 天">近 7 天<span data-icon="check"></span></button>
+                    <button class="account-filter__option is-selected" type="button" role="option" aria-selected="true" data-filter-option="近 30 天">近 30 天<span data-icon="check"></span></button>
+                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="本月">本月<span data-icon="check"></span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="account-bar-chart" data-points-trend-chart>
+              <div class="account-bar-chart__head">
+                <h4 class="account-bar-chart__title"><span data-points-trend-caption>消耗合计</span> <span data-points-trend-total>0</span></h4>
+              </div>
+              <div class="account-bar-chart__plot">
+                <div class="account-bar-chart__axis" data-points-trend-axis aria-hidden="true"><span>120</span><span>60</span><span>0</span></div>
+                <div class="account-bar-chart__bars" data-points-trend-bars role="img" aria-label="按分项统计的积分柱状图"></div>
+              </div>
+              <div class="account-bar-chart__ticks" data-points-trend-ticks aria-hidden="true"></div>
+            </div>
+          </section>
+
+          <!-- 积分明细：消耗与获取混排，每页 10 条；时间维度筛选后重新分页（表体与分页由 account-center.js 渲染） -->
+          <section class="account-points-section">
+            <div class="account-section-head">
+              <h3 class="account-info__title">积分明细</h3>
+              <div class="account-filter" data-filter data-points-record-filter>
+                <button class="account-filter__trigger" type="button" data-filter-trigger aria-haspopup="listbox" aria-expanded="false">
+                  <span class="account-filter__label">时间维度</span>
+                  <span class="account-filter__divider" aria-hidden="true"></span>
+                  <span class="account-filter__value" data-filter-value>近 30 天</span>
+                  <span data-icon="chevron-down"></span>
+                </button>
+                <div class="account-filter__menu" role="listbox" aria-label="时间维度" data-filter-menu hidden>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="近 7 天">近 7 天<span data-icon="check"></span></button>
+                  <button class="account-filter__option is-selected" type="button" role="option" aria-selected="true" data-filter-option="近 30 天">近 30 天<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="本月">本月<span data-icon="check"></span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="account-table" data-points-record-table>
+              <div class="account-table__head">
+                <span>时间</span><span>项目</span><span>分项</span><span>积分</span><span>结余</span>
+              </div>
+              <div class="account-table__body" data-points-record-body></div>
+            </div>
+            <div class="account-table-footer">
+              <span class="account-table-total" data-points-record-total></span>
+              <nav class="account-message-pager" data-points-record-pager aria-label="积分明细分页"></nav>
+            </div>
+          </section>
+
+          <!-- 积分规则：标题右侧按钮开弹窗；--line-top 让上方出一条横线 -->
+          <section class="account-points-section account-points-section--line-top">
+            <div class="account-section-head">
+              <h3 class="account-info__title">积分规则</h3>
+              <button class="btn btn-outline btn-sm" type="button" data-points-rules-open>查看规则</button>
+            </div>
+            <div class="account-info-card">
+              <div class="account-info-row">
+                <span class="account-info-row__label">每日签到</span>
+                <span class="account-info-row__value">+5 成长积分</span>
+              </div>
+              <div class="account-info-row">
+                <span class="account-info-row__label">共享通过审核</span>
+                <span class="account-info-row__value">+50 成长积分</span>
+              </div>
+              <div class="account-info-row">
+                <span class="account-info-row__label">内容被成员收藏</span>
+                <span class="account-info-row__value">每 2 次 +1 成长积分</span>
+              </div>
+              <div class="account-info-row">
+                <span class="account-info-row__label">内容被下载</span>
+                <span class="account-info-row__value">每次 +1 成长积分</span>
+              </div>
+              <div class="account-info-row">
+                <span class="account-info-row__label">基础会话</span>
+                <span class="account-info-row__value">每轮 -2 积分</span>
+              </div>
+              <div class="account-info-row">
+                <span class="account-info-row__label">项目会话</span>
+                <span class="account-info-row__value">每轮 -2 积分</span>
+              </div>
+              <div class="account-info-row">
+                <span class="account-info-row__label">联网搜索</span>
+                <span class="account-info-row__value">每次 -1 积分</span>
+              </div>
+              <div class="account-info-row">
+                <span class="account-info-row__label">智能体</span>
+                <span class="account-info-row__value">每次 -8 ~ -10 积分</span>
+              </div>
+              <div class="account-info-row">
+                <span class="account-info-row__label">文档下载</span>
+                <span class="account-info-row__value">每份 -4 积分</span>
+              </div>
+            </div>
+            <p class="account-points-note">完整规则（含上限与结算时间）在「查看规则」里。</p>
+          </section>
+
+          <!-- 订阅账单：--ruled 让上下各出一条横线，与积分规则、常见问题隔开 -->
+          <section class="account-points-section account-points-section--ruled">
+            <div class="account-section-head">
+              <h3 class="account-info__title">订阅账单</h3>
+              <button class="btn btn-primary" type="button" data-subscribe-open>订阅</button>
+            </div>
+            <div class="account-table">
+              <div class="account-table__head">
+                <span>期数</span><span>周期</span><span>金额</span><span>状态</span>
+              </div>
+              <div class="account-table__body">
+                <div class="account-table__row"><span>2026-09</span><span>2026-09-01 至 2026-09-30</span><span>￥98.00</span><span class="account-table__state">已开票<button class="account-table__link" type="button" data-bill-download>下载发票</button></span></div>
+                <div class="account-table__row"><span>2026-08</span><span>2026-08-01 至 2026-08-31</span><span>￥98.00</span><span class="account-table__state">已支付</span></div>
+                <div class="account-table__row"><span>2026-07</span><span>2026-07-01 至 2026-07-31</span><span>￥98.00</span><span class="account-table__state">已支付</span></div>
+                <div class="account-table__row"><span>2026-06</span><span>2026-06-01 至 2026-06-30</span><span>￥98.00</span><span class="account-table__state">已支付</span></div>
+              </div>
+            </div>
+            <p class="account-points-note">账单由湖北省社会科学界联合会统一开具。</p>
+          </section>
+
+          <!-- 常见问题：原生 details 折叠 -->
+          <section class="account-points-section">
+            <h3 class="account-info__title">常见问题</h3>
+            <div class="account-faq">
+              <details class="account-faq__item">
+                <summary>积分会过期吗？</summary>
+                <p>成长积分长期有效；订阅积分按订阅期刷新，未使用部分不结转，订阅到期后未使用的订阅积分同时失效。</p>
+              </details>
+              <details class="account-faq__item">
+                <summary>订阅积分和成长积分有什么区别？</summary>
+                <p>订阅积分来自订阅权益，每期定额（4000），优先用于联网搜索、智能体与文档下载；成长积分来自签到、共享与任务，长期累积，可用于兑换数据服务额度。</p>
+              </details>
+              <details class="account-faq__item">
+                <summary>消耗时先扣哪一种积分？</summary>
+                <p>先扣订阅积分，订阅积分不足时再从成长积分扣除；明细里每一笔都会标出实际扣减的来源与结余。</p>
+              </details>
+              <details class="account-faq__item">
+                <summary>兑换后可以退吗？</summary>
+                <p>已消耗的积分不支持退回。若因系统原因导致扣减异常，可提交问题反馈，审核通过后按原路径返还。</p>
+              </details>
+              <details class="account-faq__item">
+                <summary>在哪里看被扣的明细？</summary>
+                <p>本页「积分消耗明细」按时间倒序列出每一笔扣减；消息中心也会同步推送积分变动的通知。</p>
+              </details>
+            </div>
+          </section>
+        </section>
+
+        <section class="account-panel" role="tabpanel" id="accountPanelTasks" aria-labelledby="accountTabTasks" data-account-panel="tasks" hidden>
+          <h2 class="account-profile__name">任务中心</h2>
+          <p class="account-profile__desc">签到、做任务累积成长积分</p>
+
+          <!-- 签到任务：按钮状态由 account-center.js 控制（仅本次会话） -->
+          <section class="account-task-checkin" data-task-checkin>
+            <div class="account-task-checkin__copy">
+              <strong>连续签到 <span data-task-checkin-days>7</span> 天</strong>
+              <small>今日签到可得 5 成长积分，连续 7 天额外 +20</small>
+            </div>
+            <button class="btn btn-primary btn-sm" type="button" data-task-checkin-button>立即签到</button>
+          </section>
+
+          <!-- 当前任务列表：行由 account-center.js 渲染（图标 + 名称 + 说明 + 奖励 + 按钮） -->
+          <section class="account-points-section">
+            <h3 class="account-info__title">当前任务</h3>
+            <div class="account-info-card" data-task-list></div>
+          </section>
+
+          <!-- 单月活跃地图：当月日历格由 account-center.js 渲染 -->
+          <section class="account-points-section">
+            <div class="account-section-head">
+              <h3 class="account-info__title">本月活跃地图</h3>
+              <span class="account-points-note" data-task-month-label></span>
+            </div>
+            <div class="account-month-map">
+              <div class="account-month-map__weekdays" aria-hidden="true">
+                <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+              </div>
+              <div class="account-month-map__grid" data-task-month-map aria-hidden="true"></div>
+            </div>
+            <p class="account-points-note">颜色越深表示当天活跃度越高（研究、上传、共享任一行为即计为活跃）。</p>
+          </section>
+        </section>
+        <section class="account-panel" role="tabpanel" id="accountPanelMessages" aria-labelledby="accountTabMessages" data-account-panel="messages" hidden>
+          <h2 class="account-profile__name">消息中心</h2>
+          <p class="account-profile__desc">审核进度、积分变动与共享动态都会汇总在这里</p>
+
+          <!-- 工具条：左侧两个下拉（状态默认「全部」+ 类型），右侧未读计数与全部已读（列表由 account-center.js 渲染） -->
+          <div class="account-message-toolbar">
+            <div class="account-message-toolbar__filters">
+              <div class="account-filter" data-filter data-message-scope-filter>
+                <button class="account-filter__trigger" type="button" data-filter-trigger aria-haspopup="listbox" aria-expanded="false">
+                  <span class="account-filter__label">状态</span>
+                  <span class="account-filter__divider" aria-hidden="true"></span>
+                  <span class="account-filter__value" data-filter-value>全部</span>
+                  <span data-icon="chevron-down"></span>
+                </button>
+                <div class="account-filter__menu" role="listbox" aria-label="消息状态" data-filter-menu hidden>
+                  <button class="account-filter__option is-selected" type="button" role="option" aria-selected="true" data-filter-option="全部">全部<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="未读">未读<span data-icon="check"></span></button>
+                </div>
+              </div>
+
+              <div class="account-filter" data-filter data-message-type-filter>
+                <button class="account-filter__trigger" type="button" data-filter-trigger aria-haspopup="listbox" aria-expanded="false">
+                  <span class="account-filter__label">类型</span>
+                  <span class="account-filter__divider" aria-hidden="true"></span>
+                  <span class="account-filter__value" data-filter-value>全部</span>
+                  <span data-icon="chevron-down"></span>
+                </button>
+                <div class="account-filter__menu" role="listbox" aria-label="消息类型" data-filter-menu hidden>
+                  <button class="account-filter__option is-selected" type="button" role="option" aria-selected="true" data-filter-option="全部">全部<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="系统通知">系统通知<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="审核结果">审核结果<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="积分变动">积分变动<span data-icon="check"></span></button>
+                  <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="共享动态">共享动态<span data-icon="check"></span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="account-message-toolbar__end">
+              <span class="account-message-count" data-message-unread-count>0 条未读</span>
+              <button class="btn btn-primary btn-sm" type="button" data-message-read-all>全部已读</button>
+            </div>
+          </div>
+
+          <div class="account-message-list" data-message-list></div>
+          <p class="account-message-empty" data-message-empty hidden></p>
+
+          <!-- 左下角总数、右下角页码（每页 10 条，页码由 account-center.js 生成） -->
+          <div class="account-message-footer" data-message-footer hidden>
+            <span class="account-message-total" data-message-total></span>
+            <nav class="account-message-pager" data-message-pager aria-label="消息分页"></nav>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- 表单型弹窗：视觉沿用 projects.css 的 .projects-dialog 标准 -->
+  <dialog class="account-dialog" data-dialog-username aria-labelledby="accountUsernameTitle">
+    <form class="account-dialog__form" data-username-form>
+      <h2 class="account-dialog__title" id="accountUsernameTitle">编辑用户名</h2>
+      <label class="account-dialog__label" for="accountUsernameInput">用户名</label>
+      <input class="account-dialog__input" id="accountUsernameInput" type="text" maxlength="20" autocomplete="nickname" data-username-input>
+      <div class="account-dialog__actions">
+        <button class="account-dialog__button" type="button" data-dialog-close>取消</button>
+        <button class="account-dialog__button account-dialog__button--primary" type="submit">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="account-dialog" data-dialog-password aria-labelledby="accountPasswordTitle">
+    <form class="account-dialog__form" data-password-form>
+      <h2 class="account-dialog__title" id="accountPasswordTitle">重置密码</h2>
+      <label class="account-dialog__label" for="accountPasswordInput">新密码</label>
+      <input class="account-dialog__input" id="accountPasswordInput" type="password" autocomplete="new-password" data-password-input>
+      <label class="account-dialog__label" for="accountPasswordConfirm">确认新密码</label>
+      <input class="account-dialog__input" id="accountPasswordConfirm" type="password" autocomplete="new-password" data-password-confirm>
+      <div class="account-dialog__actions">
+        <button class="account-dialog__button" type="button" data-dialog-close>取消</button>
+        <button class="account-dialog__button account-dialog__button--primary" type="submit">确定</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="account-dialog" data-dialog-phone aria-labelledby="accountPhoneTitle">
+    <form class="account-dialog__form" data-phone-form>
+      <h2 class="account-dialog__title" id="accountPhoneTitle">更换手机号</h2>
+      <label class="account-dialog__label" for="accountPhoneInput">新手机号</label>
+      <div class="account-dialog__field-row">
+        <input class="account-dialog__input" id="accountPhoneInput" type="tel" autocomplete="tel" placeholder="请输入手机号" data-phone-input>
+        <button class="code-button" type="button" data-phone-code>获取验证码</button>
+      </div>
+      <label class="account-dialog__label" for="accountPhoneCode">验证码</label>
+      <input class="account-dialog__input" id="accountPhoneCode" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="请输入验证码" data-phone-code-input>
+      <div class="account-dialog__actions">
+        <button class="account-dialog__button" type="button" data-dialog-close>取消</button>
+        <button class="account-dialog__button account-dialog__button--primary" type="submit">确定</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- 积分规则：整份规则说明，入口在积分中心区块标题右侧；关闭走右上角的 X（无底部按钮） -->
+  <dialog class="account-dialog account-dialog--wide" data-dialog-points-rules aria-labelledby="accountPointsRulesTitle">
+    <div class="account-dialog__form">
+      <div class="account-dialog__head">
+        <h2 class="account-dialog__title" id="accountPointsRulesTitle">积分规则</h2>
+        <button class="account-dialog__close" type="button" data-dialog-close aria-label="关闭">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <ul class="account-rules">
+        <li class="account-rules__group">获取积分</li>
+        <li><strong>每日签到</strong>：+5 成长积分；连续签到满 7 天，当日额外 +20。</li>
+        <li><strong>共享通过审核</strong>：+50 成长积分，每份资料只计一次。</li>
+        <li><strong>内容被成员收藏</strong>：每 2 次收藏 +1 积分，单份资料每月上限 30。</li>
+        <li><strong>内容被下载</strong>：每 1 次下载 +1 积分，同一成员不重复计，单份资料每月上限 60。</li>
+        <li><strong>订阅积分</strong>：随订阅权益按月刷新，每期 4000，未使用部分不结转。</li>
+        <li class="account-rules__group">消耗积分</li>
+        <li><strong>基础会话</strong>：每轮 -2 积分；订阅积分优先抵扣，不足部分从成长积分扣。</li>
+        <li><strong>项目会话</strong>：每轮 -2 积分，项目内对话与项目资料问答同价。</li>
+        <li><strong>联网搜索</strong>：每次 -1 积分，按实际发起的检索次数计。</li>
+        <li><strong>智能体</strong>：每次 -8 ~ -10 积分，按调用的智能体与执行步骤档位计。</li>
+        <li><strong>文档下载</strong>：每份 -4 积分，同一文件重复下载不重复计费。</li>
+      </ul>
+      <p class="account-rules__note">积分于次日 09:00 前结算；对抵扣有疑问可在消息中心提交反馈，审核通过后原路返还。</p>
+    </div>
+  </dialog>
+
+  <!-- 订阅：人工开通，弹窗里给二维码与规则；入口在个人总览「积分用量」的订阅积分卡 -->
+  <dialog class="account-dialog account-dialog--wide" data-dialog-subscribe aria-labelledby="accountSubscribeTitle">
+    <div class="account-dialog__form">
+      <div class="account-dialog__head">
+        <h2 class="account-dialog__title" id="accountSubscribeTitle">订阅积分服务</h2>
+        <button class="account-dialog__close" type="button" data-dialog-close aria-label="关闭">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+
+      <div class="account-subscribe">
+        <img class="account-subscribe__qr" src="../assets/img/subscribe-qr.svg" alt="订阅咨询二维码">
+        <div class="account-subscribe__copy">
+          <p>订阅目前为人工开通：扫码添加专属顾问，由专人协助完成购买、开票与权限配置。</p>
+          <p class="account-subscribe__meta">服务时间：工作日 9:00–18:00<br>咨询电话：027-8888 6666</p>
+        </div>
+      </div>
+
+      <ul class="account-rules">
+        <li><strong>生效时间</strong>：支付确认后即时开通，当期订阅积分同步到账。</li>
+        <li><strong>积分配额</strong>：每期 4000 订阅积分，按月刷新，未使用部分不结转。</li>
+        <li><strong>抵扣顺序</strong>：联网搜索、智能体与文档下载优先扣订阅积分，不足部分从成长积分扣。</li>
+        <li><strong>发票</strong>：由湖北省社会科学界联合会统一开具，抬头与税号可在顾问处登记。</li>
+        <li><strong>变更与退订</strong>：当期结束前联系顾问即可调整档位或退订，已使用的积分不退回。</li>
+        <li><strong>试用</strong>：首次开通可申请 7 天试用额度，试用期内随时取消。</li>
+      </ul>
+      <p class="account-rules__note">演示环境：扫码显示的是咨询联系方式，未接入真实支付与订阅流程。</p>
+    </div>
+  </dialog>
+
+  <script src="../assets/js/icons.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/auth.js" defer></script>
+  <script src="../assets/js/messages.js" defer></script>
+  <script src="../assets/js/pages/account-center.js" defer></script>
+</body>
+</html>

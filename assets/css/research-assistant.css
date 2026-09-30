@@ -283,6 +283,8 @@
   z-index: var(--modal-z-mask);
   inset: 0;
   background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
   opacity: 0;
   transition: opacity var(--duration-default) var(--ease-out);
 }
@@ -643,27 +645,6 @@
   margin-top: 28px;
 }
 
-.message-author {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--foreground);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.message-author-mark {
-  display: grid;
-  width: 26px;
-  height: 26px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--text-secondary);
-  font-size: 10px;
-  font-weight: 700;
-}
-
 .message-user .message-body {
   max-width: 620px;
   justify-self: end;
@@ -671,10 +652,6 @@
   border-radius: var(--radius-md);
   background: var(--primary);
   color: #fff;
-}
-
-.message-user .message-author {
-  justify-self: end;
 }
 
 .message-ai .message-body {
@@ -1221,135 +1198,13 @@
   font-size: 10px;
 }
 
-.feedback-mask {
-  position: fixed;
-  z-index: var(--modal-z-mask);
-  inset: 0;
-  background: var(--modal-backdrop);
-  opacity: 0;
-  transition: opacity var(--duration-default) var(--ease-out);
-}
-
-.feedback-modal {
-  position: fixed;
-  z-index: var(--modal-z-box);
-  top: 50%;
-  left: 50%;
-  width: min(500px, calc(100vw - 32px));
-  border-radius: var(--radius-modal);
-  background: var(--modal-surface);
-  box-shadow: var(--shadow-modal);
-  opacity: 0;
-  transform: translate(-50%, -46%) scale(0.97);
-  transition:
-    opacity var(--duration-default) var(--ease-out),
-    transform var(--duration-slow) var(--ease-out);
-}
-
-.feedback-mask.is-open,
-.feedback-modal.is-open {
-  opacity: 1;
-}
-
-.feedback-modal.is-open {
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.feedback-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--modal-head-gap);
-  padding: var(--modal-pad-head);
-  border-bottom: 1px solid var(--border);
-}
-
-.feedback-head h2 {
-  font-size: var(--modal-title-size);
-}
-
-.feedback-head p {
-  margin-top: 5px;
-  color: var(--text-secondary);
-  font-size: var(--font-size-xxs);
-}
-
-.feedback-close {
-  display: grid;
-  width: 36px;
-  height: 36px;
-  place-items: center;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-}
-
-.feedback-close:hover {
-  background: var(--surface-hover);
-  color: var(--foreground);
-}
-
-.feedback-form {
-  display: grid;
-  gap: var(--spacing-4);
-  padding: var(--modal-pad-body);
-}
-
-.feedback-type-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.feedback-type {
-  display: flex;
-  min-height: 38px;
-  align-items: center;
-  gap: 8px;
-  padding: 0 11px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  font-size: 12px;
-}
-
-.feedback-type:has(input:checked) {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent-active);
-}
-
-.feedback-type input {
-  accent-color: var(--primary);
-}
-
-.feedback-textarea {
-  width: 100%;
-  min-height: 112px;
-  resize: vertical;
-  padding: 11px 12px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-  outline: none;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.feedback-textarea:focus {
-  border-color: var(--accent-strong);
-  box-shadow: 0 0 0 3px var(--accent);
-}
-
-.feedback-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--spacing-3);
-}
-
 .history-search-mask {
   position: fixed;
   z-index: var(--modal-z-mask);
   inset: 0;
   background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
   opacity: 0;
   transition: opacity var(--duration-default) var(--ease-out);
 }
@@ -1526,10 +1381,6 @@
   .message-ai .message-body {
     padding: 15px 16px;
   }
-
-  .feedback-type-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ============ 生成中的骨架消息 ============ */
@@ -1571,12 +1422,6 @@
 .research-assistant-page .chat-area:has(.chat-head:not(.is-new-conversation)) {
   background-color: var(--card);
   background-image: none;
-}
-
-.composer-add-menu-separator {
-  height: 1px;
-  margin: 4px 0;
-  background: var(--border);
 }
 
 .composer-agent-menu {

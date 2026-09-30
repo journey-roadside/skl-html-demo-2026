@@ -1,0 +1,337 @@
+/* ============ 登录 / 退出确认弹窗 ============
+   从 components.css 拆出来：官网首页只加载 tokens + portal-home + 本文件，
+   避免整份 components.css 里的同名选择器（.toast / .nav-link 等）串到官网首页。
+   改动登录弹窗样式请改这里。 */
+
+.auth-mask {
+  position: fixed;
+  z-index: var(--modal-z-mask);
+  inset: 0;
+  background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
+  opacity: 0;
+  transition: opacity var(--duration-default) var(--ease-out);
+}
+
+.auth-modal {
+  position: fixed;
+  z-index: var(--modal-z-box);
+  top: 50%;
+  left: 50%;
+  width: min(440px, calc(100vw - 32px));
+  padding: var(--modal-pad);
+  border-radius: var(--radius-modal);
+  background: var(--modal-surface);
+  box-shadow: var(--shadow-modal);
+  opacity: 0;
+  transform: translate(-50%, -46%) scale(0.97);
+  transition:
+    opacity var(--duration-default) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.auth-mask.is-open,
+.auth-modal.is-open {
+  opacity: 1;
+}
+
+.auth-modal.is-open {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.auth-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-5);
+}
+
+.auth-title {
+  font-size: var(--modal-title-size);
+  font-weight: var(--font-weight-semibold);
+}
+
+.auth-subtitle {
+  margin-top: var(--spacing-2);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.auth-close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+/* 关闭图标尺寸不能靠 .workbench-icon（那条规则在 workbench-shell.css，
+   官网首页不加载，图标会撑满 36px 按钮）；这里写死与工作台一致的 18px */
+.auth-close svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}@media (hover: hover){.auth-close:hover{
+  background: var(--surface-hover);
+  color: var(--foreground);
+}}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2);
+  margin: var(--spacing-5) 0;
+  padding: var(--spacing-1);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+}
+
+.auth-tab {
+  min-height: 34px;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.auth-tab.is-active {
+  background: var(--card);
+  box-shadow: 0 1px 4px rgba(31, 35, 41, 0.08);
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+.auth-form {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.logout-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-6);
+}
+
+.field {
+  display: grid;
+  gap: var(--spacing-2);
+}
+
+.field-label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.field-input-wrap {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.field input {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--spacing-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* 聚焦态与重命名输入框一致：边框实心 --accent-strong，外环 3px --accent */
+.field input:focus {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.code-button {
+  flex: 0 0 112px;
+  min-height: 44px;
+  padding: 0 var(--spacing-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}@media (hover: hover){.code-button:hover{
+  border-color: var(--foreground);
+  color: var(--foreground);
+}}
+
+/* 密码框内右侧的明文 / 隐藏切换 */
+.field-password {
+  position: relative;
+  display: block;
+}
+
+.field-password input {
+  padding-right: 46px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+  transform: translateY(-50%);
+}
+
+.password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.password-toggle__eye-off,
+.password-toggle.is-on .password-toggle__eye {
+  display: none;
+}
+
+.password-toggle.is-on .password-toggle__eye-off {
+  display: block;
+}
+
+@media (hover: hover) {
+  .password-toggle:hover {
+    color: var(--foreground);
+  }
+}
+
+/* 与上方协议行的间距翻倍：栅格外间距 16 + 这里 24 = 40px（登录 / 注册两个模式共用） */
+.auth-submit {
+  width: 100%;
+  margin-top: var(--spacing-6);
+}
+
+.auth-hint {
+  color: var(--muted-foreground);
+  font-size: var(--font-size-xxs);
+  text-align: center;
+}
+
+/* 勾选框与右侧文字垂直居中（原来靠顶部对齐 + 4px 上边距微调） */
+.auth-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xxs);
+}
+
+.auth-checkbox input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+/* 协议链接：深色加粗，左右各留一点空隙；悬停转品牌色 */
+.auth-legal-link {
+  display: inline;
+  padding: 0;
+  margin: 0 var(--spacing-1);
+  color: var(--foreground);
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (hover: hover) {
+  .auth-legal-link:hover {
+    color: var(--accent-active);
+  }
+}
+
+/* 登录弹窗内的输入框聚焦：只保留 .field input 的橙色边框 + 柔环，
+   去掉全站 :focus-visible 额外叠上来的黑色描边（本仓库 --ring 为 #000000） */
+.auth-modal .field input:focus-visible {
+  outline: none;
+}
+
+/* 协议勾选框没有 .field 的橙色边框兜底，焦点提示换成同一套橙色柔环 */
+.auth-modal .auth-checkbox input:focus-visible {
+  outline: none;
+  border-radius: var(--radius-xs);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+/* 小屏下弹窗自身可滚动，避免超出视口 */
+@media (max-width: 575.98px) {
+  .auth-modal {
+    max-height: calc(100vh - 28px);
+    overflow-y: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .auth-modal {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+/* ============ 与宿主页面解耦 ============
+   弹窗挂在 body 下，会继承所在页面的排版；而官网首页（portal-home.css：15px / 1.7）
+   与工作台各页（base.css：--font-size-sm / 1.6）取值不同，输入框在首页还会退回
+   UA 默认的 Arial 13.3px（首页不加载 base.css）。这里按 base.css 的取值写死，
+   保证登录弹窗在两个环境里完全一致。改这里的值=同时改全部页面的弹窗。 */
+.auth-modal {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.auth-modal input {
+  color: inherit;
+  font: inherit;
+}
+
+/* .btn 在 components.css（工作台）与 portal-home.css（首页）各有一套，这里统一按前者 */
+.auth-modal .btn {
+  height: 44px;
+  padding: 0 var(--spacing-6);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.auth-modal .btn-primary {
+  border-color: var(--primary);
+}
+
+/* 危险按钮（退出登录确认）不受上面那条约束：红底红边，悬停也不翻黑。
+   不写在这里就会被 .auth-modal .btn-primary 与各页的 .btn-primary:hover 盖掉 */
+.auth-modal .btn-primary.danger {
+  border-color: var(--destructive);
+  background: var(--destructive);
+  color: var(--on-dark);
+}
+
+@media (hover: hover) {
+  .auth-modal .btn-primary.danger:hover {
+    border-color: var(--destructive);
+    background: var(--destructive);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+/* 首页 .btn-outline 底色透明，工作台为半透明白；统一按工作台 */
+.auth-modal .btn-outline {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+@media (hover: hover) {
+  /* 首页 .btn-primary:hover 有 translateY(-1px) 上浮，工作台没有 */
+  .auth-modal .btn:hover {
+    transform: none;
+  }
+
+  .auth-modal .btn-primary:hover {
+    border-color: var(--primary-hover);
+  }
+}

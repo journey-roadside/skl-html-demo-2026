@@ -33,6 +33,12 @@
 html {
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
+  /* 首页整页藏起滚动条：内容照常滚动，只是不显示条 */
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {
@@ -1441,8 +1447,11 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 20px); }
 
 /* ============ Toast ============ */
 .toast {
-  position: fixed; left: 50%; bottom: 32px; z-index: 100;
-  transform: translate(-50%, 16px);
+  /* 与全站一致：提示在顶部，从上方滑入 */
+  position: fixed; left: 50%; top: 28px; z-index: 100;
+  /* popover 的 UA 默认样式（inset: 0 / margin: auto / border: solid）要抵消掉 */
+  right: auto; bottom: auto; margin: 0; border: 0;
+  transform: translate(-50%, -14px);
   background: var(--text); color: #fff; font-size: 14px;
   padding: 10px 18px; border-radius: 999px;
   box-shadow: var(--shadow-toast);
@@ -1704,4 +1713,60 @@ html { scroll-behavior: auto; }
   .footer-col {
     text-align: left;
   }
+}
+
+/* ============ 导航右侧：登录入口与用户信息 ============ */
+.site-nav .nav-auth {
+  align-self: center;
+  margin-left: 10px;
+}
+
+/* 用户信息：触发器沿用仓库既有的 .user-chip-btn，下拉沿用 .user-menu */
+.nav-user,
+.drawer-nav__user {
+  position: relative;
+  display: inline-flex;
+  align-self: center;
+  margin-left: 10px;
+}
+
+.nav-user .user-avatar,
+.drawer-nav__user .user-avatar {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.nav-user .user-name,
+.drawer-nav__user .user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* 下拉项：兼容 <a>（账户中心）与 <button>（退出登录） */
+.user-menu a {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text-2);
+  text-align: left;
+}
+
+.user-menu a:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.drawer-nav__auth {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.drawer-nav__user {
+  align-self: flex-start;
+  margin-left: 0;
+  padding: 8px 0;
 }

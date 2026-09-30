@@ -19,10 +19,90 @@
         }
         window.clearTimeout(shellToastTimer);
         toast.textContent = message;
+        /* 用 popover 进浏览器顶层：弹窗遮罩、原生 <dialog> 都在顶层，只有顶层盖得住 */
+        toast.setAttribute("popover", "manual");
+        toast.showPopover?.();
         toast.classList.add("is-visible");
         shellToastTimer = window.setTimeout(function () {
           toast.classList.remove("is-visible");
+          /* 等淡出走完再退出顶层；期间来了新提示就别退 */
+          window.setTimeout(function () {
+            if (!toast.classList.contains("is-visible")) toast.hidePopover?.();
+          }, 200);
         }, 2400);
+      }
+    });
+  }
+
+  /* 焦点陷阱兜底：同上，登录框（auth.js）在 5 个页面都会用到 setFocusTrap / releaseFocusTrap，
+     而它们只在 main.js 里定义。实现与 main.js 一致，已有则不覆盖。 */
+  if (typeof window.SKApp.setFocusTrap !== "function") {
+    const focusTrapState = new WeakMap();
+    let activeFocusTrap = null;
+
+    const getFocusableElements = function (container) {
+      const selector = [
+        "a[href]",
+        "button:not([disabled])",
+        "input:not([disabled]):not([type='hidden'])",
+        "select:not([disabled])",
+        "textarea:not([disabled])",
+        "[tabindex]:not([tabindex='-1'])",
+      ].join(",");
+      return Array.from(container.querySelectorAll(selector)).filter(function (element) {
+        if (element.hidden || element.getAttribute("aria-hidden") === "true") return false;
+        const style = window.getComputedStyle(element);
+        return style.display !== "none" && style.visibility !== "hidden" && element.getClientRects().length > 0;
+      });
+    };
+
+    const releaseFocusTrap = function (container) {
+      const state = focusTrapState.get(container);
+      if (!state) return;
+      document.removeEventListener("keydown", state.onKeydown, true);
+      focusTrapState.delete(container);
+      if (activeFocusTrap === container) activeFocusTrap = null;
+      if (state.previous && document.contains(state.previous)) {
+        state.previous.focus({ preventScroll: true });
+      }
+    };
+
+    window.SKApp = Object.assign(window.SKApp || {}, {
+      releaseFocusTrap: releaseFocusTrap,
+      setFocusTrap: function (container, options) {
+        if (!container) return;
+        if (activeFocusTrap && activeFocusTrap !== container) releaseFocusTrap(activeFocusTrap);
+        releaseFocusTrap(container);
+        const previous = document.activeElement;
+        const onKeydown = function (event) {
+          if (event.key !== "Tab") return;
+          const focusable = getFocusableElements(container);
+          if (!focusable.length) {
+            event.preventDefault();
+            container.tabIndex = -1;
+            container.focus({ preventScroll: true });
+            return;
+          }
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          } else if (!container.contains(document.activeElement)) {
+            event.preventDefault();
+            first.focus();
+          }
+        };
+        document.addEventListener("keydown", onKeydown, true);
+        focusTrapState.set(container, { onKeydown: onKeydown, previous: previous });
+        activeFocusTrap = container;
+        const initial = (options && options.initial) || getFocusableElements(container)[0] || container;
+        window.requestAnimationFrame(function () {
+          initial.focus({ preventScroll: true });
+        });
       }
     });
   }
@@ -69,7 +149,7 @@
           </svg>
           <span>社科助手</span>
         </a>
-        <a class="workbench-nav__link" href="./my-knowledge.html" data-rail-tip="我的知识" aria-label="我的知识">
+        <a class="workbench-nav__link" href="./my-knowledge.html" data-rail-tip="我的知识" aria-label="我的知识" data-auth-only>
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
             <path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"></path>
@@ -89,18 +169,6 @@
               <path d="m9 18 6-6-6-6"></path>
             </svg>
             <span class="workbench-section__summary-spacer" aria-hidden="true"></span>
-            <span class="workbench-section__actions">
-              <a class="workbench-section__action" href="./agent-square.html" data-summary-action aria-label="查看全部智能体">
-                <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="m19 5 3-3"></path>
-                  <path d="m2 22 3-3"></path>
-                  <path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path>
-                  <path d="M7.5 13.5 10 11"></path>
-                  <path d="M10.5 16.5 13 14"></path>
-                  <path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path>
-                </svg>
-              </a>
-            </span>
           </summary>
           <div class="workbench-agent-list">
           <div class="workbench-agent-row">
@@ -135,6 +203,16 @@
               <path d="M9 13v2"></path>
             </svg>
               <span class="workbench-agent__name">荆楚智审</span>
+            </a>
+          </div>
+          <div class="workbench-agent-row">
+            <a class="workbench-agent" href="./agent-square.html">
+              <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="5" cy="12" r="1"></circle>
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="19" cy="12" r="1"></circle>
+              </svg>
+              <span class="workbench-agent__name">更多</span>
             </a>
           </div>
           </div>
@@ -178,24 +256,35 @@
       </section>
 
       <div class="workbench-rail-actions" aria-label="折叠侧栏快捷入口">
-        <a class="workbench-rail-action" href="./projects.html" aria-label="项目列表" data-rail-tip="项目">
-          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M8 6h13"></path>
-            <path d="M8 12h13"></path>
-            <path d="M8 18h13"></path>
-            <path d="M3 6h.01"></path>
-            <path d="M3 12h.01"></path>
-            <path d="M3 18h.01"></path>
-          </svg>
+        <a class="workbench-rail-action" href="./projects.html" aria-label="项目列表" data-rail-tip="项目" data-auth-open data-rail-project-entry>
+          <span data-auth-only>
+            <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8 6h13"></path>
+              <path d="M8 12h13"></path>
+              <path d="M8 18h13"></path>
+              <path d="M3 6h.01"></path>
+              <path d="M3 12h.01"></path>
+              <path d="M3 18h.01"></path>
+            </svg>
+          </span>
+          <span class="workbench-project__toggle workbench-project__toggle--new" data-guest-only aria-hidden="true">
+            <svg class="workbench-icon workbench-project__folder workbench-project__folder--closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            </svg>
+            <svg class="workbench-icon workbench-project__plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true">
+              <path d="M5 12h14"></path>
+              <path d="M12 5v14"></path>
+            </svg>
+          </span>
         </a>
-        <a class="workbench-rail-action" href="research-assistant.html" aria-label="新建社科助手对话" data-rail-tip="新建对话（Ctrl+Alt+K）">
+        <a class="workbench-rail-action" href="research-assistant.html" aria-label="新建社科助手对话" data-rail-tip="新建对话（Ctrl+Alt+K）" data-auth-only>
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
             <path d="M8 12h8"></path>
             <path d="M12 8v8"></path>
           </svg>
         </a>
-        <button class="workbench-rail-action" type="button" aria-label="搜索会话" data-rail-tip="会话搜索（Ctrl+Alt+J）" data-dialog-search-open>
+        <button class="workbench-rail-action" type="button" aria-label="搜索会话" data-rail-tip="会话搜索（Ctrl+Alt+J）" data-dialog-search-open data-auth-only>
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="8"></circle>
             <path d="m21 21-4.3-4.3"></path>
@@ -214,7 +303,7 @@
               </svg>
               <span class="workbench-section__summary-spacer" aria-hidden="true"></span>
               <span class="workbench-section__actions">
-                <a class="workbench-section__action" href="./projects.html" data-summary-action aria-label="项目视图">
+                <a class="workbench-section__action" href="./projects.html" data-summary-action aria-label="项目列表" data-rail-tip="项目列表" data-auth-only>
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M8 6h13"></path>
                     <path d="M8 12h13"></path>
@@ -224,7 +313,7 @@
                     <path d="M3 18h.01"></path>
                   </svg>
                 </a>
-                <button class="workbench-section__action" type="button" data-summary-action aria-label="新建项目">
+                <button class="workbench-section__action" type="button" data-summary-action aria-label="新建项目" data-rail-tip="新建项目" data-auth-open>
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M5 12h14"></path>
                     <path d="M12 5v14"></path>
@@ -232,7 +321,7 @@
                 </button>
               </span>
             </summary>
-            <div class="workbench-projects">
+            <div class="workbench-projects" data-auth-only>
             <div class="workbench-project">
               <input class="visually-hidden workbench-project__state" type="checkbox" id="workbench-project-toggle-1" aria-label="切换项目：基层公共文化服务数字化研究" data-project-state>
               <div class="workbench-project__row">
@@ -593,6 +682,18 @@
               </button>
             </div>
           </div>
+            <button class="workbench-project__row workbench-project__row--guest" type="button" data-guest-only data-auth-open>
+              <span class="workbench-project__toggle workbench-project__toggle--new" aria-hidden="true">
+                <svg class="workbench-project__folder workbench-project__folder--closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                </svg>
+                <svg class="workbench-project__plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true">
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5v14"></path>
+                </svg>
+              </span>
+              <span class="workbench-project__title">新建项目</span>
+            </button>
           </details>
         </section>
 
@@ -605,13 +706,13 @@
               </svg>
               <span class="workbench-section__summary-spacer" aria-hidden="true"></span>
               <span class="workbench-section__actions">
-                <button class="workbench-section__action" type="button" data-summary-action data-dialog-search-open aria-label="搜索对话">
+                <button class="workbench-section__action" type="button" data-summary-action data-dialog-search-open aria-label="搜索对话" data-rail-tip="搜索对话" data-auth-only>
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.3-4.3"></path>
                   </svg>
                 </button>
-                <button class="workbench-section__action" type="button" data-summary-action data-dialog-manage-toggle aria-label="管理对话">
+                <button class="workbench-section__action" type="button" data-summary-action data-dialog-manage-toggle aria-label="多选" data-rail-tip="多选" data-auth-only>
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="m3 17 2 2 4-4"></path>
                     <path d="m3 7 2 2 4-4"></path>
@@ -620,13 +721,13 @@
                     <path d="M13 18h8"></path>
                   </svg>
                 </button>
-                <button class="workbench-section__action workbench-dialog-manage-only" type="button" data-summary-action data-dialog-manage-exit aria-label="取消管理">
+                <button class="workbench-section__action workbench-dialog-manage-only" type="button" data-summary-action data-dialog-manage-exit aria-label="取消多选" data-rail-tip="取消多选">
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
                     <path d="M18 6 6 18"></path>
                     <path d="m6 6 12 12"></path>
                   </svg>
                 </button>
-                <a class="workbench-section__action" href="./research-assistant.html" aria-label="新建对话">
+                <a class="workbench-section__action" href="./research-assistant.html" aria-label="新建对话" data-rail-tip="新建对话" data-auth-only>
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M5 12h14"></path>
                     <path d="M12 5v14"></path>
@@ -634,7 +735,7 @@
                 </a>
               </span>
             </summary>
-            <div class="workbench-dialogs">
+            <div class="workbench-dialogs" data-auth-only>
             <div class="workbench-dialog-row">
               <button class="workbench-dialog__title" type="button">湖北省社科研究热点分析</button>
               <button class="workbench-row-action" type="button" aria-label="更多操作：湖北省社科研究热点分析">
@@ -866,6 +967,17 @@
               </button>
             </div>
             </div>
+            <button class="workbench-dialog__title workbench-dialog__title--guest" type="button" data-guest-only data-auth-open>
+              <span class="workbench-dialog__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                  <path d="M21 3v5h-5"></path>
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                  <path d="M3 21v-5h5"></path>
+                </svg>
+              </span>
+              <span>登录以同步历史会话</span>
+            </button>
           </details>
         </section>
       </div>
@@ -893,10 +1005,22 @@
       <div class="workbench-row-menu" id="workbench-row-menu" role="menu" aria-label="列表操作" hidden></div>
     </header>`;
   const SHELL_USER = `    <footer class="workbench-user">
+      <!-- 任务窗口：浮动在用户区上方（对话列表下沿），内容先占位，规则后续再补；可手动关闭 -->
+      <section class="workbench-task-slot" data-task-slot aria-label="任务中心入口">
+        <button class="workbench-task-slot__close" type="button" data-task-slot-close aria-label="关闭任务窗口">
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+        <strong class="workbench-task-slot__title">任务中心</strong>
+        <p class="workbench-task-slot__desc">做任务赚积分，可兑换数据服务与深度研究额度。</p>
+        <a class="btn btn-primary btn-sm workbench-task-slot__action" href="./account-center.html?tab=tasks" target="_blank" rel="noopener">去任务中心</a>
+      </section>
       <div class="workbench-user__row">
         <button class="workbench-user__profile" type="button" data-user-menu-trigger aria-haspopup="menu" aria-expanded="false" aria-controls="workbench-user-menu">
-          <span class="workbench-user__avatar" aria-hidden="true">研</span>
-          <span class="workbench-user__name">社科研究员</span>
+          <span class="workbench-user__avatar" aria-hidden="true" data-sidebar-user-avatar>研</span>
+          <span class="workbench-user__name" data-sidebar-user-label>社科研究员</span>
         </button>
         <button class="workbench-user__messages" type="button" data-message-center-open aria-haspopup="dialog" aria-expanded="false" aria-controls="workbench-message-center" aria-label="消息，3 条未读">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -909,15 +1033,15 @@
 
       <div class="workbench-user-menu" id="workbench-user-menu" data-user-menu role="menu" aria-label="用户菜单" hidden>
         <div class="workbench-user-menu__profile">
-          <span class="workbench-user__avatar" aria-hidden="true">研</span>
+          <span class="workbench-user__avatar" aria-hidden="true" data-sidebar-user-avatar>研</span>
           <span class="workbench-user-menu__profile-copy">
-            <strong>社科研究员</strong>
-            <small>湖北省社会科学界联合会</small>
+            <strong data-sidebar-user-label>社科研究员</strong>
+            <small data-auth-only>湖北省社会科学界联合会</small>
           </span>
         </div>
         <div class="workbench-user-menu__divider" aria-hidden="true"></div>
         <div class="workbench-user-menu__group">
-          <div class="workbench-user-menu__row" role="presentation">
+          <div class="workbench-user-menu__row" role="presentation" data-auth-only>
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="8" cy="8" r="4"></circle>
               <circle cx="16" cy="16" r="4"></circle>
@@ -932,12 +1056,13 @@
                 </svg>
               </button>
               <span class="workbench-user-menu__points" data-user-points>
-                <strong>268</strong>
+                <!-- 4268 = 成长积分 268 + 订阅积分 4000（与设置页「积分订阅」两项对得上） -->
+                <strong>4268</strong>
                 <span class="skeleton" aria-hidden="true"></span>
               </span>
             </span>
           </div>
-          <button type="button" role="menuitem">
+          <a role="menuitem" href="./account-center.html?tab=overview" target="_blank" rel="noopener" aria-label="账号中心（在新窗口打开）" data-auth-only>
             <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="8" r="4"></circle>
               <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
@@ -947,6 +1072,17 @@
               <path d="M15 3h6v6"></path>
               <path d="M10 14 21 3"></path>
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            </svg>
+          </a>
+          <button type="button" role="menuitem" data-guest-only data-auth-open>
+            <svg class="workbench-user-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <path d="m10 17 5-5-5-5"></path>
+              <path d="M15 12H3"></path>
+            </svg>
+            <span>登录 / 注册</span>
+            <svg class="workbench-user-menu__trailing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m9 18 6-6-6-6"></path>
             </svg>
           </button>
           <button type="button" role="menuitem" data-settings-open>
@@ -1058,8 +1194,8 @@
           </div>
         </div>
         <div class="workbench-message-center__foot">
-          <!-- TODO 消息中心页面尚未创建，地址先占位；建好后把 href 换掉即可 -->
-          <a href="./messages.html" target="_blank" rel="noopener" aria-label="查看全部消息（在新窗口打开）">查看全部</a>
+          <!-- 全部消息在账户中心的「消息中心」菜单里（同一份数据、同一份已读状态） -->
+          <a href="./account-center.html?tab=messages" target="_blank" rel="noopener" aria-label="查看全部消息（在新窗口打开）">查看全部</a>
         </div>
       </section>
 
@@ -1084,6 +1220,47 @@
           <input class="workbench-search__input" type="search" data-dialog-search-input placeholder="输入会话标题搜索" aria-label="输入会话标题搜索" autocomplete="off">
         </label>
         <div class="workbench-search__list" data-dialog-search-list></div>
+      </dialog>
+
+      <dialog class="workbench-shortcuts" data-dialog-shortcuts aria-labelledby="workbenchShortcutsTitle">
+        <div class="workbench-shortcuts__head">
+          <div>
+            <h2 class="workbench-shortcuts__title" id="workbenchShortcutsTitle">快捷键</h2>
+            <p class="workbench-shortcuts__desc">工作台通用；macOS 上以 ⌘ 代替 Ctrl</p>
+          </div>
+          <button class="workbench-shortcuts__close" type="button" data-dialog-shortcuts-close aria-label="关闭快捷键">
+            <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <ul class="workbench-shortcuts__list">
+          <li class="workbench-shortcuts__item">
+            <span class="workbench-shortcuts__keys"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd></span>
+            <span class="workbench-shortcuts__label">收起 / 展开左侧栏</span>
+          </li>
+          <li class="workbench-shortcuts__item">
+            <span class="workbench-shortcuts__keys"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>K</kbd></span>
+            <span class="workbench-shortcuts__label">新建会话（登录后有效）</span>
+          </li>
+          <li class="workbench-shortcuts__item">
+            <span class="workbench-shortcuts__keys"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>J</kbd></span>
+            <span class="workbench-shortcuts__label">搜索会话（登录后有效）</span>
+          </li>
+          <li class="workbench-shortcuts__item">
+            <span class="workbench-shortcuts__keys"><kbd>Enter</kbd></span>
+            <span class="workbench-shortcuts__label">发送消息</span>
+          </li>
+          <li class="workbench-shortcuts__item">
+            <span class="workbench-shortcuts__keys"><kbd>Shift</kbd><kbd>Enter</kbd></span>
+            <span class="workbench-shortcuts__label">输入框内换行</span>
+          </li>
+          <li class="workbench-shortcuts__item">
+            <span class="workbench-shortcuts__keys"><kbd>Esc</kbd></span>
+            <span class="workbench-shortcuts__label">关闭当前弹窗或菜单</span>
+          </li>
+        </ul>
       </dialog>
 
       <dialog class="workbench-confirm" data-dialog-confirm aria-labelledby="workbenchConfirmTitle">
@@ -1149,6 +1326,8 @@
       } else {
         /* 新建项目弹窗只在项目列表页（projects.js 仅该页加载）：跳转过去并由该页打开弹窗 */
         create.addEventListener("click", function () {
+          /* 未登录时不跳转：交给 auth.js 的 [data-auth-open] 弹登录框 */
+          if (!window.SKAuth?.getUser()) return;
           window.location.href = "./projects.html?create=1";
         });
       }
@@ -1203,6 +1382,15 @@
     }
   };
 
+  /* 任务窗口（SHELL_USER 里的占位广告位）：关闭只在本次加载内生效，刷新页面重新出现 */
+  const taskSlot = document.querySelector("[data-task-slot]");
+
+  if (taskSlot) {
+    taskSlot.querySelector("[data-task-slot-close]")?.addEventListener("click", function () {
+      taskSlot.remove();
+    });
+  }
+
   /* 提示气泡用真实元素承载（不用 <span>：收起态 .workbench-nav__link > span 的
      overflow: hidden 会把指向箭头裁掉；伪元素又不可靠） */
   document.querySelectorAll("[data-rail-tip]").forEach(function (el) {
@@ -1243,12 +1431,25 @@
       return new URL(link.href, window.location.href).hash === hash;
     });
 
+    /* 收起侧栏只剩第一行可见：在智能体广场（含 #agent-research / #agent-review 介绍页）
+       一律由它承担选中态，哪怕真正匹配的是看不见的第二行。
+       展开态只高亮匹配项——广场首页没有 #hash 时谁都不高亮。
+       必须 Boolean() 收敛：matched 为空时 `matched && …` 是 undefined，
+       classList.toggle 收到 undefined 会当成「没传 force」的普通 toggle，每调一次翻一次 */
+    const collapsed = Boolean(sidebarState && sidebarState.checked);
+
     links.forEach(function (link, index) {
-      /* 匹配项高亮；收起侧栏只显示第一行，匹配项不可见时由可见的第一行承担选中态
-         （例如收起态下从二级菜单点「荆楚智审」进入 #agent-review） */
-      const isActive =
-        isAgentSquarePage && (link === matched || (index === 0 && (!matched || !matched.offsetWidth)));
+      const isActive = Boolean(isAgentSquarePage && (link === matched || (index === 0 && collapsed)));
       link.classList.toggle("is-active", isActive);
+    });
+
+    /* 收起侧栏的二级菜单（rail 上点智能体图标弹出）同样标出当前项：
+       按地址栏认，展开态导航过来再收起也能对上。
+       带 #hash 的两条智能体按 hash 匹配；不带 hash 的「智能体广场」在广场首页时选中 */
+    document.querySelectorAll(".workbench-agent-menu__item[href]").forEach(function (item) {
+      const itemHash = new URL(item.href, window.location.href).hash;
+      const active = isAgentSquarePage && (itemHash ? itemHash === hash : !hash);
+      item.classList.toggle("is-active", Boolean(active));
     });
   };
 
@@ -1366,10 +1567,6 @@
   /* 消息列表默认只露最近几条，其余去消息中心页看 */
   const MESSAGE_PREVIEW_COUNT = 5;
 
-  if (messageTrigger) {
-    messageTrigger.hidden = false;
-  }
-
   const updateMessageState = function () {
     if (!messagePanel || !messageTrigger) return;
 
@@ -1403,9 +1600,6 @@
   };
 
   document.addEventListener("DOMContentLoaded", function () {
-    if (messageTrigger) {
-      messageTrigger.hidden = false;
-    }
     updateMessageState();
   }, { once: true });
 
@@ -1454,7 +1648,8 @@
   };
 
   if (userTrigger && userMenu) {
-    /* 用户菜单开合由壳层单源接管：此前仅 main.js 绑定，projects / agent-square 点头像无反应 */
+    /* 用户菜单开合由壳层单源接管：此前仅 main.js 绑定，projects / agent-square 点头像无反应。
+       未登录也能开菜单——里面的「登录 / 注册」才是入口。 */
     userTrigger.addEventListener("click", function (event) {
       event.stopPropagation();
       setUserMenuOpen(userMenu.hidden, false);
@@ -1475,6 +1670,43 @@
     });
   }
 
+  /* 消息条目：有共享数据源（assets/js/messages.js 的 window.SKMessages）就按它渲染，
+     已读状态与账户中心「消息中心」共用；脚本没加载时保留模板里的静态条目兜底 */
+  const renderMessageCenterList = function () {
+    const list = messagePanel ? messagePanel.querySelector(".workbench-message-center__list") : null;
+    if (!list || !window.SKMessages) return;
+
+    const empty = list.querySelector("[data-message-empty]");
+    const items = window.SKMessages.all().map(function (message) {
+      const item = document.createElement("button");
+      item.className = "workbench-message-center__item" + (message.read ? "" : " is-unread");
+      item.type = "button";
+      item.dataset.messageId = message.id;
+
+      const head = document.createElement("span");
+      head.className = "workbench-message-center__item-head";
+
+      const title = document.createElement("strong");
+      title.textContent = message.title;
+
+      const time = document.createElement("time");
+      time.textContent = message.time;
+
+      head.append(title, time);
+
+      const copy = document.createElement("span");
+      copy.className = "workbench-message-center__item-copy";
+      copy.textContent = message.summary;
+
+      item.append(head, copy);
+      return item;
+    });
+
+    list.replaceChildren.apply(list, items);
+    /* 空态节点是 updateMessageState 的常驻宿主，重渲染后要放回去 */
+    if (empty) list.append(empty);
+  };
+
   if (messageTrigger && messagePanel) {
     messageTrigger.addEventListener("click", function (event) {
       event.stopPropagation();
@@ -1486,10 +1718,16 @@
       if (readAll) {
         const items = messagePanel.querySelectorAll(".workbench-message-center__item");
         if (!items.length) return;
-        /* 全部已读 = 列表清空，交给缺省状态占位 */
-        items.forEach(function (item) {
-          item.remove();
-        });
+        if (window.SKMessages) {
+          /* 有共享数据源：条目留着，只是全部转成已读态（账户中心那边同步） */
+          window.SKMessages.markAllRead();
+          renderMessageCenterList();
+        } else {
+          /* 兜底：列表清空，交给缺省状态占位 */
+          items.forEach(function (item) {
+            item.remove();
+          });
+        }
         updateMessageState();
         window.SKApp?.showToast?.("消息已全部已读");
         return;
@@ -1497,6 +1735,7 @@
 
       const item = event.target.closest(".workbench-message-center__item");
       if (item) {
+        window.SKMessages?.markRead(item.dataset.messageId);
         item.classList.remove("is-unread");
         updateMessageState();
       }
@@ -1515,6 +1754,7 @@
       });
     }
 
+    renderMessageCenterList();
     updateMessageState();
   }
 
@@ -1535,6 +1775,7 @@
   const rowMenu = document.querySelector("#workbench-row-menu");
   let confirmCallback = null;
   let promptCallback = null;
+  let promptValidate = null;
   let menuTarget = null;
 
   /* variant：danger（默认，破坏性操作）| primary（非破坏性操作）
@@ -1558,6 +1799,8 @@
     if (dialogPromptTitle) dialogPromptTitle.textContent = options.title || "重命名";
     if (dialogPromptInput) dialogPromptInput.value = options.value || "";
     promptCallback = options.onOk || null;
+    /* 可选的校验：返回非空字符串即视为不通过（提示文案），弹窗不关 */
+    promptValidate = options.validate || null;
     dialogPrompt.showModal();
     /* 只聚焦到末尾，不做全选：全选会套用全局 ::selection（淡桃底 + 橙字），
        视觉上像变成了提示文字 */
@@ -1582,14 +1825,23 @@
 
   document.querySelector("[data-dialog-prompt-ok]")?.addEventListener("click", function () {
     const value = dialogPromptInput ? dialogPromptInput.value.trim() : "";
+    /* 校验不过就不关窗：提示一句、焦点放回输入框，就地改 */
+    const problem = value && promptValidate ? promptValidate(value) : "";
+    if (problem) {
+      window.SKApp?.showToast?.(problem);
+      dialogPromptInput?.focus();
+      return;
+    }
     dialogPrompt?.close();
     const run = promptCallback;
     promptCallback = null;
+    promptValidate = null;
     if (run && value) run(value);
   });
 
   document.querySelector("[data-dialog-prompt-cancel]")?.addEventListener("click", function () {
     promptCallback = null;
+    promptValidate = null;
     dialogPrompt?.close();
   });
 
@@ -1783,9 +2035,18 @@
     const name = refs.title.textContent.trim();
 
     if (action === "rename") {
+      /* 重名校验：与同一组里的其它同级行比（项目 / 项目内会话 / 会话列表各自的容器） */
+      const siblings = Array.from(refs.row.parentElement.querySelectorAll(ROW_SELECTORS[kind][1]));
+      const label = kind === "project" ? "项目名称" : "对话名称";
       askPrompt({
         title: "重命名",
         value: name,
+        validate: function (next) {
+          const duplicated = siblings.some(function (node) {
+            return node !== refs.title && node.textContent.trim() === next;
+          });
+          return duplicated ? label + "已存在，请换一个名称" : "";
+        },
         onOk: function (value) {
           refs.title.textContent = value;
           window.SKApp?.showToast?.("已重命名为“" + value + "”");
@@ -1992,6 +2253,17 @@
     dialogSearch?.close();
   });
 
+  /* 快捷键弹窗：入口在设置页「快捷键」行，弹窗本身是壳层的（任意页面都能开） */
+  const dialogShortcuts = document.querySelector("[data-dialog-shortcuts]");
+  document.querySelectorAll("[data-dialog-shortcuts-open]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      if (typeof dialogShortcuts?.showModal === "function") dialogShortcuts.showModal();
+    });
+  });
+  document.querySelector("[data-dialog-shortcuts-close]")?.addEventListener("click", function () {
+    dialogShortcuts?.close();
+  });
+
   document.addEventListener("click", function (event) {
     if (userMenu && !userMenu.hidden && !userMenu.contains(event.target) && !userTrigger?.contains(event.target)) {
       setUserMenuOpen(false, false);
@@ -2004,10 +2276,12 @@
     }
   });
 
-  /* 全站快捷键：Ctrl+Alt+B 收起/展开侧栏、Ctrl+Alt+K 新建会话、Ctrl+Alt+J 会话搜索 */
+  /* 全站快捷键：Ctrl+Alt+B 收起/展开侧栏、Ctrl+Alt+K 新建会话、Ctrl+Alt+J 会话搜索。
+     后两个是登录后的功能：未登录按下不响应（与侧栏入口的显隐口径一致） */
   document.addEventListener("keydown", function (event) {
     if (!(event.ctrlKey || event.metaKey) || !event.altKey || event.repeat || event.defaultPrevented) return;
     const key = event.key.toLowerCase();
+    const loggedIn = Boolean(window.SKAuth?.getUser());
 
     if (key === "b" && sidebarState) {
       event.preventDefault();
@@ -2017,6 +2291,7 @@
     }
 
     if (key === "k") {
+      if (!loggedIn) return;
       event.preventDefault();
       const newConversation = document.querySelector("[data-new-conversation]");
       if (newConversation) {
@@ -2029,6 +2304,7 @@
     }
 
     if (key === "j") {
+      if (!loggedIn) return;
       event.preventDefault();
       if (dialogSearch && dialogSearch.open) {
         dialogSearch.close();
@@ -2045,7 +2321,8 @@
     if (rowMenu && !rowMenu.hidden) closeRowMenu();
   });
 
-    document.querySelectorAll(".workbench-dialog__title").forEach(function (button) {
+    /* 点击会话标题 = 选中该会话；未登录那条是登录入口（data-guest-only），不参与选中 */
+    document.querySelectorAll(".workbench-dialog__title:not([data-guest-only])").forEach(function (button) {
     button.addEventListener("click", function () {
       document.querySelectorAll(".workbench-dialog__title.is-active").forEach(function (item) {
         item.classList.remove("is-active");
@@ -2069,4 +2346,237 @@
     positionAgentMenu();
   });
   updateScrollState();
+
+  /* 登录态同步：全站唯一实现（原先只在 v4.js 里，只有社科助手那一页生效）。
+     登录框本身在 assets/js/auth.js，5 个页面都已加载；这里只负责把状态刷到各页面的显示钩子上。 */
+  const syncAuthState = function () {
+    const loggedIn = Boolean(window.SKAuth?.getUser());
+    document.querySelectorAll("[data-auth-only]").forEach(function (node) {
+      node.hidden = !loggedIn;
+    });
+    document.querySelectorAll("[data-guest-only]").forEach(function (node) {
+      node.hidden = loggedIn;
+    });
+    document.querySelectorAll("[data-settings-auth-only]").forEach(function (node) {
+      node.hidden = !loggedIn;
+    });
+    document.querySelectorAll("[data-settings-guest-only]").forEach(function (node) {
+      node.hidden = loggedIn;
+    });
+    /* 用户名跟随登录账号（与官网首页 portal-home.js、账户中心 account-center.js 同一口径） */
+    const userName = window.SKAuth?.getUser()?.name || "社科研究员";
+    document.querySelectorAll("[data-sidebar-user-label]").forEach(function (node) {
+      node.textContent = loggedIn ? userName : "陌生研究员";
+    });
+    document.querySelectorAll("[data-sidebar-user-avatar]").forEach(function (node) {
+      node.textContent = loggedIn ? "研" : "陌";
+    });
+    /* 收起侧栏的项目入口：未登录时图标是「新建项目」，无障碍名与悬停提示同步改口
+       （.workbench-tip 是壳层按 data-rail-tip 生成的实体元素，改属性不会自动跟着变） */
+    document.querySelectorAll("[data-rail-project-entry]").forEach(function (node) {
+      node.setAttribute("aria-label", loggedIn ? "项目列表" : "新建项目");
+      node.setAttribute("data-rail-tip", loggedIn ? "项目列表" : "新建项目");
+      const tip = node.querySelector(".workbench-tip");
+      if (tip) tip.textContent = node.getAttribute("data-rail-tip");
+    });
+    /* 消息中心是登录后才成立的功能：未登录收起铃铛，已展开的面板一并关掉 */
+    document.querySelectorAll("[data-message-center-open]").forEach(function (node) {
+      node.hidden = !loggedIn;
+    });
+    if (!loggedIn && messagePanel && !messagePanel.hidden) setMessageCenterOpen(false, false);
+  };
+
+  syncAuthState();
+  document.addEventListener("sk:auth-changed", syncAuthState);
+
+  /* 问题反馈弹窗：全站唯一实现。用户菜单、设置页「帮助与反馈」、回答下方的问题反馈按钮
+     都只挂 [data-feedback-open]，弹窗结构由壳层在这里注入，任何页面点击都能打开。
+     关闭按钮内联 SVG 而非 data-icon：icons.js 只在部分页面加载。 */
+  const feedbackMask = document.createElement("div");
+  feedbackMask.className = "feedback-mask";
+  feedbackMask.dataset.feedbackMask = "";
+  feedbackMask.hidden = true;
+
+  const FEEDBACK_LIMIT = 200;
+  const FEEDBACK_IMAGE_LIMIT = 6;
+
+  const feedbackModal = document.createElement("section");
+  feedbackModal.className = "feedback-modal";
+  feedbackModal.dataset.feedbackModal = "";
+  feedbackModal.setAttribute("role", "dialog");
+  feedbackModal.setAttribute("aria-modal", "true");
+  feedbackModal.setAttribute("aria-labelledby", "feedbackTitle");
+  feedbackModal.hidden = true;
+  feedbackModal.innerHTML = `
+    <div class="feedback-head">
+      <div>
+        <h2 id="feedbackTitle">用户反馈</h2>
+        <p>使用过程中遇到了什么问题?</p>
+      </div>
+      <button class="feedback-close" type="button" data-feedback-close aria-label="关闭反馈">
+        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <form class="feedback-form" data-feedback-form>
+      <div class="feedback-field">
+        <textarea class="feedback-textarea" placeholder="欢迎说说你的想法" aria-label="反馈内容" maxlength="${FEEDBACK_LIMIT}" data-feedback-detail></textarea>
+        <span class="feedback-count" data-feedback-count aria-live="polite">0/${FEEDBACK_LIMIT}</span>
+      </div>
+      <div class="feedback-attach">
+        <p class="feedback-attach__hint">你还可以上传或粘贴图片进行反馈。（最多添加${FEEDBACK_IMAGE_LIMIT}张）</p>
+        <div class="feedback-attach__list" data-feedback-image-list>
+          <label class="feedback-attach__tile" aria-label="添加图片">
+            <input class="visually-hidden" type="file" accept="image/*" multiple data-feedback-image-input>
+            <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M12 5v14"></path>
+              <path d="M5 12h14"></path>
+            </svg>
+          </label>
+        </div>
+      </div>
+      <div class="feedback-actions">
+        <button class="btn btn-outline" type="button" data-feedback-close>取消</button>
+        <button class="btn btn-primary" type="submit">提交反馈</button>
+      </div>
+    </form>
+  `;
+  document.body.append(feedbackMask, feedbackModal);
+
+  let feedbackHideTimer = 0;
+
+  const openFeedback = function () {
+    /* 关窗动画未走完就重开时，别让上一次的隐藏计时器把窗口藏回去 */
+    window.clearTimeout(feedbackHideTimer);
+    feedbackMask.hidden = false;
+    feedbackModal.hidden = false;
+    requestAnimationFrame(function () {
+      feedbackMask.classList.add("is-open");
+      feedbackModal.classList.add("is-open");
+    });
+    document.body.classList.add("is-locked");
+  };
+
+  const closeFeedback = function () {
+    feedbackMask.classList.remove("is-open");
+    feedbackModal.classList.remove("is-open");
+    document.body.classList.remove("is-locked");
+    /* 关窗即清空：点取消 / 关闭、提交成功之后都不残留上次的文字与图片 */
+    resetFeedback();
+    feedbackHideTimer = window.setTimeout(function () {
+      feedbackMask.hidden = true;
+      feedbackModal.hidden = true;
+    }, 220);
+  };
+
+  /* Esc 关闭反馈弹窗（自绘遮罩弹窗不走浏览器原生行为） */
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !feedbackModal.hidden) {
+      event.preventDefault();
+      closeFeedback();
+    }
+  });
+
+  /* 反馈图片：点击 + 选择本地图片，或直接在弹窗内粘贴；缩略图点击即移除 */
+  const feedbackImageInput = feedbackModal.querySelector("[data-feedback-image-input]");
+  const feedbackImageList = feedbackModal.querySelector("[data-feedback-image-list]");
+  const feedbackImageTile = feedbackImageList.querySelector(".feedback-attach__tile");
+  const feedbackImageCount = function () {
+    return feedbackImageList.querySelectorAll(".feedback-attach__thumb").length;
+  };
+  const clearFeedbackImages = function () {
+    feedbackImageList.querySelectorAll(".feedback-attach__thumb").forEach(function (item) {
+      item.remove();
+    });
+  };
+  const addFeedbackImages = function (files) {
+    const images = Array.from(files).filter(function (file) {
+      return file.type.startsWith("image/");
+    });
+    if (!images.length) return;
+    /* 上传与粘贴都走这里：超出上限的部分丢掉，并明确说一声 */
+    const room = FEEDBACK_IMAGE_LIMIT - feedbackImageCount();
+    if (images.length > room) {
+      window.SKApp?.showToast?.("最多只能添加 " + FEEDBACK_IMAGE_LIMIT + " 张图片");
+      images.length = Math.max(room, 0);
+    }
+    images.forEach(function (file) {
+      const item = document.createElement("div");
+      item.className = "feedback-attach__thumb";
+      const thumb = document.createElement("img");
+      thumb.alt = "";
+      /* 用 data URL 而非 createObjectURL：预览图生命周期跟着元素走，不必回收 */
+      const reader = new FileReader();
+      reader.addEventListener("load", function () {
+        thumb.src = reader.result;
+      });
+      reader.readAsDataURL(file);
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "feedback-attach__remove";
+      remove.setAttribute("aria-label", "移除这张图片");
+      remove.textContent = "×";
+      remove.addEventListener("click", function () {
+        item.remove();
+      });
+      item.append(thumb, remove);
+      feedbackImageList.insertBefore(item, feedbackImageTile);
+    });
+  };
+
+  feedbackImageInput.addEventListener("change", function () {
+    addFeedbackImages(feedbackImageInput.files);
+    feedbackImageInput.value = "";
+  });
+
+  feedbackModal.addEventListener("paste", function (event) {
+    const files = Array.from(event.clipboardData?.files || []);
+    if (!files.length) return;
+    event.preventDefault();
+    addFeedbackImages(files);
+  });
+
+  /* 上限交给 maxlength 拦，计数只负责把上限显示出来 */
+  const feedbackDetail = feedbackModal.querySelector("[data-feedback-detail]");
+  const feedbackCount = feedbackModal.querySelector("[data-feedback-count]");
+  const syncFeedbackCount = function () {
+    /* 兜底：脚本赋值绕过 maxlength 时也要截断，计数不能出现 260/200 */
+    if (feedbackDetail.value.length > FEEDBACK_LIMIT) {
+      feedbackDetail.value = feedbackDetail.value.slice(0, FEEDBACK_LIMIT);
+    }
+    feedbackCount.textContent = feedbackDetail.value.length + "/" + FEEDBACK_LIMIT;
+  };
+  feedbackDetail.addEventListener("input", syncFeedbackCount);
+
+  const resetFeedback = function () {
+    if (feedbackDetail.value) {
+      feedbackDetail.value = "";
+      syncFeedbackCount();
+    }
+    clearFeedbackImages();
+  };
+
+  feedbackModal.querySelector("[data-feedback-form]").addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (feedbackDetail.value.trim().length < 4 && !feedbackImageCount()) {
+      window.SKApp?.showToast?.("请补充具体问题说明");
+      feedbackDetail.focus();
+      return;
+    }
+    closeFeedback();
+    window.SKApp?.showToast?.("反馈已提交，感谢你的补充");
+  });
+
+  document.addEventListener("click", function (event) {
+    if (event.target.closest("[data-feedback-open]")) {
+      openFeedback();
+      return;
+    }
+    /* 只认关闭按钮：点遮罩不关（全站统一） */
+    if (event.target.closest("[data-feedback-close]")) {
+      closeFeedback();
+    }
+  });
 })();

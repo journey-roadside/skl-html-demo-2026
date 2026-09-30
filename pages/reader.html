@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../assets/css/tokens.css">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/auth-modal.css">
   <link rel="stylesheet" href="../assets/css/reader.css">
 </head>
 <body class="reader-body">
@@ -21,20 +22,23 @@
     <span class="reader-bar__divider" aria-hidden="true"></span>
     <div class="reader-bar__file">
       <h1 class="reader-bar__name" data-file-name>基层公共文化服务数字化研究.pdf</h1>
-      <span class="tag reader-bar__time">更新时间：<time data-file-time></time></span>
     </div>
     <div class="reader-bar__actions">
-      <!-- 三个动作暂用仓库既有的占位提示机制（main.js 的 [data-placeholder]），流程接入后替换 -->
-      <button class="reader-action" type="button" aria-label="重命名" data-placeholder="重命名">
+      <!-- 重命名 / 收藏已接真实行为（见 reader.js），下载暂用占位提示机制。
+           前两个登录后才出现；未登录时点下载会转成登录引导（reader.js） -->
+      <button class="reader-action" type="button" aria-label="重命名" data-reader-rename data-auth-only>
         <span data-icon="pencil"></span>
       </button>
-      <button class="reader-action" type="button" aria-label="加入知识库" data-placeholder="加入知识库">
-        <span data-icon="folder-plus"></span>
+      <button class="reader-action" type="button" aria-label="收藏" data-reader-favorite data-auth-only aria-pressed="false">
+        <span data-icon="star"></span>
       </button>
-      <button class="reader-action" type="button" aria-label="下载" data-placeholder="下载">
+      <button class="reader-action" type="button" aria-label="下载" data-reader-download>
         <span data-icon="download"></span>
       </button>
     </div>
+    <!-- 时间说明：来源是「我的知识」时叫更新时间，其他来源（社区等）叫共享时间 -->
+    <span class="reader-bar__divider" aria-hidden="true"></span>
+    <span class="reader-bar__time"><span data-file-time-label>共享时间</span>：<time data-file-time></time></span>
     <span class="reader-bar__divider" aria-hidden="true"></span>
     <div class="reader-bar__owner">
       <span class="reader-bar__avatar" aria-hidden="true"><span data-icon="user-round"></span></span>
@@ -76,8 +80,59 @@
     <span data-icon="arrow-up"></span>
   </button>
 
+  <!-- 底部浮动工具栏：翻页 / 缩放 / 阅读背景 / 全屏 / 关闭，行为在 reader.js -->
+  <div class="reader-toolbar" data-reader-toolbar role="toolbar" aria-label="阅读工具栏">
+    <button class="reader-toolbar__button" type="button" data-reader-page-prev aria-label="上一页">
+      <span data-icon="chevron-left"></span>
+    </button>
+    <span class="reader-toolbar__pager" aria-label="页码"><span data-reader-page-current>1</span> / <span data-reader-page-total>1</span></span>
+    <button class="reader-toolbar__button" type="button" data-reader-page-next aria-label="下一页">
+      <span data-icon="chevron-right"></span>
+    </button>
+
+    <span class="reader-toolbar__divider" aria-hidden="true"></span>
+
+    <button class="reader-toolbar__button" type="button" data-reader-zoom-out aria-label="缩小">
+      <span data-icon="circle-minus"></span>
+    </button>
+    <span class="reader-toolbar__zoom" data-reader-zoom-label>100%</span>
+    <button class="reader-toolbar__button" type="button" data-reader-zoom-in aria-label="放大">
+      <span data-icon="circle-plus"></span>
+    </button>
+
+    <span class="reader-toolbar__divider" aria-hidden="true"></span>
+
+    <button class="reader-toolbar__button" type="button" data-reader-contrast aria-label="切换阅读背景" aria-pressed="false">
+      <span data-icon="contrast"></span>
+    </button>
+    <button class="reader-toolbar__button" type="button" data-reader-fullscreen aria-label="全屏" aria-pressed="false">
+      <span data-icon="maximize"></span>
+    </button>
+    <button class="reader-toolbar__button" type="button" data-reader-minimize aria-label="收起工具栏">
+      <span data-icon="x"></span>
+    </button>
+
+    <!-- 收起后只剩这一颗：显示阅读进度，点它展开回完整工具栏 -->
+    <button class="reader-toolbar__restore" type="button" data-reader-restore aria-label="展开阅读工具栏">1 / 1</button>
+  </div>
+
+  <!-- 重命名弹窗：表单型弹窗，视觉对齐 projects.css 的 .projects-dialog -->
+  <dialog class="reader-dialog" data-reader-rename-dialog aria-labelledby="readerRenameTitle">
+    <form class="reader-dialog__form" data-reader-rename-form>
+      <h2 class="reader-dialog__title" id="readerRenameTitle">重命名文件</h2>
+      <p class="reader-dialog__description">仅修改文件名称，原文件格式会自动保留</p>
+      <label class="reader-dialog__label" for="readerRenameInput">文件名称</label>
+      <input class="reader-dialog__input" id="readerRenameInput" type="text" maxlength="60" autocomplete="off" data-reader-rename-input>
+      <div class="reader-dialog__actions">
+        <button class="reader-dialog__button" type="button" data-reader-rename-cancel>取消</button>
+        <button class="reader-dialog__button reader-dialog__button--primary" type="submit">保存</button>
+      </div>
+    </form>
+  </dialog>
+
   <script src="../assets/js/icons.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/auth.js" defer></script>
   <script src="../assets/js/pages/reader.js" defer></script>
 </body>
 </html>

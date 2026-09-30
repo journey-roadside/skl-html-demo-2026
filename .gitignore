@@ -1,7 +1,10 @@
 # AI Agent 运行配置
 CLAUDE.md
 AGENTS.md
+PRODUCT.md
 .claude/
+.impeccable/
+.playwright-mcp/
 
 # 部署配置
 .gitignore

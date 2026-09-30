@@ -214,6 +214,20 @@
     }
   }
 
+  let settingsPointsTimer = 0;
+
+  /* 积分加载态：效果与用户菜单里的积分一致（骨架先亮、700ms 后落数值），
+     区别只是触发时机——每次进入设置页都重跑一次 */
+  function refreshSettingsPoints() {
+    const points = document.querySelectorAll("[data-settings-points]");
+    if (!points.length) return;
+    window.clearTimeout(settingsPointsTimer);
+    points.forEach((node) => node.classList.add("is-loading"));
+    settingsPointsTimer = window.setTimeout(() => {
+      points.forEach((node) => node.classList.remove("is-loading"));
+    }, 700);
+  }
+
   function setSettingsView(open) {
     const settingsView = document.querySelector("[data-settings-view]");
     const chatArea = document.querySelector(".chat-area");
@@ -234,6 +248,7 @@
       document.querySelector("[data-session-files-panel]")?.classList.remove("is-open");
       document.querySelector("[data-question-history-panel]")?.classList.remove("is-open");
       settingsView.hidden = false;
+      refreshSettingsPoints();
       return;
     }
 
@@ -340,7 +355,6 @@
     document.querySelectorAll("[data-research-modal-close]").forEach((button) => {
       button.addEventListener("click", closeResearchModal);
     });
-    mask.addEventListener("click", closeResearchModal);
     input?.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
@@ -357,9 +371,10 @@
 
   function initNavigation() {
     document.addEventListener("click", (event) => {
-      const action = event.target.closest("[data-nav-toast]");
+      /* data-user-menu-toast 是设置页占位行在用的同一套写法（原先无人绑定、点了没反应） */
+      const action = event.target.closest("[data-nav-toast], [data-user-menu-toast]");
       if (!action) return;
-      window.SKApp.showToast(action.dataset.navToast);
+      window.SKApp.showToast(action.dataset.navToast || action.dataset.userMenuToast);
     });
 
     document.querySelectorAll("[data-auth-nav-url]").forEach((button) => {
@@ -435,35 +450,7 @@
   }
 
   function initUserMenuActions() {
-    const syncUserMenuAuthState = () => {
-      const loggedIn = Boolean(window.SKAuth?.getUser());
-      const userRoot = document.querySelector(".app-sidebar-user");
-      const userChip = document.querySelector("[data-user-chip]");
-      const messageTrigger = document.querySelector("[data-message-center-open]");
-      const messagePanel = document.querySelector("[data-message-center]");
-      if (userChip) userChip.hidden = false;
-      if (userRoot) userRoot.classList.toggle("is-logged-out", !loggedIn);
-      if (messageTrigger) messageTrigger.hidden = !loggedIn;
-      if (!loggedIn && messagePanel) messagePanel.hidden = true;
-      document.querySelectorAll("[data-sidebar-user-label]").forEach((node) => {
-        node.textContent = loggedIn ? "未知研究员" : "未登录";
-      });
-      document.querySelectorAll("[data-auth-only]").forEach((node) => {
-        node.hidden = !loggedIn;
-      });
-      document.querySelectorAll("[data-guest-only]").forEach((node) => {
-        node.hidden = loggedIn;
-      });
-      document.querySelectorAll("[data-settings-auth-only]").forEach((node) => {
-        node.hidden = !loggedIn;
-      });
-      document.querySelectorAll("[data-settings-guest-only]").forEach((node) => {
-        node.hidden = loggedIn;
-      });
-    };
-
-    syncUserMenuAuthState();
-    document.addEventListener("sk:auth-changed", syncUserMenuAuthState);
+    /* 登录态同步（syncUserMenuAuthState）已收归壳层 assets/js/pages/workbench.js */
 
     document.querySelectorAll("[data-feedback-open]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -503,6 +490,24 @@
     const expandButton = document.querySelector("[data-collapsed-sidebar-expand]");
     const sidebarToggle = document.querySelector("[data-sidebar-collapse]");
     expandButton?.addEventListener("click", () => sidebarToggle?.click());
+  }
+
+  /* 通用设置里的开关（深度思考 / 自动联网搜索 / 推荐管理）：切换后给一条提示。
+     文案默认取行标题（去掉开头的「允许」——「已开启允许深度思考」读着别扭），
+     行标题凑不出合适说法时用 data-settings-toast-on/off 指定 */
+  function initSettingsSwitches() {
+    document.querySelectorAll(".settings-switch input[type='checkbox']").forEach((input) => {
+      input.addEventListener("change", () => {
+        const label = (
+          input.closest(".settings-view-row")?.querySelector("strong")?.textContent || "该设置"
+        )
+          .trim()
+          .replace(/^允许/, "");
+        const on = input.dataset.settingsToastOn || `已开启${label}`;
+        const off = input.dataset.settingsToastOff || `已关闭${label}`;
+        window.SKApp.showToast(input.checked ? on : off);
+      });
+    });
   }
 
   function initSettingsSelects() {
@@ -599,6 +604,7 @@
     initUserMenuActions();
     initCollapsedToolbar();
     initSettingsSelects();
+    initSettingsSwitches();
     initSidebarScrollIndicator();
     initResearchModal();
     initDefaultState();

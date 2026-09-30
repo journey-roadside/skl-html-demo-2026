@@ -202,6 +202,16 @@
   color: var(--accent-active);
 }
 
+/* 收起侧栏的智能体二级菜单：当前所在的智能体同样标选中（与列表行同一套配色） */
+.workbench-agent-menu__item.is-active {
+  background: var(--surface-hover);
+  color: var(--accent-active);
+}
+
+.workbench-agent-menu__item.is-active .workbench-icon {
+  color: var(--accent-active);
+}
+
 .workbench-icon {
   width: 18px;
   height: 18px;
@@ -375,6 +385,31 @@
   background: var(--surface-hover);
 }
 
+/* 未登录占位行（新建项目）：与真实项目行同款，只是不带展开箭头、右侧不留操作位。
+   text-align 必须写死：button 默认居中，会把标题挤出左对齐 */
+.workbench-project__row--guest {
+  width: 100%;
+  padding-right: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* 「新建项目」的文件夹图标右下角挂一个 + 号：底色圆片盖住文件夹转角，避免线条糊在一起 */
+.workbench-project__toggle--new {
+  position: relative;
+}
+
+.workbench-project__plus {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  height: 12px;
+  padding: 1px;
+  border-radius: var(--radius-full);
+  background: var(--background);
+}
+
 .workbench-project__title.is-active {
   color: var(--accent-active);
 }
@@ -495,6 +530,28 @@
 .workbench-dialog-row {
   position: relative;
   min-width: 0;
+}
+
+/* 未登录时对话列表的占位行（登录入口）：左侧带图标。
+   padding-left 归零是为了让图标与「新建项目」行的文件夹图标对齐（同在 x=14） */
+.workbench-dialog__title--guest {
+  display: flex;
+  align-items: center;
+  padding-left: 0;
+}
+
+.workbench-dialog__icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  place-items: center;
+  color: var(--muted-foreground);
+}
+
+.workbench-dialog__icon svg {
+  width: 16px;
+  height: 16px;
 }
 
 .workbench-dialog-row .workbench-row-action {
@@ -666,7 +723,9 @@
     color: var(--foreground);
   }
 
-  .workbench-project__toggle:hover .workbench-project__folder,
+  /* 只作用于项目行：收起侧栏的 rail 入口复用了 __toggle，没有 .workbench-project 祖先，
+     否则鼠标移入会把文件夹图标藏掉，只剩一个 + 号 */
+  .workbench-project .workbench-project__toggle:hover .workbench-project__folder,
   .workbench-project__state:not(:checked) ~ .workbench-project__row .workbench-project__toggle:hover .workbench-project__folder--closed,
   .workbench-project__state:checked ~ .workbench-project__row .workbench-project__toggle:hover .workbench-project__folder--open {
     display: none;
@@ -916,6 +975,73 @@
 /* Workbench user area */
 .workbench-user {
   position: relative;
+}
+
+/* 任务窗口：浮动在用户区上方、压住对话列表下沿（占位广告位，可手动关闭）。
+   锚法与消息弹层一致，都挂在 position: relative 的 .workbench-user 上 */
+.workbench-task-slot {
+  position: absolute;
+  z-index: 5;
+  right: 14px;
+  bottom: calc(100% + 8px);
+  left: 14px;
+  display: grid;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: var(--shadow-hover);
+}
+
+.workbench-task-slot__close {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.workbench-task-slot__close .workbench-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.workbench-task-slot__title {
+  padding-right: var(--spacing-6); /* 让开右上角的关闭钮 */
+  color: var(--foreground);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.workbench-task-slot__desc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xxs);
+  line-height: 1.6;
+}
+
+.workbench-task-slot__action {
+  justify-self: start;
+}
+
+/* 收起成 rail 后没有横向空间，整块收起 */
+.workbench-shell:has(.workbench-sidebar__state:checked) .workbench-task-slot {
+  display: none;
+}
+
+@media (hover: hover) {
+  .workbench-task-slot__close:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
 }
 
 .workbench-user-menu,
@@ -1302,6 +1428,7 @@
    顶部收纳/展开按钮在两种状态下都提示（收起按钮只在展开态可见） */
 @media (hover: hover) {
   .workbench-shell:has(.workbench-sidebar__state:checked) [data-rail-tip],
+  .workbench-shell .workbench-section__action[data-rail-tip],
   .workbench-shell :is(.workbench-brand__mark, .workbench-sidebar__toggle)[data-rail-tip] {
     position: relative;
   }
@@ -1336,8 +1463,28 @@
   }
 
   .workbench-shell:has(.workbench-sidebar__state:checked) [data-rail-tip]:hover:not(.is-tip-off) .workbench-tip,
+  .workbench-shell:not(:has(.workbench-sidebar__state:checked)) .workbench-section__action[data-rail-tip]:hover:not(.is-tip-off) .workbench-tip,
   .workbench-shell :is(.workbench-brand__mark, .workbench-sidebar__toggle)[data-rail-tip]:hover:not(.is-tip-off) .workbench-tip {
     display: block;
+  }
+
+  /* 展开侧栏时区块标题右侧的图标提示：落到图标下方、右对齐。
+     放右边会被 .workbench-scroll 的 overflow-x: hidden 裁掉 */
+  .workbench-shell:not(:has(.workbench-sidebar__state:checked)) .workbench-section__action[data-rail-tip] .workbench-tip {
+    top: calc(100% + 8px);
+    right: 0;
+    left: auto;
+    transform: none;
+  }
+
+  .workbench-shell:not(:has(.workbench-sidebar__state:checked)) .workbench-section__action[data-rail-tip] .workbench-tip::before {
+    top: auto;
+    right: 9px;
+    bottom: 100%;
+    left: auto;
+    border-right-color: transparent;
+    border-bottom-color: #1a1a1a;
+    transform: none;
   }
 
   .workbench-dialog-manage-actions button:not(:disabled):hover {
@@ -1409,7 +1556,9 @@
 .workbench-dialog-manage-actions {
   display: grid;
   flex: 0 0 auto;
+  /* 两格等宽：「删除」上的选中计数出现/消失时按钮宽度不变，两个按钮都不会挪位 */
   grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   border-top: 1px solid var(--border);
   background: var(--background);
 }
@@ -1438,12 +1587,12 @@
   color: var(--accent-active);
 }
 
+/* 计数位常驻占位（未选中时留空）：数量出现时「删除」文字也不会跟着挪 */
 .workbench-dialog-manage-actions strong {
+  min-width: 1ch;
   font-weight: var(--font-weight-medium);
-}
-
-.workbench-dialog-manage-actions strong:empty {
-  display: none;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 
 .workbench-dialog-manage-actions .workbench-icon {
@@ -1571,6 +1720,8 @@
 
 .workbench-search::backdrop {
   background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
 }
 
 .workbench-search__head {
@@ -1652,7 +1803,8 @@
 }
 
 .workbench-search__list {
-  max-height: 225px; /* 45px × 5 条 */
+  /* 固定高度（45px × 5 条）：结果多少弹窗都一样高，实时搜索时不跳动 */
+  height: 225px;
   margin-top: var(--spacing-3);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -1678,8 +1830,12 @@
 }
 
 .workbench-search__empty {
-  margin: var(--spacing-5) 0;
-  color: var(--muted-foreground);
+  /* 撑满列表区做垂直居中：列表是固定高度，空态贴顶会显得偏 */
+  display: grid;
+  height: 100%;
+  margin: 0;
+  place-items: center;
+  color: var(--accent-active);
   font-size: var(--font-size-sm);
   text-align: center;
 }
@@ -1698,6 +1854,8 @@
 
 .workbench-confirm::backdrop {
   background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
 }
 
 .workbench-confirm__title {
@@ -1781,4 +1939,301 @@
   border-color: var(--primary);
   background: var(--primary);
   color: var(--primary-foreground);
+}
+
+/* ============ 问题反馈弹窗（全站共用，结构与交互在 workbench.js） ============ */
+
+.feedback-mask {
+  position: fixed;
+  z-index: var(--modal-z-mask);
+  inset: 0;
+  background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
+  opacity: 0;
+  transition: opacity var(--duration-default) var(--ease-out);
+}
+
+.feedback-modal {
+  position: fixed;
+  z-index: var(--modal-z-box);
+  top: 50%;
+  left: 50%;
+  width: min(500px, calc(100vw - 32px));
+  border-radius: var(--radius-modal);
+  background: var(--modal-surface);
+  box-shadow: var(--shadow-modal);
+  opacity: 0;
+  transform: translate(-50%, -46%) scale(0.97);
+  transition:
+    opacity var(--duration-default) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.feedback-mask.is-open,
+.feedback-modal.is-open {
+  opacity: 1;
+}
+
+.feedback-modal.is-open {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.feedback-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--modal-head-gap);
+  padding: var(--modal-pad-head);
+  border-bottom: 1px solid var(--border);
+}
+
+.feedback-head h2 {
+  font-size: var(--modal-title-size);
+}
+
+.feedback-head p {
+  margin-top: 5px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xxs);
+}
+
+.feedback-close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+.feedback-close:hover {
+  background: var(--surface-hover);
+  color: var(--foreground);
+}
+
+.feedback-form {
+  display: grid;
+  gap: var(--spacing-4);
+  padding: var(--modal-pad-body);
+}
+
+.feedback-attach {
+  display: grid;
+  gap: var(--spacing-2);
+}
+
+.feedback-attach__hint {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.feedback-attach__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.feedback-attach__tile {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.feedback-attach__tile:hover,
+.feedback-attach__tile:focus-within {
+  border-color: var(--accent-strong);
+  color: var(--accent-strong);
+}
+
+.feedback-attach__thumb {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.feedback-attach__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.feedback-attach__remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-xxs);
+  line-height: 1;
+}
+
+.feedback-attach__remove:hover {
+  background: var(--surface-hover);
+  color: var(--foreground);
+}
+
+.feedback-attach__remove:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.feedback-field {
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.feedback-count {
+  justify-self: end;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xxs);
+}
+
+.feedback-textarea {
+  width: 100%;
+  min-height: 112px;
+  resize: vertical;
+  padding: 11px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  outline: none;
+  font-size: 13px;
+  line-height: 1.6;
+  scrollbar-width: none;
+}
+
+.feedback-textarea::-webkit-scrollbar {
+  display: none;
+}
+
+.feedback-textarea:focus {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.feedback-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+}
+
+/* ============ 快捷键弹窗（结构在 workbench.js，入口在设置页） ============ */
+
+.workbench-shortcuts {
+  width: min(calc(100vw - 32px), 32.5rem);
+  padding: var(--modal-pad);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-modal);
+  background: var(--modal-surface);
+  box-shadow: var(--shadow-modal);
+  color: var(--foreground);
+}
+
+.workbench-shortcuts::backdrop {
+  background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
+}
+
+.workbench-shortcuts__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--modal-head-gap);
+  margin-bottom: var(--spacing-5);
+}
+
+.workbench-shortcuts__title {
+  margin: 0;
+  font-size: var(--modal-title-size);
+  font-weight: var(--font-weight-semibold);
+}
+
+.workbench-shortcuts__desc {
+  margin: var(--spacing-1) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xxs);
+}
+
+.workbench-shortcuts__close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+}
+
+.workbench-shortcuts__close .workbench-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.workbench-shortcuts__list {
+  display: grid;
+  gap: var(--spacing-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workbench-shortcuts__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+
+.workbench-shortcuts__keys {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: var(--spacing-1);
+}
+
+.workbench-shortcuts__keys kbd {
+  display: inline-grid;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xxs);
+}
+
+.workbench-shortcuts__label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+@media (hover: hover) {
+  .workbench-shortcuts__close:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
 }

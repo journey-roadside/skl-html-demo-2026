@@ -99,6 +99,13 @@
   grid-template-columns: minmax(0, 1fr) 40px;
 }
 
+/* 知识联盟搜索框不要浏览器自带的清除（取消）叉：搜索只在回车 / 放大镜时触发，
+   输入中的文字要保留给人改 */
+.community-search input[type="search"]::-webkit-search-cancel-button,
+.community-floating-search input[type="search"]::-webkit-search-cancel-button {
+  display: none;
+}
+
 .community-search input,
 .community-floating-search input {
   width: 100%;
@@ -407,7 +414,7 @@
 .community-card-main {
   display: grid;
   width: 100%;
-  grid-template-columns: 40px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: var(--spacing-3);
   padding: var(--spacing-4);
@@ -417,21 +424,6 @@
 .community-card-main:active,
 .community-favorite-button:active {
   transform: none;
-}
-
-.community-file-mark {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  place-items: center;
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  color: var(--text-secondary);
-}
-
-.community-file-mark .icon {
-  width: 20px;
-  height: 20px;
 }
 
 .community-card-copy {
@@ -473,15 +465,16 @@
   font-size: var(--font-size-xxs);
 }
 
+/* 描述固定一行：超出宽度省略为 …（不再折行占三行） */
 .community-card-description {
-  display: -webkit-box;
+  display: block;
   margin-top: var(--spacing-2);
   overflow: hidden;
   color: var(--text-secondary);
   font-size: var(--font-size-xxs);
   line-height: 1.65;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   grid-column: 1 / -1;
 }
 
@@ -817,6 +810,8 @@
   z-index: var(--modal-z-mask);
   inset: 0;
   background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
   opacity: 0;
   transition: opacity var(--duration-default) var(--ease-out);
 }
@@ -946,9 +941,10 @@
   font-size: var(--font-size-xs);
 }
 
+/* 高度与表单弹窗标准（projects.css 的 .projects-dialog__input）对齐：44px */
 .community-field input,
 .community-field select {
-  height: 42px;
+  min-height: 2.75rem;
 }
 
 .community-field textarea {
@@ -958,18 +954,91 @@
   line-height: 1.6;
 }
 
-/* 聚焦态与重命名输入框一致：边框实心 --accent-strong，外环 3px --accent */
+/* 聚焦态与重命名输入框一致：边框实心 --accent-strong，外环 3px --accent。
+   同时吃掉全站 :focus-visible 的黑色描边（--ring 是 #000），否则会叠成黑边 */
 .community-field input:focus,
 .community-field textarea:focus,
-.community-field select:focus {
+.community-field select:focus,
+.community-field input:focus-visible,
+.community-field textarea:focus-visible,
+.community-field select:focus-visible {
+  outline: none;
   border-color: var(--accent-strong);
   box-shadow: 0 0 0 3px var(--accent);
 }
 
-.community-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacing-3);
+/* 必填星号：主色调，紧跟字段名 */
+.community-required {
+  margin-left: 2px;
+  color: var(--accent-strong);
+  font-weight: 400;
+}
+
+/* 表单里的下拉：复用工具栏那套 community-select-*，但触发器做成框式字段、弹层铺满字段宽 */
+.community-select-wrap--field {
+  display: block;
+  width: 100%;
+}
+
+/* 字段标题是 600，这层要收回常规字重：触发器与弹层选项都不加粗。
+   选择器带 .community-field 前缀，才压得住 .community-field > span 的 600 */
+.community-field > .community-select-wrap--field {
+  font-weight: 400;
+}
+
+.community-select-button--field {
+  display: flex;
+  width: 100%;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+  padding: 0 var(--spacing-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--foreground);
+  font-size: var(--font-size-xs);
+  /* 不要继承字段标题的 600：框里的文字保持常规字重 */
+  font-weight: 400;
+  text-align: left;
+}
+
+.community-select-button--field .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+}
+
+.community-select-button--field:focus-visible {
+  outline: none;
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.community-select-list--field {
+  width: 100%;
+  max-height: 232px;
+  overflow-y: auto;
+}
+
+/* 第二步主题分类的弹层要向下探出弹窗下沿：这一步只有三个字段 + 操作区（约 520px），
+   放开裁切也够不着屏幕外；第一步带文件列表、内容高，保持原来的滚动 */
+.community-modal:has([data-share-step="2"]:not([hidden])) {
+  overflow: visible;
+}
+
+/* 屏幕下方放不下时的翻向态，由 shared-community.js 在展开时判断 */
+.community-select-list--up {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+@media (hover: hover) {
+  /* 框式触发器悬停保持正文色，不像工具栏那样变橙 */
+  .community-select-button--field:hover {
+    color: var(--foreground);
+  }
 }
 
 .community-review-note {
@@ -982,6 +1051,222 @@
   line-height: 1.65;
 }
 
+/* 分步表单：每一步自己是一个等距栅格（外层 form 的 gap 只管步骤之间） */
+.community-share-step {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+/* 本地上传的投放区：与「我的知识」上传弹窗的 .knowledge-dropzone 同一套观感
+   （虚线框、图标、主文案、副文案、拖入态） */
+.community-dropzone {
+  display: grid;
+  min-height: 156px;
+  place-items: center;
+  align-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-5);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: center;
+}
+
+.community-dropzone > .icon {
+  width: 24px;
+  height: 24px;
+  color: var(--accent-active);
+}
+
+.community-dropzone strong {
+  color: var(--foreground);
+  font-size: var(--font-size-xs);
+}
+
+.community-dropzone small {
+  font-size: var(--font-size-xxs);
+}
+
+/* 原生 file 控件整个藏掉（只留投放区当外观），键盘聚焦时由投放区的柔环提示 */
+.community-dropzone input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.community-dropzone input[type="file"]:focus,
+.community-dropzone input[type="file"]:focus-visible {
+  outline: none;
+}
+
+.community-dropzone:focus-within {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.community-dropzone.is-dragover {
+  border-color: var(--accent-active);
+  background: var(--accent-soft);
+}
+
+/* 已选中的本地文件：显示文件名 + 移除 */
+.community-picked {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--foreground);
+  font-size: var(--font-size-xs);
+}
+
+.community-picked > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-picked__remove {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+}
+
+.community-picked__remove .icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* 放弃编辑确认：叠在共享弹窗之上的一层（同一张遮罩） */
+.community-modal--confirm {
+  width: min(420px, calc(100vw - 32px));
+}
+
+/* 只有标题 + 按钮两组，中间那条分割线没有内容可以分，去掉 */
+.community-modal--confirm .community-modal-head {
+  border-bottom: 0;
+}
+
+.community-modal--confirm .community-modal-actions {
+  margin: 0;
+  padding: 0 var(--modal-pad) var(--modal-pad);
+  border-top: 0;
+}
+
+/* 我的文件：搜索框（图标 + 输入），不加边框——输入区与下方列表连成一片 */
+.community-mine-search {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: 0;
+  color: var(--muted-foreground);
+}
+
+/* 无边框时用图标变色提示聚焦 */
+.community-mine-search:focus-within {
+  color: var(--accent-active);
+}
+
+.community-mine-search .icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.community-mine-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--foreground);
+  font-size: var(--font-size-xs);
+}
+
+.community-mine-search input:focus {
+  outline: 0;
+}
+
+.community-mine-list {
+  max-height: 186px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+}
+
+.community-mine-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: var(--font-size-xs);
+  text-align: left;
+}
+
+.community-mine-item:last-child {
+  border-bottom: 0;
+}
+
+.community-mine-item > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-mine-item small {
+  flex: 0 0 auto;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-xxs);
+}
+
+.community-mine-item.is-selected {
+  background: var(--accent-soft);
+  color: var(--accent-active);
+  font-weight: var(--font-weight-semibold);
+}
+
+.community-mine-empty {
+  color: var(--muted-foreground);
+  font-size: var(--font-size-xxs);
+  text-align: center;
+}
+
+@media (hover: hover) {
+  .community-share-tab:not(.is-active):hover {
+    color: var(--foreground);
+  }
+
+  .community-mine-item:hover {
+    background: var(--surface-hover);
+  }
+
+  .community-mine-item.is-selected:hover {
+    background: var(--accent-soft);
+  }
+}
+
 .community-modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -990,6 +1275,7 @@
   padding: var(--modal-pad-actions);
   border-top: 1px solid var(--border);
 }
+
 
 @media (max-width: 1199.98px) {
   .community-grid {
@@ -1135,10 +1421,6 @@
     transform: translateY(0);
   }
 
-  .community-form-grid,
-  .community-source-field {
-    grid-template-columns: 1fr;
-  }
 
   .community-modal-actions {
     margin-inline: -26px;

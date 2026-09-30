@@ -320,6 +320,8 @@
 
 .projects-dialog::backdrop {
   background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
 }
 
 .projects-dialog__form {
@@ -491,6 +493,121 @@
   outline: 2px solid var(--ring);
   outline-offset: 1px;
 }
+
+/* ============ 「添加项目资料」上传弹窗 ============
+   上传场景与「我的知识」的上传弹窗同一套取值（my-knowledge.css 的
+   .knowledge-modal-head / .knowledge-dropzone / .knowledge-upload-file / .knowledge-modal-actions），
+   只有这一个弹窗如此，其余 projects-dialog 仍按表单型弹窗标准 */
+.projects-dialog--upload {
+  width: min(520px, calc(100% - 32px));
+}
+
+.projects-dialog--upload .projects-dialog__title {
+  font-weight: var(--font-weight-bold);
+}
+
+.projects-dialog--upload .projects-dialog__description {
+  font-size: var(--font-size-xxs);
+  line-height: 1.6;
+}
+
+/* 标题区：右端关闭钮 + 一条通栏分割线（负外边距抵消表单内边距） */
+.projects-dialog--upload .projects-dialog__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--modal-head-gap);
+  margin: calc(-1 * var(--modal-pad)) calc(-1 * var(--modal-pad)) 0;
+  padding: var(--modal-pad-head);
+  border-bottom: 1px solid var(--border);
+}
+
+.projects-dialog--upload .projects-dialog__close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+.projects-dialog--upload .projects-dialog__close .workbench-icon {
+  width: 18px;
+  height: 18px;
+}
+
+@media (hover: hover) {
+  .projects-dialog--upload .projects-dialog__close:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+}
+
+/* 投放区：与 .knowledge-dropzone 同尺寸、同文案层级 */
+.projects-dialog--upload .projects-dialog__picker {
+  min-height: 156px;
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-5);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+}
+
+.projects-dialog--upload .projects-dialog__picker > span {
+  color: var(--foreground);
+  font-weight: var(--font-weight-bold);
+}
+
+.projects-dialog--upload .projects-dialog__picker small {
+  font-size: var(--font-size-xxs);
+}
+
+/* 上传图标与「我的知识」「知识联盟」两处上传弹窗一致：18px、次级文字色 */
+.projects-dialog--upload .projects-dialog__picker .workbench-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+}
+
+/* 鼠标点开弹窗会自动聚焦文件输入：默认态别点亮框线，焦点环只认键盘 */
+.projects-dialog--upload .projects-dialog__picker:focus-within {
+  border-color: var(--border-strong);
+  box-shadow: none;
+}
+
+.projects-dialog--upload .projects-dialog__picker:has(input:focus-visible) {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.projects-dialog--upload .projects-dialog__file-list {
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+}
+
+.projects-dialog--upload .projects-dialog__file {
+  min-height: 34px;
+  gap: var(--spacing-3);
+  padding: 0 var(--spacing-3);
+  font-size: var(--font-size-xxs);
+}
+
+/* 操作区：与 .knowledge-modal-actions 同一条分割线、同尺寸按钮；
+   上方留 20px（「我的知识」那边是表单 16px 栅格间距 + 4px 外边距） */
+.projects-dialog--upload .projects-dialog__actions {
+  gap: var(--spacing-3);
+  margin: var(--spacing-5) calc(-1 * var(--spacing-6)) calc(-1 * var(--modal-pad));
+  padding: var(--modal-pad-actions);
+  border-top: 1px solid var(--border);
+}
+
+.projects-dialog--upload .projects-dialog__actions .btn {
+  min-width: 82px;
+  min-height: 40px;
+  justify-content: center;
+}
+
+/* 未选文件直接提交：按钮不做禁用态，由 JS 弹 toast 提示 */
 
 @media (hover: hover) {
   .projects-tab:hover {

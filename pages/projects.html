@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../assets/css/tokens.css">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/auth-modal.css">
   <link rel="stylesheet" href="../assets/css/pages/workbench-shell.css">
   <link rel="stylesheet" href="../assets/css/projects.css">
 </head>
@@ -583,7 +584,7 @@
           <h2 class="projects-dialog__title" id="projectsDialogTitle">创建项目</h2>
           <p class="projects-dialog__description">输入项目名称，后续可在项目中持续归档相关对话。</p>
           <label class="projects-dialog__label" for="projects-title-input">项目名称</label>
-          <input class="projects-dialog__input" id="projects-title-input" type="text" maxlength="40" required data-project-title-input>
+          <input class="projects-dialog__input" id="projects-title-input" type="text" maxlength="30" placeholder="请输入项目名称，不超过30个字" required data-project-title-input>
           <div class="projects-dialog__actions">
             <button class="projects-dialog__button" type="button" data-project-cancel>取消</button>
             <button class="projects-dialog__button projects-dialog__button--primary" type="submit">创建</button>
@@ -604,23 +605,35 @@
         </form>
       </dialog>
 
-      <dialog class="projects-dialog" data-resource-upload-dialog aria-labelledby="resourceUploadTitle">
+      <dialog class="projects-dialog projects-dialog--upload" data-resource-upload-dialog aria-labelledby="resourceUploadTitle">
         <form class="projects-dialog__form" data-resource-upload-form>
-          <h2 class="projects-dialog__title" id="resourceUploadTitle">添加项目资料</h2>
-          <p class="projects-dialog__description">从本地上传资料，上传后本项目所有对话均可使用。</p>
+          <div class="projects-dialog__head">
+            <div>
+              <h2 class="projects-dialog__title" id="resourceUploadTitle">添加项目资料</h2>
+              <p class="projects-dialog__description">从本地上传资料，上传后本项目所有对话均可使用。</p>
+            </div>
+            <button class="projects-dialog__close" type="button" data-resource-upload-cancel aria-label="关闭">
+              <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+          </div>
           <label class="projects-dialog__picker">
             <input class="visually-hidden" type="file" multiple data-resource-upload-input>
+            <!-- 与「我的知识」「知识联盟」上传弹窗同一枚图标（icons.js 的 upload） -->
             <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 16V4m0 0L8 8m4-4 4 4"></path>
-              <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <path d="m17 8-5-5-5 5"></path>
+              <path d="M12 3v12"></path>
             </svg>
             <span>选择本地文件</span>
             <small>支持 PDF、DOC、DOCX、TXT、Markdown 格式</small>
           </label>
           <ul class="projects-dialog__file-list" aria-label="待上传文件" data-resource-upload-list hidden></ul>
           <div class="projects-dialog__actions">
-            <button class="projects-dialog__button" type="button" data-resource-upload-cancel>取消</button>
-            <button class="projects-dialog__button projects-dialog__button--primary" type="submit" data-resource-upload-confirm disabled>确认</button>
+            <button class="btn btn-outline" type="button" data-resource-upload-cancel>取消</button>
+            <button class="btn btn-primary" type="submit" data-resource-upload-confirm>确认</button>
           </div>
         </form>
       </dialog>
@@ -665,6 +678,8 @@
     </main>
   </div>
 
+  <script src="../assets/js/auth.js" defer></script>
+  <script src="../assets/js/messages.js" defer></script>
   <script src="../assets/js/pages/workbench.js" defer></script>
   <script src="../assets/js/pages/projects.js" defer></script>
 </body>

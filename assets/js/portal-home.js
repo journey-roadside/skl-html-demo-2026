@@ -12,10 +12,72 @@
     var el = $('#toast');
     if (!el) { return; }
     el.textContent = msg;
+    /* 用 popover 进浏览器顶层：弹窗遮罩、原生 <dialog> 都在顶层，只有顶层盖得住 */
+    el.setAttribute('popover', 'manual');
+    if (el.showPopover) { el.showPopover(); }
     el.classList.add('is-visible');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { el.classList.remove('is-visible'); }, 2400);
+    toastTimer = setTimeout(function () {
+      el.classList.remove('is-visible');
+      /* 等淡出走完再退出顶层；期间来了新提示就别退 */
+      setTimeout(function () {
+        if (!el.classList.contains('is-visible') && el.hidePopover) { el.hidePopover(); }
+      }, 200);
+    }, 2400);
   }
+
+  /* auth.js 在未加载 main.js 的页面里会用 SKApp.showToast，
+     这里把首页自己的 toast 挂上去，避免再写一份实现 */
+  window.SKApp = window.SKApp || {};
+  if (typeof window.SKApp.showToast !== 'function') {
+    window.SKApp.showToast = toast;
+  }
+  /* 首页不要「登录成功 / 已退出登录」这类事后提示：导航上的登录态本身已经变了；
+     弹窗内的校验提示（手机号格式、协议未勾选）保留 */
+  window.SKApp.silentSuccess = true;
+
+  /* ---------- 导航里的登录入口 / 用户信息 ---------- */
+  function setNavUserMenu(open) {
+    $$('[data-nav-user]').forEach(function (wrap) {
+      var menu = $('[data-nav-user-menu]', wrap);
+      var trigger = $('[data-nav-user-trigger]', wrap);
+      if (!menu || !trigger) { return; }
+      menu.hidden = !open;
+      trigger.setAttribute('aria-expanded', String(open));
+    });
+  }
+
+  function syncAuthBar() {
+    var user = window.SKAuth && window.SKAuth.getUser();
+    $$('[data-nav-auth]').forEach(function (el) { el.hidden = !!user; });
+    $$('[data-nav-user]').forEach(function (el) {
+      el.hidden = !user;
+      if (user) {
+        $$('[data-account-name]', el).forEach(function (node) {
+          node.textContent = user.name || '社科研究员';
+        });
+      }
+    });
+    /* 退出或登录切换时收起下拉，免得留下一个无主的菜单 */
+    setNavUserMenu(false);
+  }
+  syncAuthBar();
+  document.addEventListener('sk:auth-changed', syncAuthBar);
+
+  $$('[data-nav-user-trigger]').forEach(function (trigger) {
+    trigger.addEventListener('click', function (event) {
+      event.stopPropagation();
+      var menu = $('[data-nav-user-menu]', trigger.parentNode);
+      setNavUserMenu(menu ? menu.hidden : false);
+    });
+  });
+
+  document.addEventListener('click', function (event) {
+    if (!event.target.closest('[data-nav-user]')) { setNavUserMenu(false); }
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') { setNavUserMenu(false); }
+  });
 
   /* 占位链接：点击给轻提示 */
   $$('[data-toast]').forEach(function (el) {
@@ -64,6 +126,8 @@
   });
   drawerMask.addEventListener('click', function () { setDrawer(false); });
   $$('a, button', drawer).forEach(function (el) {
+    /* 用户信息触发器只负责展开下拉，不该顺手把抽屉关掉 */
+    if (el.hasAttribute('data-nav-user-trigger')) { return; }
     el.addEventListener('click', function () { setDrawer(false); });
   });
 

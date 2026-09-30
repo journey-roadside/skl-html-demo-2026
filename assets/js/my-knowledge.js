@@ -26,26 +26,9 @@
   const COMMUNITY_FAVORITES_KEY = "sheke-v4-community-favorites";
   let customCardSequence = 0;
 
-  const simulatedFiles = [
-    ["基层治理数字化案例研究.pdf", "PDF", "2.8 MB", false, "private", "normal", "昨天 18:20 更新"],
-    ["公共文化服务标准化建设报告.docx", "DOCX", "1.6 MB", false, "community", "normal", "昨天 16:45 更新"],
-    ["城乡公共文化空间调查摘要.md", "MD", "680 KB", true, "private", "normal", "昨天 14:12 更新"],
-    ["基层治理案例访谈纪要.docx", "DOCX", "920 KB", false, "private", "normal", "昨天 11:30 更新"],
-    ["数字政府政策文件汇编.pdf", "PDF", "4.2 MB", false, "community", "normal", "09-14 17:26 更新"],
-    ["公共服务满意度数据报告.docx", "DOCX", "2.1 MB", false, "private", "normal", "09-14 13:08 更新"],
-    ["文化空间更新项目资料.pdf", "PDF", "3.4 MB", true, "private", "normal", "09-13 16:40 更新"],
-    ["基层应急治理调研记录.docx", "DOCX", "1.3 MB", false, "private", "partial", "09-13 10:22 更新"],
-    ["社科成果传播路径分析.md", "MD", "740 KB", false, "community", "normal", "09-12 18:05 更新"],
-    ["区域发展政策评估报告.pdf", "PDF", "5.1 MB", false, "private", "normal", "09-12 15:18 更新"],
-    ["公共文化服务案例清单.md", "MD", "510 KB", false, "private", "normal", "09-11 17:42 更新"],
-    ["社区治理协商记录.docx", "DOCX", "860 KB", false, "community", "normal", "09-11 09:35 更新"],
-    ["数字治理平台建设方案.pdf", "PDF", "3.6 MB", true, "private", "normal", "09-10 16:20 更新"],
-    ["基层文化设施现状调研.md", "MD", "1.4 MB", false, "private", "normal", "09-10 11:08 更新"],
-    ["政策文本分析方法综述.pdf", "PDF", "2.9 MB", false, "community", "normal", "09-09 15:44 更新"],
-    ["社会调查数据质量说明.docx", "DOCX", "1.2 MB", false, "private", "normal", "09-09 09:26 更新"],
-    ["公共文化服务创新案例.txt", "TXT", "960 KB", false, "private", "normal", "09-08 17:15 更新"],
-    ["基层治理研究成果汇编.pdf", "PDF", "6.4 MB", false, "private", "parsing", "09-08 10:02 更新"],
-  ];
+  /* 「我的文件」基础演示数据搬到 assets/js/my-files.js：与知识联盟的共享弹窗共用一份，
+     这里只取用；用户上传的文件由 SKMyFiles.add 写回 localStorage，两边都能读到 */
+  const simulatedFiles = window.SKMyFiles.base;
 
   function escapeHtml(value) {
     return String(value)
@@ -288,6 +271,13 @@
     const willOpen = !menu.classList.contains("is-open");
     closeCardMenu(menu);
     menu.classList.toggle("is-open", willOpen);
+    /* 方向：默认从按钮上方弹出；卡片贴着滚动区顶部、上方装不下时翻到按钮下方 */
+    if (willOpen) {
+      const scroller = document.querySelector(".knowledge-scroll");
+      const top = scroller ? scroller.getBoundingClientRect().top : 0;
+      const room = card.getBoundingClientRect().bottom - 48 - menu.offsetHeight - top;
+      menu.classList.toggle("is-down", room < 8);
+    }
     card.classList.toggle("has-open-menu", willOpen);
     button.classList.toggle("is-open", willOpen);
     button.setAttribute("aria-expanded", String(willOpen));
@@ -347,8 +337,8 @@
     card.innerHTML = `
       <button class="knowledge-card-main" type="button" data-knowledge-open>
         <span class="knowledge-card-copy">
-          <span class="knowledge-card-title"><strong>${escapeHtml(name)}</strong>${shared === "community" ? '<small class="knowledge-shared-tag">社区共享</small>' : ""}</span>
-          <span class="knowledge-card-description">${escapeHtml(type)}</span>
+          <span class="knowledge-card-title"><strong>${escapeHtml(splitFileName(name).base)}</strong>${shared === "community" ? '<small class="knowledge-shared-tag">社区共享</small>' : ""}</span>
+          <span class="knowledge-card-tags"><small class="knowledge-file-type">${escapeHtml(type)}</small></span>
           <span class="knowledge-card-meta">${escapeHtml(size)} · ${getSharedLabel(shared)}</span>
           <span class="knowledge-card-updated">${escapeHtml(getCardTimeText(card))}</span>
         </span>
@@ -374,26 +364,31 @@
       const day = 7 - Math.floor(index / 8);
       const hour = String(9 + (index % 9)).padStart(2, "0");
       const minute = String((index * 7) % 60).padStart(2, "0");
-      files.push([
-        `${scope}${topic}${String(index + 1).padStart(2, "0")}.${ext}`,
-        type,
-        `${(0.4 + (index % 12) * 0.37).toFixed(1)} MB`,
-        index % 9 === 0,
-        index % 9 !== 0 && index % 4 === 0 ? "community" : "private",
-        index % 11 === 0 ? "parsing" : index % 13 === 0 ? "partial" : "normal",
-        `09-${Math.max(1, day)} ${hour}:${minute} 更新`,
-      ]);
+      files.push({
+        name: `${scope}${topic}${String(index + 1).padStart(2, "0")}.${ext}`,
+        type: type,
+        size: `${(0.4 + (index % 12) * 0.37).toFixed(1)} MB`,
+        favorite: index % 9 === 0,
+        shared: index % 9 !== 0 && index % 4 === 0 ? "community" : "private",
+        status: index % 11 === 0 ? "parsing" : index % 13 === 0 ? "partial" : "normal",
+        updated: `09-${Math.max(1, day)} ${hour}:${minute} 更新`,
+      });
     }
 
     return files;
   }
 
   function seedFiles() {
-    [...simulatedFiles, ...buildAdditionalFiles(47)].reverse().forEach(
-      ([name, type, size, favorite, shared, status, updated]) => {
-        createFileCard({ name, type, size, favorite, shared, status, updated });
-      },
-    );
+    [...simulatedFiles, ...buildAdditionalFiles(47)].reverse().forEach((file) => {
+      createFileCard(file);
+    });
+  }
+
+  /* 上一次会话上传的文件（localStorage）也要长回来，否则刷新就丢 */
+  function seedUploads() {
+    window.SKMyFiles.uploads().forEach((file) => {
+      createFileCard(file);
+    });
   }
 
   function getCommunityFavorites() {
@@ -496,8 +491,10 @@
   function renderSelectedFiles() {
     const list = document.querySelector("[data-knowledge-upload-list]");
     if (!list) return;
+    /* 没选文件时整块收起（原先显示「暂未选择文件」占位，已按需求去掉） */
+    list.hidden = !state.selectedFiles.length;
     if (!state.selectedFiles.length) {
-      list.innerHTML = "<p>暂未选择文件</p>";
+      list.replaceChildren();
       return;
     }
     list.innerHTML = state.selectedFiles
@@ -523,8 +520,19 @@
     const name = extension && !baseName.toLowerCase().endsWith(extension.toLowerCase())
       ? `${baseName}${extension}`
       : baseName;
+
+    /* 重名校验：已有同名文件就不改（比的是带扩展名的完整名，自己不算） */
+    const duplicated = getCards().some(function (item) {
+      return item !== card && getCardName(item) === name;
+    });
+    if (duplicated) {
+      window.SKApp.showToast("文件名已存在，请换一个名称");
+      nameInput.focus();
+      return;
+    }
+
     card.dataset.name = name;
-    card.querySelector(".knowledge-card-title strong").textContent = name;
+    card.querySelector(".knowledge-card-title strong").textContent = splitFileName(name).base;
     closeModal();
     applyFilters();
     window.SKApp.showToast("文件名称已更新");
@@ -691,7 +699,6 @@
     document.querySelectorAll("[data-knowledge-modal-close]").forEach((button) => {
       button.addEventListener("click", closeModal);
     });
-    mask?.addEventListener("click", closeModal);
 
     document.querySelectorAll("[data-knowledge-upload-open]").forEach((button) => {
       button.addEventListener("click", openUploadModal);
@@ -719,14 +726,21 @@
         window.SKApp.showToast("请先选择文件");
         return;
       }
-      state.selectedFiles.forEach((file) => {
+      const uploaded = state.selectedFiles.map((file) => {
         const extension = file.name.includes(".") ? file.name.split(".").pop().toUpperCase() : "文件";
-        createFileCard({
+        return {
           name: file.name,
           type: extension,
           size: `${Math.max(1, Math.round(file.size / 1024))} KB`,
-        });
+          status: "parsing",
+          updated: "刚刚更新",
+        };
       });
+      uploaded.forEach((file) => {
+        createFileCard(file);
+      });
+      /* 写回共享数据源：知识联盟的「从我的文件中添加」也能看到这些文件 */
+      window.SKMyFiles.add(uploaded);
       state.metrics.files += state.selectedFiles.length;
       state.metrics.ownFiles += state.selectedFiles.length;
       state.metrics.pending += state.selectedFiles.length;
@@ -991,6 +1005,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     seedFiles();
     seedCommunityFavorites();
+    seedUploads();
     getCards().forEach(refreshCardTime);
     updateMetrics();
     initCardActions();

@@ -117,15 +117,21 @@
   --shadow-hover: 0 2px 6px rgba(31, 35, 41, 0.05), 0 18px 44px rgba(31, 35, 41, 0.09);
   --shadow-modal: 0 24px 80px rgba(31, 35, 41, 0.24);
   --shadow-toast: 0 10px 30px rgba(31, 35, 41, 0.2);
+  /* 文件查看页的浮动工具（底部工具栏 / 回到顶部）：浮在深色纸底上，
+     常规 --shadow-* 的冷灰投影在深底上几乎看不见，这里用黑色系重投影 */
+  --shadow-floating: 0 2px 6px rgba(0, 0, 0, 0.32), 0 14px 36px rgba(0, 0, 0, 0.42);
 
   /* 文件查看页内容区底色：白色纸张需要深底衬托，design-system 未覆盖此场景 */
   --reader-backdrop: rgba(0, 0, 0, 0.7);
 
-  /* Modal：全站弹窗统一的框，取值以 design-system 为准
-     （DESIGN.md §4.6：内边距 28px、圆角 24px、遮罩 rgba(31,35,41,.45)、阴影 --shadow-modal）
+  /* Modal：全站弹窗统一的框
+     （DESIGN.md §4.6：内边距 28px、圆角 24px、阴影 --shadow-modal；
+      遮罩按需求改为纯黑 50% + 背景模糊，不走 design-system 的 rgba(31,35,41,.45)）
      圆角复用 --radius-modal；各页按角色自定宽度 */
   --modal-surface: var(--card);
-  --modal-backdrop: rgba(31, 35, 41, 0.45);
+  --modal-backdrop: rgba(0, 0, 0, 0.5);
+  /* 遮罩滤镜链：高斯模糊（参数是标准差 σ）+ 轻微提饱和，营造毛玻璃感 */
+  --modal-backdrop-filter: blur(4px) saturate(120%);
   --modal-z-mask: 190;
   --modal-z-box: 200;
   --modal-pad: 28px;

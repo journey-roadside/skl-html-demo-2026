@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="社科研究助手工作台，支持社科问答、资料解析、来源追溯和研究结果追问。">
   <meta name="theme-color" content="#fcfaf8">
-  <title>社科智研工作台 · 湖北社科数据信息联盟</title>
+  <title>社科助手 · 湖北社科数据信息联盟</title>
   <link rel="stylesheet" href="../assets/css/tokens.css">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/auth-modal.css">
   <link rel="stylesheet" href="../assets/css/pages/workbench-shell.css">
   <link rel="stylesheet" href="../assets/css/app-shell.css">
   <link rel="stylesheet" href="../assets/css/research-assistant.css">
@@ -45,8 +46,8 @@
                     class="collapsed-toolbar-btn"
                     type="button"
                     data-history-search-toggle
-                    title="搜索历史记录（Ctrl+J）"
-                    aria-label="搜索历史记录，快捷键 Ctrl+J"
+                    title="搜索历史记录"
+                    aria-label="搜索历史记录"
                   >
                     <span data-icon="search"></span>
                   </button>
@@ -107,7 +108,7 @@
               <div class="settings-view-list">
                 <section class="settings-view-section">
                   <h2>用户信息</h2>
-                  <a class="settings-profile-card" href="./account-center.html" target="_blank" rel="noopener" data-settings-auth-only>
+                  <a class="settings-profile-card" href="./account-center.html?tab=profile" target="_blank" rel="noopener" data-settings-auth-only hidden>
                     <span class="settings-profile-avatar">研</span>
                     <span class="settings-profile-copy">
                       <strong data-sidebar-user-label>未知研究员</strong>
@@ -122,35 +123,78 @@
                   </button>
                 </section>
 
+                <section class="settings-view-section" data-settings-auth-only hidden>
+                  <h2>积分订阅</h2>
+                  <div class="settings-row-group">
+                  <!-- 积分余额：数值与侧栏用户菜单同源（成长 268 + 订阅 4000）；
+                       整行进账户中心的「积分中心」菜单 -->
+                  <a class="settings-view-row" href="./account-center.html?tab=points" target="_blank" rel="noopener">
+                    <span>积分余额</span>
+                    <span class="settings-points" data-settings-points>
+                      <strong>4268</strong>
+                      <span class="skeleton" aria-hidden="true"></span>
+                    </span>
+                    <span data-icon="chevron-right"></span>
+                  </a>
+                  <button class="settings-view-row" type="button" data-user-menu-toast="成长积分明细将在后续接入">
+                    <span>成长积分</span>
+                    <!-- 数值先写死，与侧栏用户菜单同源；加载骨架由 v4.js 在进入设置时重跑 -->
+                    <span class="settings-points" data-settings-points>
+                      <strong>268</strong>
+                      <span class="skeleton" aria-hidden="true"></span>
+                    </span>
+                  </button>
+                  <button class="settings-view-row" type="button" data-user-menu-toast="订阅积分明细将在后续接入">
+                    <span>订阅积分</span>
+                    <span class="settings-points" data-settings-points>
+                      <strong>0/4000</strong>
+                      <span class="skeleton" aria-hidden="true"></span>
+                    </span>
+                  </button>
+                  </div>
+                </section>
+
                 <section class="settings-view-section">
                   <h2>通用设置</h2>
                   <div class="settings-row-group">
                   <div class="settings-view-row">
-                    <span>语言设置</span>
-                    <span class="settings-select-wrap" data-settings-select data-settings-select-name="语言">
+                    <span>外观</span>
+                    <span class="settings-select-wrap" data-settings-select data-settings-select-name="外观">
                       <button class="settings-view-select" type="button" data-settings-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                        <span data-settings-select-label>简体中文</span>
+                        <span data-settings-select-label>系统默认</span>
                         <span data-icon="chevron-down"></span>
                       </button>
                       <span class="settings-select-menu" data-settings-select-menu role="listbox" hidden>
-                        <button class="is-selected" type="button" role="option" aria-selected="true" data-settings-select-value="简体中文">简体中文</button>
-                        <button type="button" role="option" aria-selected="false" data-settings-select-value="英文">英文</button>
+                        <button class="is-selected" type="button" role="option" aria-selected="true" data-settings-select-value="系统默认">系统默认</button>
+                        <button type="button" role="option" aria-selected="false" data-settings-select-value="浅色">浅色</button>
+                        <button type="button" role="option" aria-selected="false" data-settings-select-value="深色">深色</button>
                       </span>
                     </span>
                   </div>
-                  <div class="settings-view-row">
+                  <button class="settings-view-row" type="button" data-dialog-shortcuts-open>
+                    <span>快捷键</span>
+                    <span data-icon="chevron-right"></span>
+                  </button>
+                  <div class="settings-view-row" data-settings-auth-only hidden>
                     <span class="settings-view-row-copy">
                       <strong>允许深度思考</strong>
                       <small>（开启后，新会话将默认启用多步骤分析与研究推理）</small>
                     </span>
                     <label class="settings-switch"><input type="checkbox" checked><span></span></label>
                   </div>
-                  <div class="settings-view-row">
+                  <div class="settings-view-row" data-settings-auth-only hidden>
                     <span class="settings-view-row-copy">
                       <strong>自动联网搜索</strong>
                       <small>（回答前自动判断是否需要检索公开资料）</small>
                     </span>
                     <label class="settings-switch"><input type="checkbox"><span></span></label>
+                  </div>
+                  <div class="settings-view-row">
+                    <span class="settings-view-row-copy">
+                      <strong>推荐管理</strong>
+                      <small>（社科助手首页显示更多工具推荐）</small>
+                    </span>
+                    <label class="settings-switch"><input type="checkbox" checked data-settings-recommend data-settings-toast-on="开启推荐" data-settings-toast-off="关闭推荐"><span></span></label>
                   </div>
                   </div>
                 </section>
@@ -183,7 +227,7 @@
                   </div>
                 </section>
 
-                <button class="settings-view-logout" type="button" data-auth-logout data-settings-auth-only>
+                <button class="settings-view-logout" type="button" data-auth-logout data-settings-auth-only hidden>
                   <span data-icon="log-out"></span>
                   <span>退出登录</span>
                 </button>
@@ -193,10 +237,6 @@
             <div class="chat-scroll">
               <div class="message-thread" data-message-thread>
                 <article class="message message-user" data-question-time="09-10 14:26">
-                  <div class="message-author">
-                    <span class="message-author-mark">研</span>
-                    <span>陌生的研究员</span>
-                  </div>
                   <div class="message-body">
                     <p>如何理解基层公共文化服务数字化建设的政策脉络？</p>
                   </div>
@@ -205,10 +245,6 @@
                 <article class="message message-ai">
                                     <details class="message-thinking" open>
                     <summary class="message-thinking__summary">
-                      <div class="message-author">
-                        <span class="message-author-mark">智</span>
-                        <span>社科研究助手</span>
-                      </div>
                       <span class="message-thinking__title">已思考（用时 4 秒）</span>
                       <span class="message-thinking__chevron" data-icon="chevron-down" aria-hidden="true"></span>
                     </summary>
@@ -332,20 +368,12 @@
                 </article>
 
                 <article class="message message-user" data-question-time="09-10 14:31">
-                  <div class="message-author">
-                    <span class="message-author-mark">研</span>
-                    <span>陌生的研究员</span>
-                  </div>
                   <div class="message-body">
                     <p>区域治理研究通常使用哪些分析框架？</p>
                   </div>
                 </article>
 
                 <article class="message message-ai">
-                  <div class="message-author">
-                    <span class="message-author-mark">智</span>
-                    <span>社科研究助手</span>
-                  </div>
                   <div class="message-body">
                     <h2>常用分析框架</h2>
                     <p>区域治理研究可从制度分析、多中心治理、网络治理和协同治理四类框架切入。制度分析关注规则与权责，多中心治理强调多元主体，网络治理关注关系结构，协同治理则更适合分析跨部门合作。</p>
@@ -403,20 +431,12 @@
                 </article>
 
                 <article class="message message-user" data-question-time="09-10 14:36">
-                  <div class="message-author">
-                    <span class="message-author-mark">研</span>
-                    <span>陌生的研究员</span>
-                  </div>
                   <div class="message-body">
                     <p>公共政策分析中的证据分层如何理解？</p>
                   </div>
                 </article>
 
                 <article class="message message-ai">
-                  <div class="message-author">
-                    <span class="message-author-mark">智</span>
-                    <span>社科研究助手</span>
-                  </div>
                   <div class="message-body">
                     <h2>证据分层建议</h2>
                     <p>可按政策文本、统计数据、访谈材料、案例材料和专家判断分层。政策文本用于确认制度依据，统计数据用于观察趋势，访谈与案例用于解释机制，专家判断则用于补充尚未形成定论的问题。</p>
@@ -438,20 +458,12 @@
                 </article>
 
                 <article class="message message-user" data-question-time="09-10 14:42">
-                  <div class="message-author">
-                    <span class="message-author-mark">研</span>
-                    <span>陌生的研究员</span>
-                  </div>
                   <div class="message-body">
                     <p>如何把这些判断转化为可操作的研究设计？</p>
                   </div>
                 </article>
 
                 <article class="message message-ai">
-                  <div class="message-author">
-                    <span class="message-author-mark">智</span>
-                    <span>社科研究助手</span>
-                  </div>
                   <div class="message-body">
                     <h2>研究设计转化</h2>
                     <p>建议按研究问题、核心变量、资料来源、分析路径和验证方式五部分展开。先将政策判断拆成可观察变量，再为每个变量匹配资料与指标，最后设置替代解释和反例核验机制。</p>
@@ -503,8 +515,7 @@
                       </button>
                       <div class="composer-add-menu-list" data-composer-add-menu-list role="menu" hidden>
                         <button type="button" role="menuitem" data-composer-add-item="本地文件" data-file-trigger>本地文件</button>
-                        <button type="button" role="menuitem" data-composer-add-item="我的知识">我的知识</button>
-                        <div class="composer-add-menu-separator" role="separator"></div>
+                        <button type="button" role="menuitem" data-composer-add-item="我的知识" data-auth-only>我的知识</button>
                         <div class="composer-agent-menu" role="none">
                           <button
                             type="button"
@@ -749,6 +760,8 @@
   <script src="../assets/js/main.js" defer></script>
   <script src="../assets/js/research-assistant.js" defer></script>
   <script src="../assets/js/v4.js" defer></script>
+  <script src="../assets/js/auth.js" defer></script>
+  <script src="../assets/js/messages.js" defer></script>
   <script src="../assets/js/pages/workbench.js" defer></script>
 </body>
 </html>

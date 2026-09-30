@@ -382,15 +382,31 @@
   font-size: var(--font-size-xxs);
 }
 
-.knowledge-card-description {
-  display: -webkit-box;
+/* 文件类型 / 分类标签：与知识联盟卡片的 .community-card-tags 同一套取值
+   （shared-community.css），改一处必须同步改另一处 */
+.knowledge-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
   margin-top: var(--spacing-2);
-  overflow: hidden;
+}
+
+.knowledge-card-tags small {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  padding: 0 var(--spacing-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   color: var(--text-secondary);
   font-size: var(--font-size-xxs);
-  line-height: 1.6;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+}
+
+.knowledge-card-tags .knowledge-file-type {
+  background: var(--accent-soft);
+  color: var(--accent-active);
+  font-family: var(--font-mono);
+  font-weight: 600;
 }
 
 .knowledge-card-meta,
@@ -433,11 +449,13 @@
   height: 16px;
 }
 
+/* 从三点按钮（距卡底 12px、高 30px）正上方弹出，不压卡片正文；
+   上方装不下时由 JS 加 .is-down 翻到按钮下方 */
 .knowledge-card-menu {
   position: absolute;
   z-index: 15;
-  top: 46px;
   right: 12px;
+  bottom: 48px;
   display: none;
   min-width: 138px;
   padding: var(--spacing-2);
@@ -450,6 +468,11 @@
 .knowledge-card-menu.is-open {
   display: grid;
   gap: var(--spacing-1);
+}
+
+.knowledge-card-menu.is-down {
+  top: calc(100% - 6px);
+  bottom: auto;
 }
 
 .knowledge-card-menu button {
@@ -757,6 +780,8 @@
   z-index: var(--modal-z-mask);
   inset: 0;
   background: var(--modal-backdrop);
+  -webkit-backdrop-filter: var(--modal-backdrop-filter);
+  backdrop-filter: var(--modal-backdrop-filter);
   opacity: 0;
   transition: opacity var(--duration-default) var(--ease-out);
 }

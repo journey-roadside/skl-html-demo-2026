@@ -9,6 +9,11 @@
     TXT: "file-txt",
   };
   const FAVORITES_KEY = "sheke-v4-community-favorites";
+  /* 共享弹窗「从我的文件中添加」的候选来自 assets/js/my-files.js（我的知识页同一份数据：
+     基础演示文件 + 用户上传）。每次渲染现读，页面内新增的文件也能立刻看到 */
+  function myFiles() {
+    return window.SKMyFiles ? window.SKMyFiles.all() : [];
+  }
   const state = {
     channel: "community",
     topic: "all",
@@ -117,6 +122,13 @@
     syncDetailFavorite();
   }
 
+  /* 卡片标题不显示文件类型：只留主体名（data-name 仍保留完整文件名，链接/查看页用它） */
+  const baseNameOf = (value) => String(value || "").replace(/\.[A-Za-z][A-Za-z0-9]{1,4}$/, "");
+
+  /* 标签显示全称（data-type 仍存短名，格式筛选按它比对） */
+  const TYPE_LABELS = { MD: "Markdown" };
+  const typeLabel = (type) => TYPE_LABELS[type] || type;
+
   function createCard(file, index) {
     const [name, type, size, _source, org, topic, channel, featured, downloads, time, description] = file;
     const card = document.createElement("article");
@@ -134,14 +146,12 @@
     card.dataset.downloads = String(downloads);
     card.dataset.time = time;
     card.dataset.description = description;
-    const icon = FILE_ICONS[type] || "file-text";
     card.innerHTML = `
       <button class="community-card-main" type="button" data-community-open>
-        <span class="community-file-mark"><span data-icon="${icon}"></span></span>
         <span class="community-card-copy">
-          <span class="community-card-title"><strong>${escapeHtml(name)}</strong>${featured ? '<small class="community-featured-tag">官方精选</small>' : ""}</span>
+          <span class="community-card-title"><strong>${escapeHtml(baseNameOf(name))}</strong>${featured ? '<small class="community-featured-tag">官方精选</small>' : ""}</span>
           <span class="community-card-description">${escapeHtml(description)}</span>
-          <span class="community-card-tags"><small class="community-file-type">${escapeHtml(type)}</small><small>${escapeHtml(topic)}</small></span>
+          <span class="community-card-tags"><small class="community-file-type">${escapeHtml(typeLabel(type))}</small><small>${escapeHtml(topic)}</small></span>
           <span class="community-card-meta">${escapeHtml(time)}</span>
           <span class="community-card-footer">下载 ${downloads} 次</span>
         </span>
@@ -310,9 +320,15 @@
   function closeModal() {
     const mask = document.querySelector("[data-community-modal-mask]");
     const modal = document.querySelector("[data-community-share-modal]");
+    const discard = document.querySelector("[data-community-share-discard]");
     window.SKApp?.releaseFocusTrap(modal);
     mask.classList.remove("is-open");
     modal.classList.remove("is-open");
+    /* 放弃确认是叠在共享弹窗上的一层，一起收掉 */
+    if (discard) {
+      discard.classList.remove("is-open");
+      discard.hidden = true;
+    }
     document.body.classList.remove("is-locked");
     window.setTimeout(() => {
       mask.hidden = true;
@@ -328,6 +344,12 @@
     const setOpen = (open) => {
       list.hidden = !open;
       trigger.setAttribute("aria-expanded", String(open));
+      /* 字段式弹层默认向下；屏幕下方放不下就翻到触发器上方，别探出视口下沿 */
+      if (open && list.classList.contains("community-select-list--field")) {
+        const fitsBelow =
+          trigger.getBoundingClientRect().bottom + 6 + list.offsetHeight <= window.innerHeight - 8;
+        list.classList.toggle("community-select-list--up", !fitsBelow);
+      }
     };
     trigger.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -370,19 +392,16 @@
       state.type = value;
       applyFilters(true);
     });
+    /* 搜索只在回车 / 点放大镜时执行：不做实时筛选 */
     const searchInputs = document.querySelectorAll("[data-community-search]");
     searchInputs.forEach((input) => {
-      input.addEventListener("input", (event) => {
-        state.search = event.target.value;
-        searchInputs.forEach((item) => {
-          if (item !== event.target) item.value = event.target.value;
-        });
-        applyFilters(true);
-      });
       input.addEventListener("keydown", (event) => {
         if (event.key !== "Enter") return;
         event.preventDefault();
         state.search = event.currentTarget.value;
+        searchInputs.forEach((item) => {
+          item.value = state.search;
+        });
         applyFilters(true);
       });
     });
@@ -509,8 +528,111 @@
 
   function initShareModal() {
     const modal = document.querySelector("[data-community-share-modal]");
+    const discardModal = document.querySelector("[data-community-share-discard]");
+    const form = modal.querySelector("[data-community-share-form]");
     const localFile = modal.querySelector("[data-community-share-file]");
+    const dropzone = modal.querySelector("[data-community-share-dropzone]");
+    const pickedRow = modal.querySelector("[data-community-picked]");
+    const pickedName = modal.querySelector("[data-community-picked-name]");
+    const sourcePanels = Array.from(modal.querySelectorAll("[data-share-source-panel]"));
+    const steps = Array.from(modal.querySelectorAll("[data-share-step]"));
     const nameInput = modal.querySelector("[data-community-share-name]");
+    const descInput = modal.querySelector("[data-community-share-description]");
+    const searchInput = modal.querySelector("[data-community-share-search]");
+    const listNode = modal.querySelector("[data-community-share-list]");
+    const emptyNode = modal.querySelector("[data-community-share-empty]");
+
+    const EXTENSION_RE = /\.[A-Za-z][A-Za-z0-9]{1,4}$/;
+    const baseNameOf = (name) => String(name || "").replace(EXTENSION_RE, "");
+
+    let source = "local";
+    /* 第一步选中的文件：本地上传存 { name }，「我的文件」存整条记录 */
+    let pickedLocal = null;
+    let pickedMine = null;
+    let step = 1;
+
+    const setStep = (next) => {
+      step = next;
+      steps.forEach((node) => {
+        node.hidden = Number(node.dataset.shareStep) !== next;
+      });
+      modal.scrollTop = 0;
+    };
+
+    /* 下拉：复用页面的 community-select 组件（弹层样式与工具栏一致） */
+    const topicValue = () =>
+      modal.querySelector("[data-community-topic-value].is-selected")?.dataset.communityTopicValue || "";
+
+    const setSource = (next) => {
+      source = next;
+      sourcePanels.forEach((panel) => {
+        panel.hidden = panel.dataset.shareSourcePanel !== next;
+      });
+    };
+
+    /* 换来源即清空上一次的选择（本地上传 ↔ 我的文件互不保留） */
+    const clearPicks = () => {
+      pickedLocal = null;
+      pickedMine = null;
+      localFile.value = "";
+      if (pickedRow) pickedRow.hidden = true;
+      if (pickedName) pickedName.textContent = "";
+      renderMineFiles();
+    };
+
+    const syncPickedRow = () => {
+      if (!pickedRow) return;
+      pickedRow.hidden = !pickedLocal;
+      if (pickedLocal) pickedName.textContent = pickedLocal.name;
+    };
+
+    /* 实时按标题筛选；选中项高亮 */
+    const renderMineFiles = () => {
+      if (!listNode) return;
+      const keyword = (searchInput?.value || "").trim().toLowerCase();
+      const hits = myFiles().filter((file) => !keyword || file.name.toLowerCase().includes(keyword));
+
+      listNode.replaceChildren();
+      hits.forEach((file) => {
+        const item = document.createElement("button");
+        const selected = Boolean(pickedMine && pickedMine.name === file.name);
+        item.type = "button";
+        item.className = "community-mine-item" + (selected ? " is-selected" : "");
+        item.setAttribute("role", "option");
+        item.setAttribute("aria-selected", String(selected));
+
+        const title = document.createElement("span");
+        title.textContent = file.name;
+        const meta = document.createElement("small");
+        meta.textContent = `${file.size} · ${file.updated}`;
+        item.append(title, meta);
+
+        item.addEventListener("click", () => {
+          pickedMine = file;
+          renderMineFiles();
+        });
+        listNode.append(item);
+      });
+      if (emptyNode) emptyNode.hidden = hits.length > 0;
+    };
+
+    /* 第一步选中的文件名（带扩展名），第二步只显示不带类型的主体名 */
+    const pickedFullName = () => {
+      if (source === "local") return pickedLocal?.name || "";
+      return pickedMine?.name || "";
+    };
+
+    const resetShareFlow = () => {
+      form.reset();
+      clearPicks();
+      if (searchInput) searchInput.value = "";
+      /* 下拉复位：点默认项，标签、选中态、onChange 一起走一遍 */
+      modal.querySelector('[data-community-source-value="local"]')?.click();
+      modal.querySelector('[data-community-topic-value=""]')?.click();
+      setSource("local");
+      if (descInput) descInput.value = "";
+      setStep(1);
+    };
 
     document.querySelectorAll("[data-community-share-open]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -518,30 +640,121 @@
           window.SKAuth?.open();
           return;
         }
-        localFile.value = "";
-        nameInput.value = "";
+        resetShareFlow();
         openModal();
       });
     });
     document.querySelectorAll("[data-community-modal-close]").forEach((button) => {
       button.addEventListener("click", closeModal);
     });
-    document.querySelector("[data-community-modal-mask]")?.addEventListener("click", closeModal);
+
+    /* 本地上传：点击选择 或 拖入 */
     localFile.addEventListener("change", () => {
-      nameInput.value = localFile.files?.[0]?.name || "";
+      const file = localFile.files?.[0];
+      if (!file) return;
+      pickedLocal = { name: file.name };
+      syncPickedRow();
     });
-    modal.querySelector("[data-community-share-form]").addEventListener("submit", (event) => {
+    ["dragover", "dragenter"].forEach((type) => {
+      dropzone?.addEventListener(type, (event) => {
+        event.preventDefault();
+        dropzone.classList.add("is-dragover");
+      });
+    });
+    ["dragleave", "dragend"].forEach((type) => {
+      dropzone?.addEventListener(type, () => dropzone.classList.remove("is-dragover"));
+    });
+    dropzone?.addEventListener("drop", (event) => {
       event.preventDefault();
-      if (!localFile.files?.length) {
+      dropzone.classList.remove("is-dragover");
+      const file = event.dataTransfer?.files?.[0];
+      if (!file) return;
+      pickedLocal = { name: file.name };
+      syncPickedRow();
+    });
+    modal.querySelector("[data-community-share-remove]")?.addEventListener("click", () => {
+      pickedLocal = null;
+      localFile.value = "";
+      syncPickedRow();
+    });
+
+    /* 文件来源 / 主题分类走页面同款下拉组件；换来源即清空上一次的选择 */
+    initDropdown(modal.querySelector("[data-community-source-menu]"), "source", (value) => {
+      setSource(value);
+      clearPicks();
+    });
+    initDropdown(modal.querySelector("[data-community-topic-menu]"), "topic", () => {});
+
+    searchInput?.addEventListener("input", renderMineFiles);
+
+    /* 第一步 → 第二步 */
+    modal.querySelector("[data-share-next]")?.addEventListener("click", () => {
+      if (source === "local" && !pickedLocal) {
         window.SKApp.showToast("请先选择文件");
         return;
       }
-      closeModal();
-      event.target.reset();
-      window.SKApp.showToast("文件已提交审核");
+      if (source === "mine" && !pickedMine) {
+        window.SKApp.showToast("请先从我的文件中选择一个文件");
+        return;
+      }
+      if (nameInput) nameInput.value = baseNameOf(pickedFullName());
+      setStep(2);
+      nameInput?.focus();
     });
+
+    /* 第二步 → 第一步：先确认放弃编辑 */
+    const setDiscardOpen = (open) => {
+      if (!discardModal) return;
+      discardModal.hidden = !open;
+      requestAnimationFrame(() => discardModal.classList.toggle("is-open", open));
+    };
+    modal.querySelector("[data-share-back]")?.addEventListener("click", () => setDiscardOpen(true));
+    discardModal?.querySelector("[data-discard-cancel]")?.addEventListener("click", () => setDiscardOpen(false));
+    discardModal?.querySelector("[data-discard-confirm]")?.addEventListener("click", () => {
+      setDiscardOpen(false);
+      /* 确认放弃：清掉第二步填的内容，退回第一步（第一步的选择保留） */
+      if (nameInput) nameInput.value = "";
+      if (descInput) descInput.value = "";
+      modal.querySelector('[data-community-topic-value=""]')?.click();
+      setStep(1);
+    });
+
+    /* 第二步提交：三项都必填 */
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (step !== 2) return;
+      const name = nameInput.value.trim();
+      if (!name) {
+        window.SKApp.showToast("请输入文件名");
+        nameInput.focus();
+        return;
+      }
+      const description = descInput.value.trim();
+      if (!description) {
+        window.SKApp.showToast("请输入简短说明");
+        descInput.focus();
+        return;
+      }
+      const topic = topicValue();
+      if (!topic) {
+        window.SKApp.showToast("请选择主题分类");
+        modal.querySelector("[data-community-topic-trigger]")?.focus();
+        return;
+      }
+      /* 校验都过了：关窗 + toast 反馈（不再建独立成功页） */
+      closeModal();
+      window.SKApp.showToast("提交成功，审核通过后才会在知识联盟公开，请等待消息通知！");
+      resetShareFlow();
+    });
+
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !modal.hidden) closeModal();
+      if (event.key !== "Escape") return;
+      if (discardModal && !discardModal.hidden) {
+        event.preventDefault();
+        setDiscardOpen(false);
+        return;
+      }
+      if (!modal.hidden) closeModal();
     });
   }
 

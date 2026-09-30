@@ -15,8 +15,9 @@
 | V5 | 2026-09-23 | 大重构：定位升级为「湖北社科数据信息联盟」官网首页；重写门户首页（双智能体入口 / 研究能力 / 联盟共建）；新增智能体广场、知识联盟、项目列表；引入统一工作台壳（workbench-shell / workbench.js），页面导航收归前端壳；设计令牌 tokens.css 扩展重写 |
 | V5.1 | 2026-09-27 | 项目详情增强：对话项三点菜单（移出项目 / 删除）、项目资料支持本地上传与删除、资料项改双行布局并隐藏扩展名、列表一屏 5 项滚动、格式筛选新增「全部」默认项 |
 | V5.2 | 2026-09-27 | 壳层单源重构：侧栏与用户区合并为 `workbench.js` 内的模板并在运行时注入，5 个页面各删除 926 行重复结构（净减约 1.29 万行）；删除 12 个零引用资源文件 |
+| V5.3 | 2026-10-01 | 账户中心成页：新增 `pages/account-center.html`（个人总览 / 账户信息 / 积分中心 / 任务中心 / 消息中心），从工作台用户菜单与设置页进入，菜单访问状态记在本地；新增消息中心数据模块 `assets/js/messages.js` 与「我的文件」数据模块 `assets/js/my-files.js`；积分中心含总览、积分趋势、积分明细、积分规则弹窗、订阅账单（订阅弹窗带二维码）与常见问题；任务中心含签到、当前任务与本月活跃地图；工作台侧栏用户区上方新增任务窗口；登录弹窗独立为 `assets/css/auth-modal.css` 并校正未登录流程；另统一知识联盟 / 智能体广场 / 项目详情 / 我的知识 / 文件查看页的卡片圆角、悬停提示与表单弹窗样式 |
 
-当前根目录以 V5.2 为主版本：
+当前根目录以 V5.3 为主版本：
 
 - `index.html` 为「湖北社科数据信息联盟」官网首页。
 - `pages/knowledge-alliance.html` 为知识联盟（工作台底座）。
@@ -47,6 +48,7 @@ python -m http.server 8080
 | `pages/research-assistant.html` | 社科智研工作台 | 用户信息、通用设置、帮助与反馈及政策脉络等研究模块 |
 | `pages/my-knowledge.html` | 我的知识 | 文件上传、重命名、删除与共享审核 |
 | `pages/reader.html` | 文件查看 | 知识文件在新页面打开后的查看页：顶部工具条（文件名称、格式类型标签、重命名 / 加入知识库 / 下载图标按钮）+ 下方内容栏；地址契约 `?source=<来源>&file=<文件名>`，`file` 可省 |
+| `pages/account-center.html` | 账户中心 | 个人总览、账户信息（个人信息 / 账户安全 / 其他信息）、积分中心、任务中心、消息中心五个菜单；仅登录后可进，未登录回官网首页；`?tab=<overview\|profile\|points\|tasks\|messages>` 可直接深链到指定菜单 |
 
 主访问路径为：
 
@@ -67,12 +69,14 @@ html-demo/
 │  ├─ research-assistant.html  # 社科智研工作台
 │  ├─ projects.html            # 项目列表
 │  ├─ my-knowledge.html        # 我的知识
-│  └─ reader.html              # 文件查看（知识文件新窗口打开后的查看页）
+│  ├─ reader.html              # 文件查看（知识文件新窗口打开后的查看页）
+│  └─ account-center.html      # 账户中心（个人总览 / 账户信息 / 积分中心 / 任务中心 / 消息中心）
 ├─ assets/
 │  ├─ css/
 │  │  ├─ tokens.css            # 设计令牌（仅浅色，全站无深色模式）
 │  │  ├─ base.css              # 基础重置与排版
 │  │  ├─ components.css        # 通用按钮、表单、弹窗和 Toast
+│  │  ├─ auth-modal.css        # 登录 / 退出确认弹窗（从 components.css 拆出，官网首页也加载）
 │  │  ├─ portal-home.css       # 官网首页样式
 │  │  ├─ app-shell.css         # 工作台侧栏、顶栏和用户区
 │  │  ├─ agent-square.css      # 智能体广场样式
@@ -81,6 +85,7 @@ html-demo/
 │  │  ├─ research-assistant.css # 工作台与历史会话共享样式
 │  │  ├─ my-knowledge.css      # 我的知识样式
 │  │  ├─ reader.css            # 文件查看页样式
+│  │  ├─ account-center.css    # 账户中心样式
 │  │  ├─ v4.css                # 旧工作台样式（保留兼容）
 │  │  ├─ <page>.css            # 各页面专用样式
 │  │  └─ pages/
@@ -89,6 +94,8 @@ html-demo/
 │  │  ├─ icons.js              # SVG 图标注入
 │  │  ├─ main.js               # 基础交互和 Toast
 │  │  ├─ auth.js               # 登录、注册和退出
+│  │  ├─ messages.js           # 消息中心数据模块（账户中心与工作台铃铛共用已读状态）
+│  │  ├─ my-files.js           # 「我的文件」数据模块（我的知识与知识联盟共享弹窗共用）
 │  │  ├─ portal-home.js        # 官网首页交互
 │  │  ├─ shared-community.js   # 共享社区逻辑
 │  │  ├─ research-assistant.js # 工作台会话交互
@@ -98,9 +105,11 @@ html-demo/
 │  │  ├─ <page>.js            # 各页面专用逻辑
 │  │  └─ pages/
 │  │     ├─ projects.js        # 项目列表逻辑
+│  │     ├─ account-center.js  # 账户中心逻辑（菜单记忆、积分中心、任务中心、消息中心）
 │  │     └─ workbench.js       # 统一工作台外壳：侧栏与用户区单源模板 + 注入逻辑
 │  ├─ img/
-│  │  └─ grid-pattern.svg
+│  │  ├─ grid-pattern.svg
+│  │  └─ subscribe-qr.svg      # 订阅弹窗二维码（离线生成，扫码内容为咨询联系方式）
 │  └─ images/social-union/     # 官网二维码和默认头像
 ├─ v3/                         # V3 原始项目归档
 │  ├─ index.html
@@ -122,6 +131,10 @@ html-demo/
 - 页面切换、筛选、排序、分页、弹窗、Toast 和划词工具均为前端静态交互，数据使用页面内模拟数据。
 - 登录态：`localStorage["sheke-demo-user"]`，由 `assets/js/auth.js` 管理。
 - 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`，由 `assets/js/pages/workbench.js` 管理。
+- 账户中心菜单：`localStorage["sheke-account-tab"]`，刷新后仍停在上次那一项；从工作台深链带的 `?tab=` 只在当次生效、不写入记忆，页内换过菜单后地址栏参数会被摘掉。
+- 消息中心：`localStorage["sheke-message-read"]`，由 `assets/js/messages.js` 统一管理，账户中心消息中心与工作台铃铛共用同一份已读状态。
+- 「我的文件」名单：`localStorage["sheke-my-files"]`，由 `assets/js/my-files.js` 管理，我的知识与知识联盟共享弹窗共用。
+- 工作台任务窗口：侧栏用户区上方的任务窗口每次页面加载都出现，点关闭只在本次加载内生效，不写入本地存储。
 - 壳层注入：`workbench.js` 先注入侧栏与用户区，再按 `location.pathname` 推导激活导航和 `data-project-create-trigger`，页面无需声明自身状态。
 - 收起侧栏的快捷入口：项目列表（→ `projects.html`）与对话（→ `research-assistant.html`）在 5 个页面均为可跳转链接，行为一致。
 - 用户菜单：开合、点击外部关闭与 `Esc` 关闭统一由 `assets/js/pages/workbench.js` 绑定，5 个页面行为一致（`main.js` 不再重复绑定）。

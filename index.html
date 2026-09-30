@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="社科智联——湖北省社科联打造的社科研究与理论宣讲数智化平台。">
 <meta name="theme-color" content="#fcfaf8">
-<title>社科智联 · 智汇社科 联结未来</title>
+<title>湖北社科数据信息联盟</title>
 <link rel="stylesheet" href="assets/css/tokens.css">
+<!-- 登录弹窗样式单独一份，避免整份 components.css 的同名选择器串到官网首页 -->
+<link rel="stylesheet" href="assets/css/auth-modal.css">
 <link rel="stylesheet" href="assets/css/portal-home.css">
 </head>
 <body>
@@ -27,6 +29,17 @@
       <a class="nav-link" href="./pages/agent-square.html#agent-research"><span class="nav-agent-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1"></circle><path d="M12 4v3"></path><rect x="4" y="7" width="16" height="11" rx="2.5"></rect><path d="M2 13h2M20 13h2"></path><circle cx="9" cy="12" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg></span>荆楚智研</a>
       <a class="nav-link" href="./pages/agent-square.html#agent-review"><span class="nav-agent-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1"></circle><path d="M12 4v3"></path><rect x="4" y="7" width="16" height="11" rx="2.5"></rect><path d="M2 13h2M20 13h2"></path><circle cx="9" cy="12" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg></span>荆楚智审</a>
       <a class="nav-link" href="#about">关于</a>
+      <button class="btn btn-primary btn-sm nav-auth" type="button" data-nav-auth data-auth-open>登录 / 注册</button>
+      <span class="nav-user" data-nav-user hidden>
+        <button class="user-chip-btn" type="button" data-nav-user-trigger aria-haspopup="menu" aria-expanded="false">
+          <span class="user-avatar" aria-hidden="true">研</span>
+          <span class="user-name" data-account-name>社科研究员</span>
+        </button>
+        <div class="user-menu" role="menu" data-nav-user-menu hidden>
+          <a role="menuitem" href="./pages/account-center.html" target="_blank" rel="noopener">账户中心</a>
+          <button role="menuitem" type="button" data-auth-logout>退出登录</button>
+        </div>
+      </span>
     </nav>
 
     <div class="header-actions">
@@ -48,6 +61,17 @@
       <a href="./pages/agent-square.html#agent-research"><span class="nav-agent-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1"></circle><path d="M12 4v3"></path><rect x="4" y="7" width="16" height="11" rx="2.5"></rect><path d="M2 13h2M20 13h2"></path><circle cx="9" cy="12" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg></span>荆楚智研</a>
       <a href="./pages/agent-square.html#agent-review"><span class="nav-agent-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1"></circle><path d="M12 4v3"></path><rect x="4" y="7" width="16" height="11" rx="2.5"></rect><path d="M2 13h2M20 13h2"></path><circle cx="9" cy="12" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg></span>荆楚智审</a>
       <a href="#about">关于</a>
+      <button class="btn btn-primary btn-sm drawer-nav__auth" type="button" data-nav-auth data-auth-open>登录 / 注册</button>
+      <span class="drawer-nav__user" data-nav-user hidden>
+        <button class="user-chip-btn" type="button" data-nav-user-trigger aria-haspopup="menu" aria-expanded="false">
+          <span class="user-avatar" aria-hidden="true">研</span>
+          <span class="user-name" data-account-name>社科研究员</span>
+        </button>
+        <div class="user-menu" role="menu" data-nav-user-menu hidden>
+          <a role="menuitem" href="./pages/account-center.html" target="_blank" rel="noopener">账户中心</a>
+          <button role="menuitem" type="button" data-auth-logout>退出登录</button>
+        </div>
+      </span>
     </nav>
   </div>
   <div class="drawer-mask" id="drawerMask" hidden></div>
@@ -266,6 +290,8 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<!-- auth.js 提供登录弹窗与登录态；它的提示复用 portal-home.js 的 toast（见该文件里的 SKApp 兜底） -->
+<script src="assets/js/auth.js"></script>
 <script src="assets/js/portal-home.js"></script>
 </body>
 </html>
