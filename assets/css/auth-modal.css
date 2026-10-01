@@ -14,6 +14,15 @@
   transition: opacity var(--duration-default) var(--ease-out);
 }
 
+/* 叠在已有遮罩之上的确认框（如协议确认）：背景全透明、不做模糊，视觉上仍是一层遮罩。
+   层级要提到弹窗那一档（190 在弹窗 200 之下，会漏点穿透），同档后挂的 DOM 顺序更靠上 */
+.auth-mask--clear {
+  z-index: var(--modal-z-box);
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
 .auth-modal {
   position: fixed;
   z-index: var(--modal-z-box);
@@ -107,7 +116,8 @@
   gap: var(--spacing-4);
 }
 
-.logout-confirm-actions {
+/* 确认类弹窗的按钮行：退出确认、协议确认共用 */
+.auth-confirm-actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-3);

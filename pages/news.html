@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="湖北社科数据信息联盟官方资讯，汇聚联盟发布的通知、动态与研究进展。">
+<meta name="theme-color" content="#fcfaf8">
+<title>官方资讯 · 湖北社科数据信息联盟</title>
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="../assets/css/auth-modal.css">
+<link rel="stylesheet" href="../assets/css/portal-home.css">
+<link rel="stylesheet" href="../assets/css/news.css">
+</head>
+<body>
+
+<!-- ======== 顶部导航（镜像官网首页，见 AGENTS.md 镜像实现约定） ======== -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="brand" href="../index.html" aria-label="湖北社科数据信息联盟首页">
+      <span class="brand-text">
+        <span class="brand-name">湖北社科数据信息联盟</span>
+        <span class="brand-en">SOCIAL SCIENCE UNION</span>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="主导航">
+      <a class="nav-link is-active" href="./news.html" aria-current="page">官方资讯</a>
+      <a class="nav-link" href="./knowledge-alliance.html">知识联盟</a>
+      <a class="nav-link" href="./agent-square.html#agent-research"><span class="nav-agent-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1"></circle><path d="M12 4v3"></path><rect x="4" y="7" width="16" height="11" rx="2.5"></rect><path d="M2 13h2M20 13h2"></path><circle cx="9" cy="12" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg></span>荆楚智研</a>
+      <a class="nav-link" href="./agent-square.html#agent-review"><span class="nav-agent-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1"></circle><path d="M12 4v3"></path><rect x="4" y="7" width="16" height="11" rx="2.5"></rect><path d="M2 13h2M20 13h2"></path><circle cx="9" cy="12" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg></span>荆楚智审</a>
+      <a class="nav-link" href="../index.html#about">关于</a>
+      <button class="btn btn-primary btn-sm nav-auth" type="button" data-nav-auth data-auth-open>登录 / 注册</button>
+      <span class="nav-user" data-nav-user hidden>
+        <button class="user-chip-btn" type="button" data-nav-user-trigger aria-haspopup="menu" aria-expanded="false">
+          <span class="user-avatar" aria-hidden="true">研</span>
+          <span class="user-name" data-account-name>社科研究员</span>
+        </button>
+        <div class="user-menu" role="menu" data-nav-user-menu hidden>
+          <a role="menuitem" href="./account-center.html" target="_blank" rel="noopener">账户中心</a>
+          <button role="menuitem" type="button" data-auth-logout>退出登录</button>
+        </div>
+      </span>
+    </nav>
+
+    <div class="header-actions">
+      <button class="hamburger" id="hamburger" type="button" aria-label="打开导航菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 移动端抽屉菜单 -->
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <span class="drawer-title">导航</span>
+      <button class="drawer-close" id="drawerClose" type="button" aria-label="关闭菜单">×</button>
+    </div>
+    <nav class="drawer-nav" aria-label="移动端导航">
+      <a href="./news.html" aria-current="page">官方资讯</a>
+      <a href="./knowledge-alliance.html">知识联盟</a>
+      <a href="./agent-square.html#agent-research"><span class="nav-agent-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1"></circle><path d="M12 4v3"></path><rect x="4" y="7" width="16" height="11" rx="2.5"></rect><path d="M2 13h2M20 13h2"></path><circle cx="9" cy="12" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg></span>荆楚智研</a>
+      <a href="./agent-square.html#agent-review"><span class="nav-agent-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="3" r="1"></circle><path d="M12 4v3"></path><rect x="4" y="7" width="16" height="11" rx="2.5"></rect><path d="M2 13h2M20 13h2"></path><circle cx="9" cy="12" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg></span>荆楚智审</a>
+      <a href="../index.html#about">关于</a>
+      <button class="btn btn-primary btn-sm drawer-nav__auth" type="button" data-nav-auth data-auth-open>登录 / 注册</button>
+      <span class="drawer-nav__user" data-nav-user hidden>
+        <button class="user-chip-btn" type="button" data-nav-user-trigger aria-haspopup="menu" aria-expanded="false">
+          <span class="user-avatar" aria-hidden="true">研</span>
+          <span class="user-name" data-account-name>社科研究员</span>
+        </button>
+        <div class="user-menu" role="menu" data-nav-user-menu hidden>
+          <a role="menuitem" href="./account-center.html" target="_blank" rel="noopener">账户中心</a>
+          <button role="menuitem" type="button" data-auth-logout>退出登录</button>
+        </div>
+      </span>
+    </nav>
+  </div>
+  <div class="drawer-mask" id="drawerMask" hidden></div>
+</header>
+
+<main class="news-page">
+  <div class="container">
+    <ul class="news-list" data-news-list></ul>
+    <nav class="news-pagination" data-news-pagination aria-label="资讯分页"></nav>
+  </div>
+</main>
+
+<!-- ======== 页脚（镜像官网首页） ======== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <span class="brand-name">湖北社科数据信息联盟</span>
+        <span class="brand-en footer-brand-en">SOCIAL SCIENCE UNION</span>
+        <p class="footer-slogan">一站式社科研究与理论宣讲数智化平台<br>让知识流动，让研究更高效</p>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-col-title">平台工具</h3>
+        <a href="./knowledge-alliance.html">知识联盟</a>
+        <a href="#" data-toast="更新日志后续接入">更新日志</a>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-col-title">生态共建</h3>
+        <a href="#" data-toast="入驻申请流程后续接入">申请入驻</a>
+        <a href="#" data-toast="联盟章程后续接入">联盟章程</a>
+        <a href="#" data-toast="数据共享标准后续接入">数据共享标准</a>
+        <a href="#" data-toast="成员单位名录后续接入">成员单位名录</a>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-col-title">支持与法律</h3>
+        <a href="#" data-toast="用户协议后续接入">用户协议</a>
+        <a href="#" data-toast="隐私政策后续接入">隐私政策</a>
+        <a href="#" data-toast="免责声明后续接入">免责声明</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 社科智联 · 湖北省社科联<span class="footer-divider">|</span>运营主体：<a href="https://www.hbskw.com/" target="_blank" rel="noopener">湖北省社会科学界联合会</a></span>
+      <span>鄂ICP备XXXXXXXX号</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/portal-home.js"></script>
+<script src="../assets/js/news-data.js"></script>
+<script src="../assets/js/pages/news.js"></script>
+</body>
+</html>

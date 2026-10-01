@@ -181,17 +181,33 @@
     }
   };
 
-  /* 首次打开还没有记录：前三条未读，其余按已读种下（对齐工作台铃铛原来的「3 条未读」），
-     并立刻写回——否则只读了第一条，其余几条会因为记录里没有它们而重新变成未读 */
+  /* 初始未读 = 前三条，其余按已读种下（对齐工作台铃铛原来的「3 条未读」） */
+  const seedReadIds = function () {
+    return MESSAGES.slice(3).map(function (message) {
+      return message.id;
+    });
+  };
+
+  /* 首次打开还没有记录，就种下初始状态并立刻写回——否则只读了第一条，
+     其余几条会因为记录里没有它们而重新变成未读 */
   const storedIds = readStoredIds();
-  const readIds = new Set(
-    storedIds === null
-      ? MESSAGES.slice(3).map(function (message) {
-          return message.id;
-        })
-      : parseIds(storedIds),
-  );
+  const readIds = new Set(storedIds === null ? seedReadIds() : parseIds(storedIds));
   if (storedIds === null) writeReadIds(Array.from(readIds));
+
+  /* 演示需要：退出登录即清掉已读记录并复位成初始状态，
+     这样重新登录进来，铃铛和消息中心又是「前三条未读」 */
+  document.addEventListener("sk:auth-changed", function (event) {
+    if (event.detail) return; /* 登录、换绑触发的刷新不动已读记录 */
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      /* 存储写不了也无妨，下面内存里照样复位 */
+    }
+    readIds.clear();
+    seedReadIds().forEach(function (id) {
+      readIds.add(id);
+    });
+  });
 
   const all = function () {
     return MESSAGES.map(function (message) {

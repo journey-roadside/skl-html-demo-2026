@@ -6,6 +6,8 @@
   let mask;
   let logoutConfirmMask;
   let logoutConfirmModal;
+  let agreementConfirmMask;
+  let agreementConfirmModal;
   /* 演示环境统一密码：手机号任意填，密码只认这一个 */
   const DEMO_PASSWORD = "123";
   /* 密码规则（演示）：3–20 位字母 / 数字 / 半角符号；空格（含首尾）、中文、其他非 ASCII 字符都不合规 */
@@ -148,7 +150,8 @@
     modal.querySelector(".auth-submit").textContent = isRegister ? "创建账号并登录" : "登录";
   }
 
-  function openModal(target) {
+  /* mode 为 "register" 时直接落在注册页签（默认登录）；调用方不传则行为不变 */
+  function openModal(target, mode) {
     if (window.SKApp && typeof window.SKApp.closeDrawer === "function") {
       window.SKApp.closeDrawer();
     }
@@ -173,7 +176,7 @@
     } else {
       modal.querySelector(".auth-close")?.focus({ preventScroll: true });
     }
-    setMode("login");
+    setMode(mode === "register" ? "register" : "login");
   }
 
   function closeModal() {
@@ -261,7 +264,7 @@
     }
 
     if (!agreement.checked) {
-      window.SKApp.showToast("请先阅读并同意相关协议");
+      openAgreementConfirm();
       return;
     }
 
@@ -331,12 +334,75 @@
           </svg>
         </button>
       </div>
-      <div class="logout-confirm-actions">
+      <div class="auth-confirm-actions">
         <button class="btn btn-outline" type="button" data-logout-confirm-close>取消</button>
         <button class="btn btn-primary danger" type="button" data-logout-confirm-submit>确定</button>
       </div>
     `;
     document.body.append(logoutConfirmMask, logoutConfirmModal);
+  }
+
+  /* 未勾选协议时的确认弹窗：点「同意」即替用户勾上，不再用 toast 拦提交。
+     文案随登录 / 注册场景切换 */
+  function createAgreementConfirm() {
+    if (agreementConfirmModal) return;
+    agreementConfirmMask = document.createElement("div");
+    /* 它叠在登录弹窗已有的遮罩之上，不再压第二层暗；这层只负责挡住穿透点击 */
+    agreementConfirmMask.className = "auth-mask auth-mask--clear";
+    agreementConfirmMask.dataset.agreementConfirmMask = "";
+    agreementConfirmMask.hidden = true;
+
+    agreementConfirmModal = document.createElement("section");
+    agreementConfirmModal.className = "auth-modal";
+    agreementConfirmModal.dataset.agreementConfirmModal = "";
+    agreementConfirmModal.setAttribute("role", "alertdialog");
+    agreementConfirmModal.setAttribute("aria-modal", "true");
+    agreementConfirmModal.setAttribute("aria-labelledby", "agreementConfirmTitle");
+    agreementConfirmModal.hidden = true;
+    agreementConfirmModal.innerHTML = `
+      <div class="auth-head">
+        <div>
+          <h2 class="auth-title" id="agreementConfirmTitle">同意协议</h2>
+          <p class="auth-subtitle" data-agreement-confirm-desc></p>
+        </div>
+        <button class="auth-close" type="button" data-agreement-confirm-close aria-label="关闭">
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="auth-confirm-actions">
+        <button class="btn btn-outline" type="button" data-agreement-confirm-close>取消</button>
+        <button class="btn btn-primary" type="button" data-agreement-confirm-submit>同意</button>
+      </div>
+    `;
+    document.body.append(agreementConfirmMask, agreementConfirmModal);
+  }
+
+  function openAgreementConfirm() {
+    createAgreementConfirm();
+    const isRegister = modal?.dataset.mode === "register";
+    agreementConfirmModal.querySelector("[data-agreement-confirm-desc]").textContent =
+      `${isRegister ? "注册" : "登录"}即代表你已阅读并同意《用户协议》和《隐私政策》`;
+    agreementConfirmMask.hidden = false;
+    agreementConfirmModal.hidden = false;
+    requestAnimationFrame(() => {
+      agreementConfirmMask.classList.add("is-open");
+      agreementConfirmModal.classList.add("is-open");
+    });
+    window.SKApp?.setFocusTrap?.(agreementConfirmModal, { initial: agreementConfirmModal.querySelector("[data-agreement-confirm-submit]") });
+  }
+
+  function closeAgreementConfirm() {
+    if (!agreementConfirmModal || agreementConfirmModal.hidden) return;
+    window.SKApp?.releaseFocusTrap?.(agreementConfirmModal);
+    agreementConfirmMask.classList.remove("is-open");
+    agreementConfirmModal.classList.remove("is-open");
+    window.setTimeout(() => {
+      agreementConfirmMask.hidden = true;
+      agreementConfirmModal.hidden = true;
+    }, 220);
   }
 
   function openLogoutConfirm() {
@@ -405,7 +471,8 @@
         /* 已登录时不拦：把点击还给元素自己（链接照常跳转、按钮走原行为） */
         if (readUser()) return;
         event.preventDefault();
-        openModal(authOpen.dataset.destination || null);
+        /* data-auth-mode="register" 的入口（如侧栏注册引导）直接落在注册页签 */
+        openModal(authOpen.dataset.destination || null, authOpen.dataset.authMode || null);
         return;
       }
 
@@ -483,6 +550,18 @@
           return;
         }
         notifySuccess("已退出登录");
+        return;
+      }
+
+      if (event.target.closest("[data-agreement-confirm-close]")) {
+        closeAgreementConfirm();
+        return;
+      }
+
+      /* 同意：替用户勾上协议，关掉确认框，提交仍由用户自己点 */
+      if (event.target.closest("[data-agreement-confirm-submit]")) {
+        modal?.querySelector("[data-auth-agreement]")?.click();
+        closeAgreementConfirm();
       }
     });
 
@@ -492,6 +571,11 @@
       if (logoutConfirmModal && !logoutConfirmModal.hidden) {
         event.preventDefault();
         closeLogoutConfirm();
+        return;
+      }
+      if (agreementConfirmModal && !agreementConfirmModal.hidden) {
+        event.preventDefault();
+        closeAgreementConfirm();
         return;
       }
       if (modal && !modal.hidden) {

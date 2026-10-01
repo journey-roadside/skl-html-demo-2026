@@ -836,8 +836,13 @@
       });
     }
 
-    /* 其它页面的「新建项目」入口带 ?create=1 跳过来，落地即弹出新建弹窗（未登录不弹） */
-    if (location.search.indexOf("create=1") !== -1 && window.SKAuth?.getUser()) openCreateDialog();
+    /* 其它页面的「新建项目」入口带 ?create=1 跳过来，落地即弹出新建弹窗（未登录不弹）。
+       判断要等 DOMContentLoaded：这段是 defer 脚本顶层，跑的时候 auth.js 还没挂上 window.SKAuth */
+    document.addEventListener("DOMContentLoaded", function () {
+      if (location.search.indexOf("create=1") === -1) return;
+      if (!window.SKAuth?.getUser()) return;
+      openCreateDialog();
+    });
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();

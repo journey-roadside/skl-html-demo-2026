@@ -643,7 +643,7 @@ section[id] {
 .portal-station-card > a {
   margin-top: var(--spacing-6);
   color: var(--accent-active);
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .portal-news-grid,
@@ -1424,7 +1424,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 20px); }
 .about { background: var(--surface); }
 .about-grid { max-width: 780px; margin-inline: auto; text-align: center; }
 .about-intro p:not(.section-kicker) { margin-top: 18px; color: var(--text-2); }
-.about-qr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 40px; max-width: 460px; margin-inline: auto; }
+/* 二维码数量不定，用居中的 flex 排布（原为写死三列的 grid，减到一项后整体偏左） */
+.about-qr { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; margin-top: 40px; }
 .qr-item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .qr-item img { width: 120px; height: 120px; padding: 8px; background: #fff; border: 1px solid var(--border); border-radius: 8px; }
 .qr-item span { font-size: 13px; color: var(--text-2); }

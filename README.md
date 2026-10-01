@@ -20,9 +20,9 @@
 当前根目录以 V5.3 为主版本：
 
 - `index.html` 为「湖北社科数据信息联盟」官网首页。
-- `pages/knowledge-alliance.html` 为知识联盟（工作台底座）。
+- `pages/knowledge-alliance.html` 为知识联盟（工作台首页）。
 - `pages/agent-square.html` 为智能体广场（荆楚智研 / 荆楚智审）。
-- `pages/research-assistant.html` 为社科智研工作台。
+- `pages/research-assistant.html` 为社科智研会话助手。
 - `pages/projects.html` 为项目列表，`pages/my-knowledge.html` 为我的知识。
 - V3 原始项目保留在 `v3/`，V4 项目保留在 `v4/`，用于对照和回溯。
 
@@ -42,6 +42,8 @@ python -m http.server 8080
 | 文件 | 页面 | 说明 |
 | --- | --- | --- |
 | `index.html` | 湖北社科数据信息联盟官网 | 品牌首屏、最新动态、双智能体入口（荆楚智研 / 荆楚智审）、研究能力、联盟共建、关于与二维码 |
+| `pages/news.html` | 官方资讯 | 官网资讯文章列表：27 条分 3 页，底部分页仅页码（无上一页 / 下一页）；顶部导航镜像官网首页，「官方资讯」为选中态；入口为官网首页「最新动态」板块的「查看更多」，点标题新窗口打开文章详情 |
+| `pages/news-article.html` | 资讯详情 | 单篇文章：标题、发布时间与发布作者、正文（段落 / 小标题 / 配图与图注）、底部上一篇 / 下一篇导航（带标题；最新一篇的左侧、最后一篇的右侧改放「返回资讯首页」）；宽度与资讯列表页一致（860px）；正文超一屏时右下角出现回到顶部圆钮（短文章不出现）；地址契约 `?id=<1-27>`，无匹配回列表页；正文数据在 `assets/js/news-data.js`，长度刻意不一以演示长短文章与图文 / 纯文字两类排版 |
 | `pages/knowledge-alliance.html` | 知识联盟（工作台底座） | 共享文件浏览、文件信息、相关文件与共享审核入口 |
 | `pages/agent-square.html` | 智能体广场 | 荆楚智研、荆楚智审双智能体：概述、适用场景、核心能力、使用边界与快速开始（#agent-research / #agent-review 锚点） |
 | `pages/projects.html` | 项目列表 | 课题示例、项目详情、对话、创建 / 重命名项目；对话项三点菜单（移出项目 / 删除）、项目资料本地上传与删除、格式筛选含「全部」 |
@@ -64,6 +66,8 @@ python -m http.server 8080
 html-demo/
 ├─ index.html                  # 湖北社科数据信息联盟官网首页
 ├─ pages/
+│  ├─ news.html                # 官方资讯（官网资讯文章列表，导航镜像官网首页）
+│  ├─ news-article.html        # 资讯详情（单篇文章，?id= 定位）
 │  ├─ knowledge-alliance.html  # 知识联盟（工作台底座）
 │  ├─ agent-square.html        # 智能体广场（荆楚智研 / 荆楚智审）
 │  ├─ research-assistant.html  # 社科智研工作台
@@ -86,6 +90,8 @@ html-demo/
 │  │  ├─ my-knowledge.css      # 我的知识样式
 │  │  ├─ reader.css            # 文件查看页样式
 │  │  ├─ account-center.css    # 账户中心样式
+│  │  ├─ news.css              # 官方资讯列表页样式（导航与基础复用 portal-home.css）
+│  │  ├─ news-article.css      # 资讯详情页正文排版
 │  │  ├─ v4.css                # 旧工作台样式（保留兼容）
 │  │  ├─ <page>.css            # 各页面专用样式
 │  │  └─ pages/
@@ -96,6 +102,7 @@ html-demo/
 │  │  ├─ auth.js               # 登录、注册和退出
 │  │  ├─ messages.js           # 消息中心数据模块（账户中心与工作台铃铛共用已读状态）
 │  │  ├─ my-files.js           # 「我的文件」数据模块（我的知识与知识联盟共享弹窗共用）
+│  │  ├─ news-data.js          # 官方资讯数据模块（27 篇含正文，列表页与详情页共用）
 │  │  ├─ portal-home.js        # 官网首页交互
 │  │  ├─ shared-community.js   # 共享社区逻辑
 │  │  ├─ research-assistant.js # 工作台会话交互
@@ -105,6 +112,8 @@ html-demo/
 │  │  ├─ <page>.js            # 各页面专用逻辑
 │  │  └─ pages/
 │  │     ├─ projects.js        # 项目列表逻辑
+│  │     ├─ news.js            # 官方资讯列表：渲染与分页
+│  │     ├─ news-article.js    # 资讯详情：按 ?id= 渲染文章正文
 │  │     ├─ account-center.js  # 账户中心逻辑（菜单记忆、积分中心、任务中心、消息中心）
 │  │     └─ workbench.js       # 统一工作台外壳：侧栏与用户区单源模板 + 注入逻辑
 │  ├─ img/
@@ -132,9 +141,9 @@ html-demo/
 - 登录态：`localStorage["sheke-demo-user"]`，由 `assets/js/auth.js` 管理。
 - 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`，由 `assets/js/pages/workbench.js` 管理。
 - 账户中心菜单：`localStorage["sheke-account-tab"]`，刷新后仍停在上次那一项；从工作台深链带的 `?tab=` 只在当次生效、不写入记忆，页内换过菜单后地址栏参数会被摘掉。
-- 消息中心：`localStorage["sheke-message-read"]`，由 `assets/js/messages.js` 统一管理，账户中心消息中心与工作台铃铛共用同一份已读状态。
+- 消息中心：`localStorage["sheke-message-read"]`，由 `assets/js/messages.js` 统一管理，账户中心消息中心与工作台铃铛共用同一份已读状态；退出登录会清掉这份记录，重新登录后又回到初始的「前三条未读」（便于演示）。
 - 「我的文件」名单：`localStorage["sheke-my-files"]`，由 `assets/js/my-files.js` 管理，我的知识与知识联盟共享弹窗共用。
-- 工作台任务窗口：侧栏用户区上方的任务窗口每次页面加载都出现，点关闭只在本次加载内生效，不写入本地存储。
+- 工作台签到窗口：侧栏用户区上方，登录后才出现；点关闭或签到后收起，本次会话内不再出现（`sessionStorage["sheke-checkin-hidden"]`），重新登录重置显隐与签到键；未登录、隐私模式存不了标记时只按登录态显隐。未登录时同一位置显示注册引导票券（`data-guest-only` + `data-auth-open`，点击开登录框），与签到窗口按登录态互斥。
 - 壳层注入：`workbench.js` 先注入侧栏与用户区，再按 `location.pathname` 推导激活导航和 `data-project-create-trigger`，页面无需声明自身状态。
 - 收起侧栏的快捷入口：项目列表（→ `projects.html`）与对话（→ `research-assistant.html`）在 5 个页面均为可跳转链接，行为一致。
 - 用户菜单：开合、点击外部关闭与 `Esc` 关闭统一由 `assets/js/pages/workbench.js` 绑定，5 个页面行为一致（`main.js` 不再重复绑定）。
