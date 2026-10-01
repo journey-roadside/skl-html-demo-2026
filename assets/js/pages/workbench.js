@@ -313,7 +313,7 @@
                     <path d="M3 18h.01"></path>
                   </svg>
                 </a>
-                <button class="workbench-section__action" type="button" data-summary-action aria-label="新建项目" data-rail-tip="新建项目" data-auth-open>
+                <button class="workbench-section__action" type="button" data-summary-action aria-label="新建项目" data-rail-tip="新建项目" data-auth-only>
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M5 12h14"></path>
                     <path d="M12 5v14"></path>
@@ -1006,17 +1006,40 @@
     </header>`;
   const SHELL_USER = `    <footer class="workbench-user">
       <!-- 任务窗口：浮动在用户区上方（对话列表下沿），内容先占位，规则后续再补；可手动关闭 -->
-      <section class="workbench-task-slot" data-task-slot aria-label="任务中心入口">
-        <button class="workbench-task-slot__close" type="button" data-task-slot-close aria-label="关闭任务窗口">
+      <section class="workbench-task-slot" data-task-slot aria-label="签到入口">
+        <button class="workbench-task-slot__close" type="button" data-task-slot-close aria-label="关闭签到窗口">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M18 6 6 18"></path>
             <path d="m6 6 12 12"></path>
           </svg>
         </button>
-        <strong class="workbench-task-slot__title">任务中心</strong>
-        <p class="workbench-task-slot__desc">做任务赚积分，可兑换数据服务与深度研究额度。</p>
-        <a class="btn btn-primary btn-sm workbench-task-slot__action" href="./account-center.html?tab=tasks" target="_blank" rel="noopener">去任务中心</a>
+        <strong class="workbench-task-slot__title">每日签到</strong>
+        <p class="workbench-task-slot__desc">签到得 5 成长积分，可兑换数据服务与深度研究额度。</p>
+        <button class="btn btn-primary btn-sm workbench-task-slot__action" type="button" data-task-slot-checkin>立即签到</button>
       </section>
+      <!-- 未登录广告位：注册引导票券，与上面的签到窗口按登录态互斥；点主体开登录框，
+           关闭钮只清本次显示（不写存储，刷新即恢复）。外层不能是 <button>：关闭钮要嵌在里面 -->
+      <div class="workbench-promo" data-promo data-guest-only>
+        <button class="workbench-promo__main" type="button" data-auth-open data-auth-mode="register" aria-label="免费领取 500 积分">
+          <span class="workbench-promo__body">
+            <strong class="workbench-promo__title">免费领取 500 积分</strong>
+            <span class="workbench-promo__sub">
+              注册查看更多免费积分获取方式
+              <svg class="workbench-promo__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 12h16"></path>
+                <path d="m14 6 6 6-6 6"></path>
+              </svg>
+            </span>
+          </span>
+          <span class="workbench-promo__stub" aria-hidden="true">UNION</span>
+        </button>
+        <button class="workbench-promo__close" type="button" data-promo-close aria-label="关闭注册引导">
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
       <div class="workbench-user__row">
         <button class="workbench-user__profile" type="button" data-user-menu-trigger aria-haspopup="menu" aria-expanded="false" aria-controls="workbench-user-menu">
           <span class="workbench-user__avatar" aria-hidden="true" data-sidebar-user-avatar>研</span>
@@ -1324,10 +1347,9 @@
       if (page === "projects.html") {
         create.setAttribute("data-project-create-trigger", "");
       } else {
-        /* 新建项目弹窗只在项目列表页（projects.js 仅该页加载）：跳转过去并由该页打开弹窗 */
+        /* 新建项目弹窗只在项目列表页（projects.js 仅该页加载）：跳转过去并由该页打开弹窗。
+           入口带 data-auth-only，未登录根本不显示，不用再判登录态 */
         create.addEventListener("click", function () {
-          /* 未登录时不跳转：交给 auth.js 的 [data-auth-open] 弹登录框 */
-          if (!window.SKAuth?.getUser()) return;
           window.location.href = "./projects.html?create=1";
         });
       }
@@ -1382,14 +1404,66 @@
     }
   };
 
-  /* 任务窗口（SHELL_USER 里的占位广告位）：关闭只在本次加载内生效，刷新页面重新出现 */
+  /* 签到窗口（SHELL_USER 里的浮动块）：登录后才出现；关闭或签到后本次会话内不再出现，
+     重新登录时重置。「已收起」记 sessionStorage，换标签页 / 重开浏览器自然复位 */
   const taskSlot = document.querySelector("[data-task-slot]");
 
   if (taskSlot) {
-    taskSlot.querySelector("[data-task-slot-close]")?.addEventListener("click", function () {
-      taskSlot.remove();
+    const TASK_SLOT_KEY = "sheke-checkin-hidden";
+    const taskSlotCheckin = taskSlot.querySelector("[data-task-slot-checkin]");
+    const signedIn = function () {
+      return Boolean(window.SKAuth?.getUser());
+    };
+    const slotDismissed = function () {
+      try { return sessionStorage.getItem(TASK_SLOT_KEY) === "1"; } catch (err) { return false; }
+    };
+    const syncTaskSlot = function () {
+      taskSlot.hidden = !signedIn() || slotDismissed();
+    };
+    const dismissTaskSlot = function () {
+      try { sessionStorage.setItem(TASK_SLOT_KEY, "1"); } catch (err) { /* 隐私模式下存不了，只在本次加载内收起 */ }
+      taskSlot.hidden = true;
+    };
+
+    taskSlot.querySelector("[data-task-slot-close]")?.addEventListener("click", dismissTaskSlot);
+
+    /* 签到：与账户中心任务中心同一条规则（+5 成长积分）；签完即收起窗口 */
+    taskSlotCheckin?.addEventListener("click", function () {
+      if (taskSlotCheckin.disabled) return;
+      taskSlotCheckin.disabled = true;
+      taskSlotCheckin.textContent = "今日已签到";
+      window.SKApp?.showToast?.("签到成功，+5 成长积分");
+      dismissTaskSlot();
+    });
+
+    /* auth.js 每次渲染都派发 sk:auth-changed（含页面加载那一次），
+       只有登录态真的变了才算新会话：清掉「已收起」并把签到键复位。
+       基准值不能在脚本顶层取——SKAuth 要等 DOMContentLoaded 才挂上 window，
+       顶层取到的是 null，页面加载那一次派发会被误判成刚登录 */
+    let lastSignedIn = null;
+    document.addEventListener("DOMContentLoaded", function () {
+      lastSignedIn = signedIn();
+      syncTaskSlot();
+    });
+    document.addEventListener("sk:auth-changed", function () {
+      const now = signedIn();
+      if (lastSignedIn !== null && now !== lastSignedIn) {
+        try { sessionStorage.removeItem(TASK_SLOT_KEY); } catch (err) { /* 同上 */ }
+        if (taskSlotCheckin) {
+          taskSlotCheckin.disabled = false;
+          taskSlotCheckin.textContent = "立即签到";
+        }
+      }
+      lastSignedIn = now;
+      syncTaskSlot();
     });
   }
+
+  /* 未登录推广票券：关闭只清本次显示，不写存储——刷新即恢复（与签到窗口的 sessionStorage 不同） */
+  const promoSlot = document.querySelector("[data-promo]");
+  promoSlot?.querySelector("[data-promo-close]")?.addEventListener("click", function () {
+    promoSlot.hidden = true;
+  });
 
   /* 提示气泡用真实元素承载（不用 <span>：收起态 .workbench-nav__link > span 的
      overflow: hidden 会把指向箭头裁掉；伪元素又不可靠） */

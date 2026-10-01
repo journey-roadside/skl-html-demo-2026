@@ -441,15 +441,19 @@
   height: 14px;
 }
 
+/* 编辑标题的输入框只在编辑期间出现，样式直接用工整的聚焦态：
+   边框实心 --accent-strong + 3px --accent 外环（全站输入框聚焦同一口径）。
+   原先用的是 --accent / --accent-soft，两个都是接近白色的浅橙，
+   落在白卡片上等于没有边框，聚焦外环也看不出来 */
 .chat-title-input {
   width: min(420px, 46vw);
   height: 34px;
   padding: 0 10px;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--accent-strong);
   border-radius: var(--radius-sm);
   outline: none;
-  background: #fff;
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  background: var(--card);
+  box-shadow: 0 0 0 3px var(--accent);
   font-size: 14px;
   font-weight: 600;
 }
@@ -852,6 +856,25 @@
   display: none;
 }
 
+/* 有附件时，在附件区与下方输入区之间拉一条分隔线。
+   挂 :not(:empty) 上即可——空态整行已 display: none，线跟着不出现；
+   移除最后一个附件的 chip 后行重新变空，线也自动收掉。
+   线用伪元素画而不是 border-bottom：border 会顶到输入框左右边框上，
+   伪元素能左右各缩进一个内边距，跟 chip 的左右边界对齐 */
+.attachment-row:not(:empty) {
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.attachment-row:not(:empty)::after {
+  content: "";
+  position: absolute;
+  right: var(--spacing-3);
+  bottom: 0;
+  left: var(--spacing-3);
+  border-top: 1px solid var(--border);
+}
+
 .attachment-chip {
   display: inline-flex;
   min-height: 30px;
@@ -864,8 +887,15 @@
   font-size: 11px;
 }
 
+/* 文件图标用深橙，与文件名和删除钮拉开层次 */
+.attachment-chip .icon {
+  color: var(--accent-active);
+}
+
 .attachment-chip button {
   color: var(--muted-foreground);
+  font-size: var(--font-size-md);
+  line-height: 1;
 }
 
 .composer-main {
@@ -1198,7 +1228,10 @@
   font-size: 10px;
 }
 
-.history-search-mask {
+/* 搜索历史弹窗与「我的知识」选择弹窗共用一套外壳：两个类名并列写在同一份声明里，
+   改样式时两边一起动，不用记「改一处要同步另一处」 */
+.history-search-mask,
+.doc-picker-mask {
   position: fixed;
   z-index: var(--modal-z-mask);
   inset: 0;
@@ -1209,7 +1242,8 @@
   transition: opacity var(--duration-default) var(--ease-out);
 }
 
-.history-search-modal {
+.history-search-modal,
+.doc-picker-modal {
   position: fixed;
   z-index: var(--modal-z-box);
   top: 50%;
@@ -1227,15 +1261,19 @@
 }
 
 .history-search-mask.is-open,
-.history-search-modal.is-open {
+.doc-picker-mask.is-open,
+.history-search-modal.is-open,
+.doc-picker-modal.is-open {
   opacity: 1;
 }
 
-.history-search-modal.is-open {
+.history-search-modal.is-open,
+.doc-picker-modal.is-open {
   transform: translate(-50%, -50%) scale(1);
 }
 
-.history-search-head {
+.history-search-head,
+.doc-picker-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -1243,17 +1281,20 @@
   padding: var(--modal-pad-head);
 }
 
-.history-search-head h2 {
+.history-search-head h2,
+.doc-picker-head h2 {
   font-size: var(--modal-title-size);
 }
 
-.history-search-head p {
+.history-search-head p,
+.doc-picker-head p {
   margin-top: 4px;
   color: var(--text-secondary);
   font-size: var(--font-size-xxs);
 }
 
-.history-search-close {
+.history-search-close,
+.doc-picker-close {
   display: grid;
   width: 36px;
   height: 36px;
@@ -1262,18 +1303,21 @@
   color: var(--text-secondary);
 }
 
-.history-search-close:hover {
+.history-search-close:hover,
+.doc-picker-close:hover {
   background: var(--surface-hover);
   color: var(--foreground);
 }
 
-.history-search-field {
+.history-search-field,
+.doc-picker-field {
   position: relative;
   display: block;
   margin: 0 var(--spacing-6) var(--spacing-4);
 }
 
-.history-search-field .icon {
+.history-search-field .icon,
+.doc-picker-field .icon {
   position: absolute;
   top: 50%;
   left: 12px;
@@ -1281,7 +1325,8 @@
   transform: translateY(-50%);
 }
 
-.history-search-field input {
+.history-search-field input,
+.doc-picker-field input {
   width: 100%;
   height: 44px;
   padding: 0 13px 0 38px;
@@ -1291,12 +1336,14 @@
   font-size: 14px;
 }
 
-.history-search-field input:focus {
+.history-search-field input:focus,
+.doc-picker-field input:focus {
   border-color: var(--accent-strong);
   box-shadow: 0 0 0 3px var(--accent);
 }
 
-.history-search-results {
+.history-search-results,
+.doc-picker-results {
   display: grid;
   max-height: 320px;
   overflow-y: auto;
@@ -1321,11 +1368,60 @@
   border-bottom: 0;
 }
 
-.history-search-empty {
+.history-search-empty,
+.doc-picker-empty {
   padding: 28px 12px;
   color: var(--muted-foreground);
   font-size: 13px;
   text-align: center;
+}
+
+/* 「我的知识」列表条目：只有文件名，超长省略。
+   悬停是中性的灰底，选中才用品牌浅橙，两者不混 */
+.doc-picker-item {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-3) 10px;
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--foreground);
+  font-size: 13px;
+  text-align: left;
+}
+
+.doc-picker-item > span {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.doc-picker-item:last-child {
+  border-bottom: 0;
+}
+
+.doc-picker-item:hover {
+  background: var(--surface-hover);
+}
+
+.doc-picker-item.is-selected {
+  background: var(--accent-soft);
+  color: var(--accent-active);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* 底部确认条：与弹窗头部的内边距同一套令牌，右对齐 */
+.doc-picker-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  padding: var(--modal-pad-actions);
+  border-top: 1px solid var(--border);
+}
+
+.doc-picker-actions .btn {
+  min-height: 40px;
 }
 
 @media (max-width: 1199.98px) {

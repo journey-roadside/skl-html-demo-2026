@@ -115,6 +115,11 @@
   }
   let historySearchMask;
   let historySearchModal;
+  /* 「我的知识」选择弹窗：选中的文档按 名称→条目 存，确认时直接拿 size 做附件元信息 */
+  let docPickerMask;
+  let docPickerModal;
+  let docPickerRender = null;
+  const docPickerPicked = new Map();
   let historyItemMenu;
   let historyItemMenuTarget;
   let historyDialogMask;
@@ -261,7 +266,7 @@
     if (sendButton) sendButton.disabled = !textarea.value.trim();
   }
 
-  function addAttachment(name, meta) {
+  function addAttachment(name) {
     const { attachmentRow } = getElements();
     if (!attachmentRow) return;
 
@@ -270,7 +275,6 @@
     chip.innerHTML = `
       <span data-icon="file-text"></span>
       <span>${name}</span>
-      <small>${meta}</small>
       <button type="button" aria-label="移除附件">×</button>
     `;
     chip.querySelector("button").addEventListener("click", () => chip.remove());
@@ -662,6 +666,7 @@
         return;
       }
       setOpen(false);
+      if (item.dataset.composerAddItem === "我的知识") openDocPicker();
     });
 
     document.addEventListener("click", (event) => {
@@ -710,14 +715,17 @@
     if (fileInput) {
       fileInput.addEventListener("change", () => {
         Array.from(fileInput.files || []).forEach((file) => {
-          addAttachment(file.name, `${Math.max(1, Math.round(file.size / 1024))} KB`);
+          addAttachment(file.name);
         });
         fileInput.value = "";
       });
     }
 
     document.querySelectorAll("[data-mode-toggle]").forEach((button) => {
-      button.addEventListener("click", () => button.classList.toggle("is-on"));
+      button.addEventListener("click", () => {
+        const on = button.classList.toggle("is-on");
+        window.SKApp.showToast(`${on ? "已开启" : "已关闭"}${button.textContent.trim()}`);
+      });
     });
 
     document.querySelectorAll("[data-voice-trigger]").forEach((button) => {
@@ -1376,6 +1384,138 @@
     window.setTimeout(() => {
       historySearchMask.hidden = true;
       historySearchModal.hidden = true;
+    }, 220);
+  }
+
+  /* 「我的知识」选择弹窗：从 SKMyFiles（我的知识页同一份数据）挑文档加进输入框附件区。
+     骨架与上面的历史搜索弹窗对齐（CSS 也共用同一份声明），差别是列表可多选 + 底部确认条 */
+  function createDocPicker() {
+    if (docPickerModal) return;
+
+    docPickerMask = document.createElement("div");
+    docPickerMask.className = "doc-picker-mask";
+    docPickerMask.hidden = true;
+
+    docPickerModal = document.createElement("section");
+    docPickerModal.className = "doc-picker-modal";
+    docPickerModal.setAttribute("role", "dialog");
+    docPickerModal.setAttribute("aria-modal", "true");
+    docPickerModal.setAttribute("aria-labelledby", "docPickerTitle");
+    docPickerModal.hidden = true;
+    docPickerModal.innerHTML = `
+      <div class="doc-picker-head">
+        <div>
+          <h2 id="docPickerTitle">我的知识</h2>
+          <p>选择要添加的文档</p>
+        </div>
+        <button class="doc-picker-close" type="button" data-doc-picker-close aria-label="关闭">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <label class="doc-picker-field">
+        <span data-icon="search"></span>
+        <input type="search" placeholder="搜索文档标题" autocomplete="off" data-doc-picker-input>
+      </label>
+      <div class="doc-picker-results" role="listbox" aria-multiselectable="true" data-doc-picker-results></div>
+      <div class="doc-picker-actions">
+        <button class="btn btn-outline" type="button" data-doc-picker-cancel>取消</button>
+        <button class="btn btn-primary" type="button" data-doc-picker-confirm disabled>添加</button>
+      </div>
+    `;
+    document.body.append(docPickerMask, docPickerModal);
+    window.SKIcons.hydrate(docPickerModal);
+
+    const results = docPickerModal.querySelector("[data-doc-picker-results]");
+    const searchInput = docPickerModal.querySelector("[data-doc-picker-input]");
+    const confirmButton = docPickerModal.querySelector("[data-doc-picker-confirm]");
+
+    const syncConfirm = () => {
+      const count = docPickerPicked.size;
+      confirmButton.disabled = count === 0;
+      confirmButton.textContent = count ? `添加 ${count} 个文档` : "添加";
+    };
+
+    const render = () => {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const files = (window.SKMyFiles?.all() || []).filter(
+        (file) => !keyword || file.name.toLowerCase().includes(keyword),
+      );
+
+      results.replaceChildren();
+      if (!files.length) {
+        const empty = document.createElement("p");
+        empty.className = "doc-picker-empty";
+        empty.textContent = "没有匹配的文档";
+        results.append(empty);
+      }
+      files.forEach((file) => {
+        const item = document.createElement("button");
+        const picked = docPickerPicked.has(file.name);
+        item.type = "button";
+        item.className = "doc-picker-item" + (picked ? " is-selected" : "");
+        item.setAttribute("role", "option");
+        item.setAttribute("aria-selected", String(picked));
+
+        const name = document.createElement("span");
+        name.textContent = file.name;
+        item.append(name);
+
+        /* 只切这一个条目的状态、不重渲染整表：重渲染会把滚动位置弹回顶部 */
+        item.addEventListener("click", () => {
+          const next = !docPickerPicked.has(file.name);
+          if (next) docPickerPicked.set(file.name, file);
+          else docPickerPicked.delete(file.name);
+          item.classList.toggle("is-selected", next);
+          item.setAttribute("aria-selected", String(next));
+          syncConfirm();
+        });
+        results.append(item);
+      });
+      syncConfirm();
+    };
+    docPickerRender = render;
+
+    searchInput.addEventListener("input", render);
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeDocPicker();
+    });
+
+    docPickerModal.querySelector("[data-doc-picker-close]").addEventListener("click", closeDocPicker);
+    docPickerModal.querySelector("[data-doc-picker-cancel]").addEventListener("click", closeDocPicker);
+
+    confirmButton.addEventListener("click", () => {
+      const picked = Array.from(docPickerPicked.values());
+      picked.forEach((file) => addAttachment(file.name));
+      closeDocPicker();
+      if (picked.length) window.SKApp.showToast(`已添加 ${picked.length} 个文档`);
+    });
+  }
+
+  function openDocPicker() {
+    createDocPicker();
+    /* 每次打开都从干净状态开始：清掉上次的选中文档与关键词 */
+    docPickerPicked.clear();
+    docPickerModal.querySelector("[data-doc-picker-input]").value = "";
+    docPickerRender();
+
+    docPickerMask.hidden = false;
+    docPickerModal.hidden = false;
+    requestAnimationFrame(() => {
+      docPickerMask.classList.add("is-open");
+      docPickerModal.classList.add("is-open");
+    });
+    document.body.classList.add("is-locked");
+    window.setTimeout(() => docPickerModal.querySelector("[data-doc-picker-input]").focus(), 60);
+  }
+
+  function closeDocPicker() {
+    if (!docPickerModal) return;
+    docPickerMask.classList.remove("is-open");
+    docPickerModal.classList.remove("is-open");
+    document.body.classList.remove("is-locked");
+    window.setTimeout(() => {
+      docPickerMask.hidden = true;
+      docPickerModal.hidden = true;
     }, 220);
   }
 

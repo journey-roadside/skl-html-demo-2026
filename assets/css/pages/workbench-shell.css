@@ -47,6 +47,11 @@
   gap: 7px;
 }
 
+/* 未登录时铃铛被收起（workbench.js 置 hidden），用户信息按钮独占整行 */
+.workbench-user__row:has(.workbench-user__messages[hidden]) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .workbench-user__profile {
   order: 1;
 }
@@ -533,10 +538,13 @@
 }
 
 /* 未登录时对话列表的占位行（登录入口）：左侧带图标。
-   padding-left 归零是为了让图标与「新建项目」行的文件夹图标对齐（同在 x=14） */
+   padding-left 归零是为了让图标与「新建项目」行的文件夹图标对齐（同在 x=14）；
+   基础规则的 4px 横向内边距跟着没了，图标与文字的间距要用 gap 补回来，
+   取值对齐 .workbench-project__title 的 padding-left */
 .workbench-dialog__title--guest {
   display: flex;
   align-items: center;
+  gap: var(--spacing-1);
   padding-left: 0;
 }
 
@@ -1035,6 +1043,127 @@
 /* 收起成 rail 后没有横向空间，整块收起 */
 .workbench-shell:has(.workbench-sidebar__state:checked) .workbench-task-slot {
   display: none;
+}
+
+/* 未登录广告位：注册引导票券（左主区 + 右存根），位置与签到窗口相同，两者按登录态互斥 */
+.workbench-promo {
+  position: absolute;
+  z-index: 5;
+  right: 14px;
+  bottom: calc(100% + 8px);
+  left: 14px;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid rgba(251, 129, 71, 0.3);
+  border-radius: var(--radius-lg);
+  background: var(--accent-soft);
+  box-shadow: var(--shadow-hover);
+  text-align: left;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+/* 票券缺口：用侧栏底色画圆再靠 overflow 裁掉一半 */
+.workbench-promo::before,
+.workbench-promo::after {
+  content: "";
+  position: absolute;
+  right: 29px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--background);
+}
+
+.workbench-promo::before { top: -5px; }
+.workbench-promo::after { bottom: -5px; }
+
+/* 票券主体：整块是登录入口。关闭钮是它的兄弟节点——<button> 里不能再嵌 <button> */
+.workbench-promo__main {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+  text-align: left;
+}
+
+.workbench-promo__body {
+  display: grid;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+}
+
+.workbench-promo__title {
+  color: var(--accent-active);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.workbench-promo__sub {
+  color: var(--accent-foreground);
+  font-size: var(--font-size-xxs);
+  text-wrap: balance; /* 折成两行时让两行长度接近，别留一行孤字 */
+}
+
+/* 箭头跟字走：文案长了会折行，箭头得留在末行末尾，不能单独占一行 */
+.workbench-promo__arrow {
+  display: inline-block;
+  margin-left: var(--spacing-1);
+  vertical-align: -2px;
+  width: 15px;
+  height: 15px;
+}
+
+.workbench-promo__stub {
+  display: grid;
+  width: 34px;
+  place-items: center;
+  border-left: 1px dashed rgba(251, 129, 71, 0.35);
+  color: var(--accent-foreground);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  writing-mode: vertical-rl;
+}
+
+/* 关闭钮：默认隐藏，悬停卡片或键盘聚焦时才出现；触摸设备没有 hover，恒显。
+   right 让开右侧存根（34px），别压住票券缺口 */
+.workbench-promo__close {
+  position: absolute;
+  top: var(--spacing-2);
+  right: calc(34px + var(--spacing-2));
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--accent-strong); /* 主色调 */
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.workbench-promo__close .workbench-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.workbench-promo:hover .workbench-promo__close,
+.workbench-promo__close:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .workbench-promo__close {
+    opacity: 1;
+  }
+}
+
+.workbench-shell:has(.workbench-sidebar__state:checked) .workbench-promo {
+  display: none;
+}
+
+@media (hover: hover) {
+  .workbench-promo:hover {
+    border-color: var(--accent-strong);
+  }
 }
 
 @media (hover: hover) {

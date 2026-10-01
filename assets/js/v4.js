@@ -441,14 +441,6 @@
     window.addEventListener("resize", closeResearchItemMenu);
   }
 
-  function initComposerExtras() {
-    document.querySelectorAll('[data-composer-add-item="我的知识"]').forEach((button) => {
-      button.addEventListener("click", () => {
-        window.SKApp.showToast("已打开我的知识资料选择");
-      });
-    });
-  }
-
   function initUserMenuActions() {
     /* 登录态同步（syncUserMenuAuthState）已收归壳层 assets/js/pages/workbench.js */
 
@@ -600,7 +592,6 @@
     showDemoUser();
     seedResearchProjects();
     initNavigation();
-    initComposerExtras();
     initUserMenuActions();
     initCollapsedToolbar();
     initSettingsSelects();
