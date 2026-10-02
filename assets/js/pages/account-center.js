@@ -4,9 +4,24 @@
   /* 登录校验：账户中心只对已登录用户开放。
      未登录（含退出后按浏览器返回、从 bfcache 恢复的情况）一律回官网首页。
      校验必须等 DOMContentLoaded——SKAuth 由 auth.js 在那一刻才挂到 window 上 */
+  const isLoggedIn = function () {
+    return Boolean(window.SKAuth?.getUser());
+  };
+
+  let leaving = false;
+  /* 未登录离开：用户操作触发的先把提示亮一会儿，页面加载时的直接走（toast 也来不及看） */
+  const leaveToHome = function (withToast) {
+    if (leaving) return;
+    leaving = true;
+    if (withToast) window.SKApp?.showToast("当前用户已退出登录");
+    window.setTimeout(function () {
+      window.location.replace("../index.html");
+    }, withToast ? 1400 : 0);
+  };
+
   const requireLogin = function () {
-    if (window.SKAuth?.getUser()) return;
-    window.location.replace("../index.html");
+    if (isLoggedIn()) return;
+    leaveToHome(false);
   };
 
   document.addEventListener("DOMContentLoaded", requireLogin);
@@ -14,9 +29,20 @@
     /* persisted 为 true 说明页面是从往返缓存里恢复的，脚本不会重跑 */
     if (event.persisted) requireLogin();
   });
-  document.addEventListener("sk:auth-changed", function () {
-    if (!window.SKAuth?.getUser()) requireLogin();
-  });
+
+  /* 未登录时页面上的任何操作（菜单、按钮、筛选、任务链接等）都不该继续执行：
+     捕获阶段统一拦下，提示后回官网首页。退出登录本身走 auth.js 的确认框，不在此列 */
+  document.addEventListener(
+    "click",
+    function (event) {
+      if (leaving || isLoggedIn()) return;
+      if (!event.target.closest("button, a[href], input, select, textarea, summary")) return;
+      event.preventDefault();
+      event.stopPropagation();
+      leaveToHome(true);
+    },
+    true,
+  );
 
   /* 菜单切换：按钮 data-account-tab 与面板 data-account-panel 一一对应。
      选中的菜单记在本地，刷新后仍停在上次那一项；没有记录或记录已失效时停在第一项 */
@@ -893,8 +919,11 @@
     }
     usernameInput.value = user.name || "社科研究员";
     usernameDialog.showModal();
-    usernameInput.focus();
-    usernameInput.select();
+    /* showModal 的自动聚焦要等渲染帧才落定，会顶掉同步调用的 select；延后一帧再全选 */
+    window.requestAnimationFrame(function () {
+      usernameInput.focus();
+      usernameInput.select();
+    });
   });
 
   document.querySelector("[data-username-form]")?.addEventListener("submit", function (event) {
@@ -913,7 +942,7 @@
     window.SKApp.showToast("用户名已更新");
   });
 
-  /* 重置密码：两次输入一致才通过（演示环境不落库） */
+  /* 重置密码：规则与登录 / 注册一致（3-20 位字母、数字、半角符号），两次输入一致才通过（演示环境不落库） */
   const passwordDialog = document.querySelector("[data-dialog-password]");
   const passwordInput = document.querySelector("[data-password-input]");
   const passwordConfirm = document.querySelector("[data-password-confirm]");
@@ -932,9 +961,22 @@
   const phoneCodeInput = document.querySelector("[data-phone-code-input]");
   const phoneCodeButton = document.querySelector("[data-phone-code]");
 
-  /* 手机号不限格式，只要求非空 */
+  /* 手机号只收数字：输入或粘贴时把非数字字符直接删掉（与登录框同一套） */
+  phoneInput?.addEventListener("input", function () {
+    const cleaned = phoneInput.value.replace(/\D/g, "");
+    if (cleaned !== phoneInput.value) phoneInput.value = cleaned;
+  });
+
   const readPhoneValue = function () {
-    return phoneInput ? phoneInput.value.trim() : "";
+    return phoneInput ? phoneInput.value.replace(/\D/g, "") : "";
+  };
+
+  /* 长度固定 11 位：获取验证码与提交两处共用同一份校验 */
+  const ensureValidPhone = function () {
+    if (readPhoneValue().length === 11) return true;
+    window.SKApp.showToast("请输入 11 位手机号");
+    phoneInput?.focus();
+    return false;
   };
 
   document.querySelector("[data-phone-open]")?.addEventListener("click", function () {
@@ -950,22 +992,14 @@
   });
 
   phoneCodeButton?.addEventListener("click", function () {
-    if (!readPhoneValue()) {
-      window.SKApp.showToast("请先输入手机号");
-      phoneInput.focus();
-      return;
-    }
+    if (!ensureValidPhone()) return;
     window.SKAuth.sendSmsCode(phoneCodeButton);
     window.SKApp.showToast("验证码已发送，演示环境可输入任意 6 位数字");
   });
 
   document.querySelector("[data-phone-form]")?.addEventListener("submit", function (event) {
     event.preventDefault();
-    if (!readPhoneValue()) {
-      window.SKApp.showToast("请输入手机号");
-      phoneInput.focus();
-      return;
-    }
+    if (!ensureValidPhone()) return;
     if (phoneCodeInput.value.replace(/\D/g, "").length !== 6) {
       window.SKApp.showToast("请输入 6 位验证码");
       phoneCodeInput.focus();
@@ -981,8 +1015,8 @@
 
   document.querySelector("[data-password-form]")?.addEventListener("submit", function (event) {
     event.preventDefault();
-    if (passwordInput.value.length < 6) {
-      window.SKApp.showToast("新密码至少 6 位");
+    if (!window.SKAuth?.isValidPassword?.(passwordInput.value)) {
+      window.SKApp.showToast("密码需为 3-20 位字母、数字或符号");
       passwordInput.focus();
       return;
     }

@@ -206,7 +206,7 @@
     document.dispatchEvent(new CustomEvent("sk:auth-changed", { detail: user }));
   }
 
-  /* 11 位纯数字脱敏成 139****2222；其他输入原样保留（账户中心换绑不限格式） */
+  /* 11 位纯数字脱敏成 139****2222；其他输入原样保留 */
   function formatPhone(raw) {
     const value = String(raw || "").trim();
     return /^\d{11}$/.test(value) ? `${value.slice(0, 3)}****${value.slice(-4)}` : value;
@@ -458,6 +458,8 @@
         renderUser();
         return true;
       },
+      /* 密码规则（3-20 位字母 / 数字 / 半角符号）：登录、注册与账户中心重置密码共用 */
+      isValidPassword: (value) => PASSWORD_PATTERN.test(value || ""),
       /* 复用登录框里那套 60s 倒计时，供账号中心的短信验证调用 */
       sendSmsCode: startCountdown,
       open: openModal,
@@ -546,7 +548,11 @@
         signOut();
         closeLogoutConfirm();
         if (logoutRedirect) {
-          window.location.href = logoutRedirect;
+          /* 账户中心：先亮出「已退出登录」，再回官网首页 */
+          window.SKApp.showToast("当前用户已退出登录");
+          window.setTimeout(() => {
+            window.location.href = logoutRedirect;
+          }, 1400);
           return;
         }
         notifySuccess("已退出登录");

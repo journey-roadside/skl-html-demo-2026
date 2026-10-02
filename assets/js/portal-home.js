@@ -79,6 +79,28 @@
     if (event.key === 'Escape') { setNavUserMenu(false); }
   });
 
+  /* 登录态已在别处失效、本页菜单还挂着时：点「账户中心 / 退出登录」不打开新页，
+     提示后退回官网首页（捕获阶段拦下，auth.js 的退出确认框不再弹出） */
+  var authLeaving = false;
+  document.addEventListener(
+    'click',
+    function (event) {
+      if (authLeaving || (window.SKAuth && window.SKAuth.getUser())) { return; }
+      var menu = event.target.closest('[data-nav-user-menu]');
+      if (!menu) { return; }
+      if (!event.target.closest('a[href$="account-center.html"], [data-auth-logout]')) { return; }
+      event.preventDefault();
+      event.stopPropagation();
+      authLeaving = true;
+      setNavUserMenu(false);
+      toast('当前用户已退出登录');
+      setTimeout(function () {
+        window.location.href = './index.html';
+      }, 1400);
+    },
+    true
+  );
+
   /* 占位链接：点击给轻提示 */
   $$('[data-toast]').forEach(function (el) {
     el.addEventListener('click', function (e) {

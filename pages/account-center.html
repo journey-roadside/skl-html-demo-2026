@@ -541,9 +541,9 @@
     <form class="account-dialog__form" data-password-form>
       <h2 class="account-dialog__title" id="accountPasswordTitle">重置密码</h2>
       <label class="account-dialog__label" for="accountPasswordInput">新密码</label>
-      <input class="account-dialog__input" id="accountPasswordInput" type="password" autocomplete="new-password" data-password-input>
+      <input class="account-dialog__input" id="accountPasswordInput" type="password" autocomplete="new-password" placeholder="输入3-20位字母、数字、符号组成密码" data-password-input>
       <label class="account-dialog__label" for="accountPasswordConfirm">确认新密码</label>
-      <input class="account-dialog__input" id="accountPasswordConfirm" type="password" autocomplete="new-password" data-password-confirm>
+      <input class="account-dialog__input" id="accountPasswordConfirm" type="password" autocomplete="new-password" placeholder="再次输入密码" data-password-confirm>
       <div class="account-dialog__actions">
         <button class="account-dialog__button" type="button" data-dialog-close>取消</button>
         <button class="account-dialog__button account-dialog__button--primary" type="submit">确定</button>
@@ -556,7 +556,7 @@
       <h2 class="account-dialog__title" id="accountPhoneTitle">更换手机号</h2>
       <label class="account-dialog__label" for="accountPhoneInput">新手机号</label>
       <div class="account-dialog__field-row">
-        <input class="account-dialog__input" id="accountPhoneInput" type="tel" autocomplete="tel" placeholder="请输入手机号" data-phone-input>
+        <input class="account-dialog__input" id="accountPhoneInput" type="tel" inputmode="numeric" maxlength="11" autocomplete="tel" placeholder="请输入手机号" data-phone-input>
         <button class="code-button" type="button" data-phone-code>获取验证码</button>
       </div>
       <label class="account-dialog__label" for="accountPhoneCode">验证码</label>
