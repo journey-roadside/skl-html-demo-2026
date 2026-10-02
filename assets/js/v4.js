@@ -228,6 +228,31 @@
     }, 700);
   }
 
+  /* 设置视图不属于任何菜单项：打开时把侧栏的选中临时摘掉，关掉再还回来。
+     带 ?settings=1 直接落地时，workbench.js 的 applyShellState 也不标高亮 */
+  let settingsStashedActives = [];
+
+  function stashSidebarActives() {
+    if (settingsStashedActives.length) return;
+    settingsStashedActives = [...document.querySelectorAll(".workbench-header .is-active")].map((node) => ({
+      node,
+      current: node.getAttribute("aria-current"),
+    }));
+    settingsStashedActives.forEach(({ node }) => {
+      node.classList.remove("is-active");
+      node.removeAttribute("aria-current");
+    });
+  }
+
+  function restoreSidebarActives() {
+    settingsStashedActives.forEach(({ node, current }) => {
+      if (!node.isConnected) return;
+      node.classList.add("is-active");
+      if (current) node.setAttribute("aria-current", current);
+    });
+    settingsStashedActives = [];
+  }
+
   function setSettingsView(open) {
     const settingsView = document.querySelector("[data-settings-view]");
     const chatArea = document.querySelector(".chat-area");
@@ -236,6 +261,13 @@
     const chatHead = document.querySelector("[data-chat-head]");
     const chatTitleEdit = document.querySelector("[data-chat-title-edit]");
     if (!settingsView || !chatArea || !chatScroll) return;
+
+    /* URL 跟着走：刷新（F5）后还停在设置区块，落地时由 DOMContentLoaded 里的
+       ?settings=1 判断把视图打开 */
+    const url = new URL(window.location.href);
+    if (open) url.searchParams.set("settings", "1");
+    else url.searchParams.delete("settings");
+    window.history.replaceState(null, "", url);
 
     if (open) {
       const overview = document.querySelector("[data-research-overview]");
@@ -248,6 +280,7 @@
       document.querySelector("[data-session-files-panel]")?.classList.remove("is-open");
       document.querySelector("[data-question-history-panel]")?.classList.remove("is-open");
       settingsView.hidden = false;
+      stashSidebarActives();
       refreshSettingsPoints();
       return;
     }
@@ -259,6 +292,7 @@
     if (chatTitleEdit && chatHead) {
       chatTitleEdit.hidden = chatHead.classList.contains("is-new-conversation");
     }
+    restoreSidebarActives();
   }
 
   function closeResearchModal() {

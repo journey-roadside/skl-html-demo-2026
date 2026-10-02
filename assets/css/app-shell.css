@@ -608,15 +608,26 @@ body.app-body {
   opacity: 0;
   pointer-events: none;
   transform: translateX(102%);
+  /* 收起时必须移出焦点顺序：opacity: 0 + pointer-events: none 都挡不住 Tab，
+     焦点一进来浏览器就会把 overflow: hidden 的 .assistant-workspace 滚过去，
+     页面内容整体左移、右边露出藏着的面板。
+     visibility 等滑出动画走完再切（展开时立即切回来） */
+  visibility: hidden;
   transition:
     opacity var(--duration-default) var(--ease-out),
-    transform var(--duration-slow) var(--ease-out);
+    transform var(--duration-slow) var(--ease-out),
+    visibility 0s linear var(--duration-slow);
 }
 
 .app-side-panel.is-open {
   opacity: 1;
   pointer-events: auto;
   transform: translateX(0);
+  visibility: visible;
+  transition:
+    opacity var(--duration-default) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out),
+    visibility 0s;
 }
 
 .settings-row {

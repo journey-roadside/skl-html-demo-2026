@@ -403,6 +403,11 @@
   background: rgba(255, 255, 255, 0.94);
 }
 
+/* 内容向下滚动后补一条下边框（用阴影画，不占布局，滚回顶部就消失） */
+.chat-head.is-scrolled {
+  box-shadow: 0 1px 0 var(--border);
+}
+
 .chat-title {
   min-width: 0;
 }
@@ -497,12 +502,21 @@
 }
 
 .new-chat {
+  --composer-project-row-h: 44px;
   display: grid;
   max-width: 680px;
   min-height: 430px;
   align-content: center;
   justify-items: start;
   margin-inline: auto;
+  transition: margin-top var(--duration-slow) var(--ease-out);
+}
+
+/* 输入框下方多出项目行后整块高 Δ，居中布局会把标题那一批往上顶 Δ/2。
+   补等量的 margin-top 抵回来：上方元素纹丝不动，只有下方的「更多社科研究工具」
+   跟着下移；移除项目时反向抬回 */
+.new-chat.has-project {
+  margin-top: var(--composer-project-row-h);
 }
 
 .new-chat h2 {
@@ -543,11 +557,130 @@
   color: var(--accent-active);
 }
 
+/* 荆楚智研的四步流程图：横向排开，步骤之间一个右向箭头 */
+.new-chat-flow {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  gap: var(--spacing-6);
+  margin-top: 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.new-chat-flow__step {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  flex: 1 1 0;
+  align-content: start;
+  gap: 4px;
+  padding: var(--spacing-3);
+  /* 边框规格对齐全站输入框的聚焦态：实线 --accent-strong + 3px --accent 外环 */
+  border: 1px solid var(--accent-strong);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.new-chat-flow__step strong {
+  color: var(--accent-active);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.new-chat-flow__step small {
+  color: var(--muted-foreground);
+  font-size: var(--font-size-xxs);
+  line-height: 1.5;
+}
+
+.new-chat-flow__step:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--spacing-6) / -2);
+  width: 7px;
+  height: 7px;
+  border-top: 2px solid var(--accent-strong);
+  border-right: 2px solid var(--accent-strong);
+  transform: translate(50%, -50%) rotate(45deg);
+  content: "";
+}
+
+/* 窄屏放不下四列，改成竖排、箭头朝下 */
+@media (max-width: 767.98px) {
+  .new-chat-flow {
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .new-chat-flow__step:not(:last-child)::after {
+    top: auto;
+    right: 50%;
+    bottom: calc(var(--spacing-3) / -2);
+    transform: translate(50%, 50%) rotate(135deg);
+  }
+}
+
+/* 智审：输入框下方的三条审查说明（对齐 v4 审查页 review-guidance 的内容与排版） */
+.new-chat-guide {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.new-chat-guide article {
+  display: flex;
+  gap: 11px;
+  padding: 15px;
+  /* 边框规格与智研流程图一致：实线 --accent-strong + 3px --accent 外环；
+     高度交给内容（grid 行内自动拉伸，三张仍等高） */
+  border: 1px solid var(--accent-strong);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+/* 图标注入后 .icon 是 data-icon 占位符的孙元素，不能用 > 直接选 */
+.new-chat-guide .icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: var(--accent-active);
+}
+
+/* 带 .new-chat 前缀是为了压过 v4.css 里后加载的 `.new-chat p`（字号 14px）——
+   两者原本同特异性，靠加载顺序 v4.css 会赢 */
+.new-chat .new-chat-guide strong {
+  display: block;
+  color: var(--accent-active);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.new-chat .new-chat-guide p {
+  margin-top: 5px;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-xxs);
+  line-height: 1.55;
+}
+
+/* 窄屏放不下三列，改竖排 */
+@media (max-width: 767.98px) {
+  .new-chat-guide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .new-chat .composer-wrap {
   width: 100%;
   margin-top: 28px;
   padding: 0;
   background: transparent;
+  /* 切换场景由 JS 内联指定 420ms 的归位过渡，这里给一条兜底 */
+  transition: transform var(--duration-slow) var(--ease-out);
 }
 
 .new-chat .composer-shell {
@@ -556,7 +689,14 @@
 
 .new-chat-recommendations {
   width: 100%;
+  /* 给 max-height 一个具体起点，收起时才有过渡（auto/none 无法参与 transition） */
+  max-height: 320px;
   margin-top: 28px;
+  transition:
+    max-height var(--duration-slow) var(--ease-out),
+    margin-top var(--duration-slow) var(--ease-out),
+    opacity var(--duration-default) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
 }
 
 .new-chat-recommendations > span {
@@ -658,17 +798,8 @@
   color: #fff;
 }
 
-.message-ai .message-body {
-  padding: 18px 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: #fff;
-  box-shadow: var(--shadow-card);
-}
-
 .message-body {
-  color: var(--text-secondary);
-  font-size: 14px;
+  color: var(--foreground);
   line-height: 1.75;
 }
 
@@ -750,30 +881,64 @@
   cursor: pointer;
 }
 
+/* 引用资料与生成文件同款卡片（.message-output-file，样式在 v4.css）：
+   整行可点，新窗口进阅读器；每张卡自带分隔横线，行本身不再画线 */
 .message-source-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 14px;
-  padding-top: 13px;
-  border-top: 1px solid var(--border);
+  display: grid;
+  margin-top: 6px;
 }
 
-.message-source {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 8px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  background: #fff;
-  font-size: 10px;
+button.message-output-file {
+  width: 100%;
+  text-align: left;
   cursor: pointer;
 }
 
-.message-source b {
-  color: var(--accent-active);
+@media (hover: hover) {
+  button.message-output-file:hover .message-output-file-copy strong {
+    color: var(--accent-active);
+  }
+}
+
+.message-output-file-open {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: var(--muted-foreground);
+}
+
+.message-output-file-open .icon {
+  width: 15px;
+  height: 15px;
+}
+
+/* 消息底部按钮行上方的一行入口：查看资料引用 / 查看所有产物 */
+.message-docs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+  margin-top: 10px;
+}
+
+.message-docs-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}
+
+.message-docs-link .icon {
+  width: 14px;
+  height: 14px;
+}
+
+@media (hover: hover) {
+  .message-docs-link:hover {
+    color: var(--accent-active);
+  }
 }
 
 .message-actions {
@@ -815,6 +980,7 @@
 }
 
 .composer-shell {
+  position: relative; /* 输入框快捷菜单（/ 与 @）锚在它下沿 */
   width: min(100%, var(--chat-content-width));
   margin-inline: auto;
   overflow: visible;
@@ -873,6 +1039,72 @@
   bottom: 0;
   left: var(--spacing-3);
   border-top: 1px solid var(--border);
+}
+
+/* 当前加入的项目行：贴在输入区下方，上沿一条两侧不顶边的分隔线（与附件区的下沿
+   线一起夹住输入区）。高度固定，让位动画要靠它当补偿量（见 .new-chat.has-project） */
+.composer-project {
+  position: relative;
+  display: flex;
+  height: 0;
+  align-items: center;
+  gap: var(--spacing-2);
+  overflow: hidden;
+  padding: 0 var(--spacing-3);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    height var(--duration-slow) var(--ease-out),
+    opacity var(--duration-default) var(--ease-out),
+    visibility 0s linear var(--duration-slow);
+}
+
+.composer-project.is-on {
+  height: var(--composer-project-row-h, 44px);
+  opacity: 1;
+  visibility: visible;
+  transition:
+    height var(--duration-slow) var(--ease-out),
+    opacity var(--duration-default) var(--ease-out),
+    visibility 0s;
+}
+
+.composer-project::before {
+  position: absolute;
+  top: 0;
+  right: var(--spacing-3);
+  left: var(--spacing-3);
+  border-top: 1px solid var(--border);
+  content: "";
+}
+
+.composer-project__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--accent-active);
+}
+
+.composer-project__icon .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.composer-project__name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composer-project__remove {
+  margin-left: auto;
+  flex: 0 0 auto;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-md);
+  line-height: 1;
 }
 
 .attachment-chip {
@@ -960,6 +1192,98 @@
 .composer-add-menu-list button:hover {
   background: var(--surface-hover);
   color: var(--foreground);
+}
+
+/* 输入框快捷菜单：首字符打 /、@ 或 # 时贴着输入框弹出，宽度跟输入框等宽。
+   高度按「标题 + 5 条菜单项 + 上下内边距」封顶，多出来的进细滚动条 */
+.composer-quick-menu {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  max-height: calc(29px + 5 * 37px + 12px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  box-shadow: var(--shadow-hover);
+}
+
+.composer-quick-menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.composer-quick-menu::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  background: var(--border-strong);
+}
+
+.composer-quick-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 下方放不下时翻到输入框上方（新建会话的欢迎页 composer 贴近视口底，
+   不翻的话菜单整块掉出屏幕看不到）——由 JS 在打开时判断 */
+.composer-quick-menu.is-up {
+  top: auto;
+  bottom: calc(100% + 8px);
+}
+
+.composer-quick-menu__title {
+  display: block;
+  padding: 4px 10px 6px;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-xxs);
+}
+
+.composer-quick-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  text-align: left;
+}
+
+/* 图标是 <span data-icon> 里的 svg，得用后代选择器（原写成 > 一直没匹配上） */
+.composer-quick-item .icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  color: var(--accent-active);
+}
+
+/* 名称在左、描述在右，同一行排；描述过长时截断 */
+.composer-quick-item__text {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: var(--spacing-3);
+}
+
+.composer-quick-item__text strong {
+  flex: 0 0 auto;
+  color: var(--foreground);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.composer-quick-item__text small {
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-xxs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 上下键与鼠标悬停共用同一个高亮位（图标已是主色调，高亮只靠底色区分） */
+.composer-quick-item.is-active {
+  background: var(--surface-hover);
 }
 
 .composer-tool {
@@ -1137,6 +1461,25 @@
   box-shadow: var(--shadow-card);
 }
 
+/* 来源 / 会话文件卡片整卡可点：新窗口进阅读器（reader.html），点完面板收起 */
+button.source-card,
+button.session-file-card {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  button.source-card:hover,
+  button.session-file-card:hover {
+    border-color: rgba(251, 129, 71, 0.42);
+    box-shadow: var(--shadow-hover);
+  }
+}
+
 .source-card-head {
   display: flex;
   align-items: center;
@@ -1187,6 +1530,93 @@
   flex-direction: column;
 }
 
+/* 右上角：自动播报开关 + 更多菜单（历史提问 / 会话文件等入口收进菜单里）。
+   开 / 关靠图标区分（斜杠有无），不靠背景变色 */
+.chat-head-more {
+  position: relative;
+}
+
+.chat-head-more-menu {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  min-width: 176px;
+  gap: 2px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  box-shadow: var(--shadow-modal);
+}
+
+.chat-head-more-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  text-align: left;
+}
+
+.chat-head-more-menu button .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+}
+
+@media (hover: hover) {
+  .chat-head-more-menu button:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+
+  .chat-head-more-menu button:hover .icon {
+    color: var(--foreground);
+  }
+}
+
+.chat-head-more-menu .chat-head-more-item--danger {
+  color: var(--destructive);
+}
+
+.chat-head-more-menu .chat-head-more-item--danger .icon {
+  color: var(--destructive);
+}
+
+/* 历史提问的搜索框：对齐全站搜索栏的边框与聚焦态 */
+.question-history-search {
+  position: relative;
+  display: block;
+  margin: 12px 16px 0;
+}
+
+.question-history-search .icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  color: var(--muted-foreground);
+  transform: translateY(-50%);
+}
+
+.question-history-search input {
+  width: 100%;
+  height: 38px;
+  padding: 0 13px 0 36px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  outline: none;
+  font-size: var(--font-size-xs);
+}
+
+.question-history-search input:focus {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
 .question-history-list {
   display: grid;
   gap: 8px;
@@ -1228,10 +1658,12 @@
   font-size: 10px;
 }
 
-/* 搜索历史弹窗与「我的知识」选择弹窗共用一套外壳：两个类名并列写在同一份声明里，
-   改样式时两边一起动，不用记「改一处要同步另一处」 */
+/* 搜索历史、我的知识、创建项目三个弹窗共用一套外壳：类名并列写在同一份声明里，
+   改样式时一起动，不用记「改一处要同步另一处」 */
 .history-search-mask,
-.doc-picker-mask {
+.doc-picker-mask,
+.project-dialog-mask,
+.message-feedback-mask {
   position: fixed;
   z-index: var(--modal-z-mask);
   inset: 0;
@@ -1243,7 +1675,9 @@
 }
 
 .history-search-modal,
-.doc-picker-modal {
+.doc-picker-modal,
+.project-dialog-modal,
+.message-feedback-modal {
   position: fixed;
   z-index: var(--modal-z-box);
   top: 50%;
@@ -1260,20 +1694,32 @@
     transform var(--duration-slow) var(--ease-out);
 }
 
+.message-feedback-modal {
+  width: min(500px, calc(100vw - 32px));
+}
+
 .history-search-mask.is-open,
 .doc-picker-mask.is-open,
+.project-dialog-mask.is-open,
+.message-feedback-mask.is-open,
 .history-search-modal.is-open,
-.doc-picker-modal.is-open {
+.doc-picker-modal.is-open,
+.project-dialog-modal.is-open,
+.message-feedback-modal.is-open {
   opacity: 1;
 }
 
 .history-search-modal.is-open,
-.doc-picker-modal.is-open {
+.doc-picker-modal.is-open,
+.project-dialog-modal.is-open,
+.message-feedback-modal.is-open {
   transform: translate(-50%, -50%) scale(1);
 }
 
 .history-search-head,
-.doc-picker-head {
+.doc-picker-head,
+.project-dialog-head,
+.message-feedback-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -1282,19 +1728,25 @@
 }
 
 .history-search-head h2,
-.doc-picker-head h2 {
+.doc-picker-head h2,
+.project-dialog-head h2,
+.message-feedback-head h2 {
   font-size: var(--modal-title-size);
 }
 
 .history-search-head p,
-.doc-picker-head p {
+.doc-picker-head p,
+.project-dialog-head p,
+.message-feedback-head p {
   margin-top: 4px;
   color: var(--text-secondary);
   font-size: var(--font-size-xxs);
 }
 
 .history-search-close,
-.doc-picker-close {
+.doc-picker-close,
+.project-dialog-close,
+.message-feedback-close {
   display: grid;
   width: 36px;
   height: 36px;
@@ -1304,9 +1756,80 @@
 }
 
 .history-search-close:hover,
-.doc-picker-close:hover {
+.doc-picker-close:hover,
+.project-dialog-close:hover,
+.message-feedback-close:hover {
   background: var(--surface-hover);
   color: var(--foreground);
+}
+
+/* 「问题反馈」特有：反馈类型四选一 + 补充说明 */
+.message-feedback-form {
+  display: grid;
+  gap: 18px;
+  padding: 22px var(--modal-pad) var(--modal-pad);
+}
+
+.message-feedback-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.message-feedback-type {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xxs);
+  cursor: pointer;
+}
+
+.message-feedback-type:has(input:checked) {
+  border-color: var(--accent-strong);
+  background: var(--accent-soft);
+  color: var(--accent-active);
+}
+
+.message-feedback-type input {
+  accent-color: var(--primary);
+}
+
+.message-feedback-field {
+  display: grid;
+  gap: 7px;
+}
+
+.message-feedback-field-label {
+  color: var(--foreground);
+  font-size: var(--font-size-xs);
+}
+
+.message-feedback-textarea {
+  width: 100%;
+  min-height: 112px;
+  resize: vertical;
+  padding: 11px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  outline: none;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.message-feedback-textarea:focus {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.message-feedback-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .history-search-field,
@@ -1412,7 +1935,8 @@
 }
 
 /* 底部确认条：与弹窗头部的内边距同一套令牌，右对齐 */
-.doc-picker-actions {
+.doc-picker-actions,
+.project-dialog-actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-3);
@@ -1420,8 +1944,41 @@
   border-top: 1px solid var(--border);
 }
 
-.doc-picker-actions .btn {
+.doc-picker-actions .btn,
+.project-dialog-actions .btn {
   min-height: 40px;
+}
+
+/* 创建项目弹窗的表单区：标签 + 输入框，规格对齐 projects 页的 .projects-dialog */
+.project-dialog-form {
+  display: grid;
+  gap: var(--spacing-2);
+  padding: 0 var(--spacing-6) var(--spacing-4);
+}
+
+.project-dialog-label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.project-dialog-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--spacing-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: var(--font-size-sm);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.project-dialog-input:focus {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 @media (max-width: 1199.98px) {
@@ -1473,10 +2030,6 @@
   .message-user .message-body {
     max-width: 90%;
   }
-
-  .message-ai .message-body {
-    padding: 15px 16px;
-  }
 }
 
 /* ============ 生成中的骨架消息 ============ */
@@ -1520,10 +2073,6 @@
   background-image: none;
 }
 
-.composer-agent-menu {
-  position: relative;
-}
-
 .composer-add-menu-chevron {
   display: grid;
   width: 14px;
@@ -1537,21 +2086,6 @@
 .composer-add-menu-chevron .icon {
   width: 14px;
   height: 14px;
-}
-
-.research-assistant-page .composer-agent-menu .composer-agent-list {
-  top: 0;
-  right: auto;
-  left: calc(100% + 6px);
-  min-width: 132px;
-}
-
-@media (max-width: 575.98px) {
-  .research-assistant-page .composer-agent-menu .composer-agent-list {
-    position: static;
-    min-width: 0;
-    margin-top: 4px;
-  }
 }
 
 .research-assistant-page .chat-head {
@@ -1625,38 +2159,195 @@
   }
 }
 
-.new-chat[data-agent-transition="true"] > p {
-  animation: new-chat-fade-up var(--duration-default) var(--ease-out) both;
+/* ── 切换智能体时的分段入场 ──
+   标题由 JS 逐字打出，打完给 .new-chat 挂 .is-revealed，后面几段才依次就位：
+   描述长出来（把输入框推下去）→ 推荐区下移渐隐让位 → 流程图四步逐个淡入 */
+
+/* 说明文字：位置在切换那一刻就占好了，这里只管淡入上浮。
+   用 transition 而不是 keyframes——动画的 fill 会一直盖着 transform，
+   后面居中补偿那条 translateY 就落不到它身上（p 会跟着输入框一起下移） */
+.new-chat[data-agent-transition="true"].is-agent > p {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
 }
 
+.new-chat[data-agent-transition="true"].is-agent.is-revealed > p {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 没选智能体的欢迎页出场：标题（逐字）→ 说明文字 → 提示词 → 输入框 → 推荐区。
+   除标题外的几段都挂在 .is-revealed 上，计时基准 = 打字完成那一刻 */
+.new-chat[data-agent-transition="true"]:not(.is-agent) .composer-wrap {
+  opacity: 0;
+}
+
+.new-chat[data-agent-transition="true"]:not(.is-agent).is-revealed .composer-wrap {
+  animation: new-chat-fade-up 480ms var(--ease-out) both;
+  animation-delay: 720ms;
+}
+
+.new-chat[data-agent-transition="true"]:not(.is-agent).is-revealed .new-chat-prompts button:nth-child(1) {
+  animation-delay: 200ms;
+}
+
+.new-chat[data-agent-transition="true"]:not(.is-agent).is-revealed .new-chat-prompts button:nth-child(2) {
+  animation-delay: 360ms;
+}
+
+.new-chat[data-agent-transition="true"]:not(.is-agent).is-revealed .new-chat-prompts button:nth-child(3) {
+  animation-delay: 520ms;
+}
+
+.new-chat[data-agent-transition="true"]:not(.is-agent) .new-chat-recommendations {
+  transition-delay: 1200ms;
+}
+
+/* 欢迎页（没选智能体）：描述与流程图先收成 0 高度，reveal 后长出来把输入框推下去。
+   切到智能体那边不这么做——那两段要提前占位，只淡入 */
+.new-chat[data-agent-transition="true"]:not(.is-agent) > p,
+.new-chat[data-agent-transition="true"]:not(.is-agent) .new-chat-flow {
+  max-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  transition:
+    max-height var(--duration-slow) var(--ease-out),
+    margin-top var(--duration-slow) var(--ease-out);
+}
+
+.new-chat[data-agent-transition="true"]:not(.is-agent).is-revealed > p {
+  max-height: 240px;
+  margin-top: 12px;
+}
+
+.new-chat[data-agent-transition="true"]:not(.is-agent).is-revealed .new-chat-flow {
+  max-height: 240px;
+  margin-top: 24px;
+}
+
+.new-chat[data-agent-transition="true"] .new-chat-flow__step {
+  opacity: 0;
+}
+
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-flow__step {
+  animation: new-chat-fade-up var(--duration-slow) var(--ease-out) both;
+}
+
+/* 紧接说明文字：淡完就轮到流程图，四步各差 200ms、单步 300ms，一档档走 */
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-flow__step:nth-child(1) {
+  animation-delay: 600ms;
+}
+
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-flow__step:nth-child(2) {
+  animation-delay: 800ms;
+}
+
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-flow__step:nth-child(3) {
+  animation-delay: 1000ms;
+}
+
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-flow__step:nth-child(4) {
+  animation-delay: 1200ms;
+}
+
+/* 智审的三条审查说明：出场最后一步，三张卡同时淡入（不做逐个 stagger），
+   起点与智研流程图一致——说明文字淡完后 600ms */
+.new-chat[data-agent-transition="true"] .new-chat-guide {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-guide {
+  opacity: 1;
+  transform: none;
+  transition-delay: 600ms;
+}
+
+/* 推荐区：切回来的那次先藏着等淡入 */
+.new-chat[data-agent-transition="true"]:not(.is-agent) .new-chat-recommendations {
+  opacity: 0;
+}
+
+/* 切到智能体：推荐区从头到尾就不出现（不是先显示再淡出）——
+   它一帧都不参与布局，输入框也就不必为它的收放让位，整块内容从切换那刻起定住不动 */
+.new-chat[data-agent-transition="true"].is-agent > .new-chat-recommendations {
+  display: none;
+}
+
+.new-chat[data-agent-transition="true"]:not(.is-agent).is-revealed .new-chat-recommendations {
+  opacity: 1;
+}
+
+/* 快捷提示词（荆楚智审仍在用）：同样等标题打完，再一档档淡入 */
 .new-chat[data-agent-transition="true"] .new-chat-prompts button {
+  opacity: 0;
+}
+
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-prompts button {
   animation: new-chat-fade-up var(--duration-default) var(--ease-out) both;
 }
 
-.new-chat[data-agent-transition="true"] .new-chat-prompts button:nth-child(1) {
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-prompts button:nth-child(1) {
   animation-delay: 40ms;
 }
 
-.new-chat[data-agent-transition="true"] .new-chat-prompts button:nth-child(2) {
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-prompts button:nth-child(2) {
   animation-delay: 100ms;
 }
 
-.new-chat[data-agent-transition="true"] .new-chat-prompts button:nth-child(3) {
+.new-chat[data-agent-transition="true"].is-revealed .new-chat-prompts button:nth-child(3) {
   animation-delay: 160ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .new-chat[data-agent-transition="true"] > p,
-  .new-chat[data-agent-transition="true"] .new-chat-prompts button {
+  .new-chat[data-agent-transition="true"] .new-chat-flow,
+  .new-chat[data-agent-transition="true"] .new-chat-flow__step,
+  .new-chat[data-agent-transition="true"] .new-chat-guide,
+  .new-chat[data-agent-transition="true"] .new-chat-prompts button,
+  .new-chat-recommendations {
     animation: none;
+    transition: none;
   }
+
+  /* 动效关掉后，靠 opacity: 0 等动画的元素得直接显示出来 */
+  .new-chat[data-agent-transition="true"]:not(.is-agent) .composer-wrap,
+  .new-chat[data-agent-transition="true"] .new-chat-flow__step,
+  .new-chat[data-agent-transition="true"] .new-chat-prompts button {
+    opacity: 1;
+  }
+}
+
+/* 思考过程是二级结构：一级是「已完成」状态行，二级是执行步骤。
+   一级不缩进；二级整体缩进，左侧一条竖线（对齐一级图标的中心），像时间线 */
+.message-thinking {
+  padding-bottom: 6px;
+  margin-bottom: 0;
+}
+
+/* 思考过程收起时，状态行下方带一段回复总结；展开思考详情后让位 */
+.message-thinking__conclusion {
+  margin-bottom: 14px;
+  color: var(--foreground);
+  font-size: var(--font-size-md);
+  line-height: 1.7;
+}
+
+.message-thinking[open] + .message-thinking__conclusion {
+  display: none;
 }
 
 .message-thinking__summary {
   display: flex;
   min-height: 30px;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
   cursor: pointer;
   list-style: none;
 }
@@ -1665,9 +2356,35 @@
   display: none;
 }
 
-.message-thinking__title {
-  color: var(--muted-foreground);
-  font-size: 12px;
+/* 状态行：原子图标 + 「已完成 （耗时）」；整组靠左，不撑到右边。
+   文字与正文同号同色，图标跟着放大保持比例 */
+.message-thinking__state {
+  display: inline-flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  color: var(--foreground);
+  font-size: var(--font-size-md);
+}
+
+.message-thinking__state-icon {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--accent-active);
+}
+
+.message-thinking__state-icon .icon {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.message-thinking__duration {
+  color: var(--foreground);
 }
 
 .message-thinking__chevron {
@@ -1675,7 +2392,6 @@
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
-  margin-left: -4px;
   place-items: center;
   color: var(--muted-foreground);
   transition: transform var(--duration-fast) var(--ease-out);
@@ -1686,144 +2402,213 @@
   height: 16px;
 }
 
+/* 箭头是右向的 chevron：展开时朝下 */
 .message-thinking[open] .message-thinking__chevron {
-  transform: rotate(180deg);
+  transform: rotate(90deg);
 }
 
+/* 二级步骤列表：整行可点展开；负外边距把行内边距拉回，左缘再缩进一档。
+   竖线落在二级里，left 16px = 内容左缘(-8) + 一级图标中心(8px)，与「已完成」的图标对齐 */
 .message-thinking__body {
   position: relative;
   display: grid;
-  gap: 12px;
-  margin: 6px 0 10px;
-  padding: 14px 16px 14px 30px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--card-warm);
+  gap: 2px;
+  margin: 4px -8px 10px;
+  padding-left: 20px;
 }
 
 .message-thinking__body::before {
   position: absolute;
-  top: 18px;
-  bottom: 18px;
+  top: 4px;
+  bottom: 10px;
   left: 16px;
   width: 1px;
-  background: var(--border-strong);
+  border-radius: var(--radius-full);
+  /* 与执行步骤内容框的边框同色 */
+  background: var(--border);
   content: "";
 }
 
 .message-thinking__step {
-  position: relative;
+  min-width: 0;
+}
+
+.message-thinking__step-head {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  font-size: 13px;
-  line-height: 1.65;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  text-align: left;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .message-thinking__step-head:hover {
+    background: var(--surface-hover);
+  }
+}
+
+.message-thinking__step-chevron {
+  display: grid;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--muted-foreground);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.message-thinking__step-chevron .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.message-thinking__step.is-open .message-thinking__step-chevron {
+  transform: rotate(180deg);
+}
+
+/* 点开后向下展开的补充说明：内容包一层带边框的块 */
+.message-thinking__step-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--duration-default) var(--ease-out);
+}
+
+.message-thinking__step.is-open .message-thinking__step-body {
+  max-height: 420px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* 展开的补充说明：随内容自适应，超过 100px 封顶并在框内滚动（细滚动条） */
+.message-thinking__step-note {
+  max-height: 100px;
+  overflow-y: auto;
+  margin-left: 22px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.7;
+}
+
+.message-thinking__step-note::-webkit-scrollbar {
+  width: 4px;
+}
+
+.message-thinking__step-note::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  background: var(--border-strong);
+}
+
+.message-thinking__step-note::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .message-thinking__icon {
-  position: absolute;
-  z-index: 1;
-  top: -3px;
-  left: -28px;
   display: grid;
-  width: 26px;
-  height: 26px;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
   place-items: center;
-  border: 1px solid var(--border-strong);
-  border-radius: 50%;
-  background: var(--card);
-  color: var(--accent-active);
+  color: var(--muted-foreground);
 }
 
 .message-thinking__icon .icon {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   stroke-width: 2;
 }
 
-.message-thinking__label {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--foreground);
-  font-size: 12px;
-  font-weight: 600;
+/* flex-grow 撑满剩余空间：右侧的 meta 与箭头始终贴到行尾 */
+.message-thinking__text {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.message-thinking__step > p {
-  margin: 0;
+/* strong 只保留语义，不加粗也不变色 */
+.message-thinking__text strong {
+  color: inherit;
+  font-weight: inherit;
+}
+
+.message-thinking__meta {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding-left: 12px;
   color: var(--muted-foreground);
-  font-weight: 400;
+  font-size: var(--font-size-xs);
 }
 
-.message-thinking__step > p strong {
-  color: var(--foreground);
-  font-weight: 600;
+/* 网页来源（核验步骤的展开内容）：标题 + 链接清单，默认露 5 条 */
+.message-thinking__sources {
+  margin: 8px 0 0 22px;
 }
 
-.message-thinking__web-search {
-  display: inline-flex;
-  min-height: 28px;
-  max-width: 100%;
-  align-items: center;
+.message-thinking__source-list {
+  display: grid;
   gap: 6px;
-  margin-top: -4px;
-  padding: 3px 7px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: transparent;
+  margin-top: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.message-thinking__source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.message-thinking__source-link .icon {
+  width: 13px;
+  height: 13px;
   color: var(--muted-foreground);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .message-thinking__source-link:hover,
+  .message-thinking__source-link:hover .icon {
+    color: var(--accent-active);
+  }
+}
+
+.message-thinking__sources-more {
+  display: inline-flex;
+  margin-top: 9px;
+  padding: 5px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
   transition:
     border-color var(--duration-fast) var(--ease-out),
     background var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
 }
 
-.message-thinking__web-search:hover {
-  border-color: var(--accent-strong);
-  background: var(--accent-soft);
-  color: var(--accent-active);
-}
-
-.message-thinking__web-search:hover .message-thinking__web-search-label,
-.message-thinking__web-search:hover .message-thinking__web-link {
-  color: var(--accent-active);
-}
-
-.message-thinking__web-link {
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-}
-
-
-.message-thinking__web-search-label {
-  overflow: hidden;
-  color: var(--foreground);
-  font-size: 12px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.message-thinking__web-search-links {
-  display: inline-flex;
-  flex: 0 0 auto;
-  gap: 2px;
-}
-
-.message-thinking__web-link {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  color: var(--muted-foreground);
-}
-
-.message-thinking__web-search .message-thinking__web-link:hover {
-  background: var(--foreground);
-  color: var(--on-dark);
-}
-
-.message-thinking__web-link .icon {
-  width: 12px;
-  height: 12px;
+@media (hover: hover) {
+  .message-thinking__sources-more:hover {
+    border-color: var(--accent-strong);
+    background: var(--accent-soft);
+    color: var(--accent-active);
+  }
 }
 
 .search-results-panel.app-side-panel {

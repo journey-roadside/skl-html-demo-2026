@@ -1100,6 +1100,21 @@
       button.classList.toggle("is-on", nextPressed);
     });
   });
+
+  /* 「自动联网搜索」开着时，详情页的联网搜索默认选中。
+     开关本身在社科助手的设置里，选择记在同一个源的 localStorage 下 */
+  (function applyAutoWebMode() {
+    let autoWeb = false;
+    try {
+      autoWeb = localStorage.getItem("sheke-settings-auto-web") === "on";
+    } catch (error) {
+      /* 隐私模式下读不到，按默认关闭 */
+    }
+    const webButton = document.querySelector("[data-project-mode-web]");
+    if (!autoWeb || !webButton) return;
+    webButton.setAttribute("aria-pressed", "true");
+    webButton.classList.add("is-on");
+  })();
   getCards().forEach(function (card) {
     prepareCardLink(card);
     prepareCardMenu(card);

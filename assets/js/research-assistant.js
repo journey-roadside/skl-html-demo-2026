@@ -7,12 +7,20 @@
     isNewConversation: false,
     managingHistory: false,
     selectedAgent: null,
+    /* 当前加入的项目名（只能有一个，再选就替换）；只活在本次页面会话里 */
+    project: null,
     selectedHistoryItems: new Set(),
     /* 未登录时点发送：先弹登录窗，登录成功后接着把这条消息发出去 */
     pendingSubmit: false,
+    /* 「自动播报」总开关（右上角按钮）：开启后每段回复完成自动播报，默认关闭。
+       关闭时用户在每条回复底部手动点播报 */
+    autoSpeak: false,
   };
-  const NEW_CHAT_PLACEHOLDER = "输入你的社科研究问题，或上传资料开始研究";
-  const CONTINUE_CHAT_PLACEHOLDER = "继续追问，或上传资料作为研究依据";
+  const NEW_CHAT_PLACEHOLDER = "输入你的问题 / 使用智能体 @ 添加资料 # 加入到项目";
+  /* 已选中智能体，不再需要「/ 使用智能体」那半句 */
+  const RESEARCH_PLACEHOLDER = "输入你的研究问题 @ 添加资料 # 加入到项目";
+  const REVIEW_PLACEHOLDER = "输入需要审查的社科成果或材料内容 @ 添加资料 # 加入到项目";
+  const CONTINUE_CHAT_PLACEHOLDER = "继续追问 @ 添加资料";
 
   const DEFAULT_WELCOME = {
     title: "从一个清晰的社科问题开始",
@@ -27,31 +35,38 @@
 
   const AGENT_CONFIGS = {
     research: {
-      controlLabel: "社科智研",
+      controlLabel: "荆楚智研",
       mark: "研",
-      title: "让研究从问题走向证据",
-      description: "聚焦选题梳理、政策分析与文献比较，快速形成有来源、有脉络的研究框架。",
-      placeholder: "输入你的社科研究问题，或上传资料开始研究",
+      title: "让专题研究一步步形成结论",
+      description: "围绕一个专题，依次完成确立主题、背景扫描、问题分析与结论建议，形成有据可查、可追溯的研究结论。",
+      placeholder: RESEARCH_PLACEHOLDER,
       responseTitle: "研究提示",
       responseText: "已结合当前对话和资料范围完成初步梳理。该结果会保留来源边界，并标记需要进一步核验的政策条款与数据口径。",
-      prompts: [
-        { label: "梳理政策脉络", prompt: "梳理基层公共文化服务数字化建设的政策脉络" },
-        { label: "比较研究框架", prompt: "比较区域治理研究的三种主要分析框架" },
-        { label: "提取核心观点", prompt: "从上传资料中提取核心观点和争议问题" },
+      /* 四步流程图，横排逐步入场；有 flow 的智能体不再渲染 prompts。
+         说明文字压在一行（卡片内容宽 131px、字号 12px，上限 10 个字），
+         所以不带标点——渲染时逗号顿号会被换成折行 */
+      flow: [
+        { label: "第一步：确立主题", desc: "确定目标与研究边界" },
+        { label: "第二步：背景扫描", desc: "采集资料明确研究背景" },
+        { label: "第三步：问题分析", desc: "搭建框架确定分析维度" },
+        { label: "第四步：建议与结论", desc: "对策建议与结论产出" },
       ],
     },
     review: {
-      controlLabel: "社科智审",
+      controlLabel: "荆楚智审",
       mark: "审",
       title: "让社科成果经得起审查",
       description: "围绕价值导向、事实依据、版权规范与 AI 伦理，辅助完成材料审查与风险研判。",
-      placeholder: "输入需要审查的社科成果或材料内容",
+      placeholder: REVIEW_PLACEHOLDER,
       responseTitle: "审查提示",
       responseText: "已按价值导向、真实性、版权与 AI 伦理维度完成初步审查。结果将标注需要人工复核的风险点和材料依据。",
-      prompts: [
-        { label: "分析价值导向", prompt: "分析研究成果的价值导向与规范性" },
-        { label: "核验事实依据", prompt: "核验材料中的事实依据与潜在争议" },
-        { label: "生成审查报告", prompt: "生成社科成果风险审查报告" },
+      /* 输入框下方的三条审查说明（与 v4 审查页的 review-guidance 同款），
+         出场最后一步三张一起淡入。
+         说明压在一行（文字区约 166px、字号 12px，上限 13 个字） */
+      guide: [
+        { icon: "scan-search", title: "真实性核验", desc: "核验出处、引用与时间信息" },
+        { icon: "scale", title: "价值导向分析", desc: "识别结论边界、尺度与偏差" },
+        { icon: "bot", title: "AI 伦理审查", desc: "关注数据版权、痕迹与责任" },
       ],
     },
   };
@@ -71,13 +86,18 @@
 
     if (modeSwitches) modeSwitches.hidden = Boolean(config);
     if (agentSelection) agentSelection.hidden = !config;
+    /* 荆楚智审用不着语音转文字，选中时把麦克风收起来（切回欢迎页/智研自动恢复） */
+    document.querySelectorAll("[data-voice-trigger]").forEach((button) => {
+      button.hidden = state.selectedAgent === "review";
+    });
     if (!config) return;
 
     if (agentLabel) agentLabel.textContent = config.controlLabel;
     if (agentClear) agentClear.setAttribute("aria-label", `取消${config.controlLabel}`);
   }
 
-  function animateNewChatTitle(element, text, animate) {
+  /* onDone：标题打完（或直接落字）后回调，用来放行后面几段入场动效 */
+  function animateNewChatTitle(element, text, animate, onDone) {
     window.clearTimeout(titleTypingTimer);
     titleTypingTimer = null;
     if (!element) return;
@@ -85,6 +105,7 @@
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!animate || reduceMotion) {
       element.textContent = text;
+      onDone?.();
       return;
     }
 
@@ -94,7 +115,9 @@
       index += 1;
       element.textContent = text.slice(0, index);
       if (index < text.length) {
-        titleTypingTimer = window.setTimeout(revealNext, 70);
+        titleTypingTimer = window.setTimeout(revealNext, 90);
+      } else {
+        onDone?.();
       }
     };
     revealNext();
@@ -143,6 +166,16 @@
     return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
+  /* 历史提问搜索：按输入内容实时过滤当前会话的提问列表 */
+  function applyQuestionSearchFilter() {
+    const input = document.querySelector("[data-question-history-search]");
+    const keyword = (input?.value || "").trim().toLowerCase();
+    document.querySelectorAll(".question-history-item").forEach((item) => {
+      const text = item.querySelector(".question-history-text")?.textContent?.toLowerCase() || "";
+      item.hidden = Boolean(keyword) && !text.includes(keyword);
+    });
+  }
+
   function renderQuestionHistory() {
     const list = document.querySelector(".question-history-list");
     if (!list) return;
@@ -186,6 +219,8 @@
       });
       list.append(button);
     });
+    /* 重建后沿用当前的搜索关键词 */
+    applyQuestionSearchFilter();
   }
 
   function getElements() {
@@ -253,17 +288,30 @@
     if (historyPanel) historyPanel.classList.toggle("is-open", open);
   }
 
-  function autoGrowTextarea() {
+  /* 输入区里已添加的附件名（本地文件 / 我的知识） */
+  function composerAttachments() {
+    const { attachmentRow } = getElements();
+    if (!attachmentRow) return [];
+    return [...attachmentRow.querySelectorAll(".attachment-chip")].map((chip) => chip.dataset.name || "");
+  }
+
+  /* 发送按钮的可用状态：有文字或有附件都算有内容可发。
+     输入、插推荐问句、加减附件、发送后清空都会走到这里 */
+  function syncSendButton() {
     const { textarea, sendButton } = getElements();
+    if (!sendButton || !textarea) return;
+    sendButton.disabled = !textarea.value.trim() && composerAttachments().length === 0;
+  }
+
+  function autoGrowTextarea() {
+    const { textarea } = getElements();
     if (!textarea) return;
     const maxHeight = 180;
     textarea.style.height = "auto";
     const nextHeight = Math.min(textarea.scrollHeight, maxHeight);
     textarea.style.height = `${nextHeight}px`;
     textarea.style.overflowY = textarea.scrollHeight > maxHeight ? "auto" : "hidden";
-    /* 输入框为空时禁用发送按钮（与项目详情提交按钮一致）；
-       输入、插入推荐问句、发送后清空都会走到这里 */
-    if (sendButton) sendButton.disabled = !textarea.value.trim();
+    syncSendButton();
   }
 
   function addAttachment(name) {
@@ -272,14 +320,19 @@
 
     const chip = document.createElement("span");
     chip.className = "attachment-chip";
+    chip.dataset.name = name;
     chip.innerHTML = `
       <span data-icon="file-text"></span>
-      <span>${name}</span>
+      <span>${escapeHtml(name)}</span>
       <button type="button" aria-label="移除附件">×</button>
     `;
-    chip.querySelector("button").addEventListener("click", () => chip.remove());
+    chip.querySelector("button").addEventListener("click", () => {
+      chip.remove();
+      syncSendButton();
+    });
     window.SKIcons.hydrate(chip);
     attachmentRow.append(chip);
+    syncSendButton();
   }
 
   function createMessage(role, content, options = {}) {
@@ -312,7 +365,7 @@
               <button class="message-action" type="button" data-message-action="已重新生成回答" title="重新生成" aria-label="重新生成">
                 <span data-icon="rotate-cw"></span>
               </button>
-              <button class="message-action" type="button" data-feedback-open title="问题反馈" aria-label="问题反馈">
+              <button class="message-action" type="button" data-message-feedback-open title="问题反馈" aria-label="问题反馈">
                 <span data-icon="message-square"></span>
               </button>
               <button class="message-action" type="button" data-speech-toggle title="语音播报" aria-label="语音播报" aria-pressed="false">
@@ -335,6 +388,7 @@
 
     const scroll = document.querySelector(".chat-scroll");
     if (scroll) scroll.scrollTop = scroll.scrollHeight;
+    return article;
   }
 
   function createSkeletonMessage() {
@@ -366,15 +420,18 @@
   }
 
   function sendMessage() {
-    const { textarea, sendButton, stopButton } = getElements();
+    const { textarea, sendButton, stopButton, attachmentRow } = getElements();
     if (!textarea || state.sending) return;
 
     const content = textarea.value.trim();
-    if (!content) {
+    const attachments = composerAttachments();
+    if (!content && !attachments.length) {
       window.SKApp.showToast("请输入研究问题");
       textarea.focus();
       return;
     }
+    /* 只加了附件没打字：把附件名带进消息，替用户起个头 */
+    const messageContent = content || `请分析我添加的资料：${attachments.join("、")}`;
 
     /* 未登录：先登录/注册，成功后自动续发（内容留在输入框里） */
     if (!window.SKAuth?.getUser()) {
@@ -393,7 +450,7 @@
       const chatHead = document.querySelector("[data-chat-head]");
       const title = document.querySelector("[data-chat-title]");
       const titleInput = document.querySelector("[data-chat-title-input]");
-      const generatedTitle = content.length > 24 ? `${content.slice(0, 24)}…` : content;
+      const generatedTitle = messageContent.length > 24 ? `${messageContent.slice(0, 24)}…` : messageContent;
       if (chatHead) chatHead.hidden = false;
       chatHead?.classList.remove("is-new-conversation");
       const titleEdit = document.querySelector("[data-chat-title-edit]");
@@ -411,22 +468,29 @@
         message.classList.contains("message-user"),
       );
       const firstQuestionText = firstQuestion?.querySelector(".message-body p");
-      if (firstQuestionText) firstQuestionText.textContent = content;
+      if (firstQuestionText) firstQuestionText.textContent = messageContent;
       if (firstQuestion) firstQuestion.dataset.questionTime = formatQuestionTime();
       showDemoConversation();
       const scroll = document.querySelector(".chat-scroll");
       if (scroll) scroll.scrollTop = 0;
     } else {
-      createMessage("user", content);
+      createMessage("user", messageContent);
       const config = state.selectedAgent ? AGENT_CONFIGS[state.selectedAgent] : null;
-      createMessage(
+      const aiMessage = createMessage(
         "ai",
         config?.responseText || "已结合当前对话和资料范围完成初步梳理。该结果会保留来源边界，并标记需要进一步核验的政策条款与数据口径。",
         { title: config?.responseTitle || "研究提示" },
       );
+      /* 自动播报开着：这段回复生成完就播，不用手动点 */
+      if (state.autoSpeak && aiMessage) {
+        const speechButton = aiMessage.querySelector("[data-speech-toggle]");
+        if (speechButton) toggleSpeechPlayback(speechButton);
+      }
     }
 
+    /* 附件随消息一起发出，输入区清干净 */
     textarea.value = "";
+    if (attachmentRow) attachmentRow.replaceChildren();
     autoGrowTextarea();
     state.sending = false;
     if (sendButton) sendButton.hidden = false;
@@ -462,6 +526,55 @@
     } catch (error) {
       /* 写不了就只在本页生效 */
     }
+  }
+
+  /* 通用设置里的「自动联网搜索」开关：开着时输入框里的联网搜索默认选中。
+     选择同样记在本地 */
+  const AUTO_WEB_KEY = "sheke-settings-auto-web";
+
+  function readAutoWebSetting() {
+    try {
+      return localStorage.getItem(AUTO_WEB_KEY) === "on";
+    } catch (error) {
+      /* 隐私模式下读不到，按默认关闭 */
+      return false;
+    }
+  }
+
+  function saveAutoWebSetting(enabled) {
+    try {
+      localStorage.setItem(AUTO_WEB_KEY, enabled ? "on" : "off");
+    } catch (error) {
+      /* 写不了就只在本页生效 */
+    }
+  }
+
+  /* 通用设置里的「展示思考过程」开关：关闭后会话里的思考过程块收起来。默认开启 */
+  const THINKING_KEY = "sheke-settings-thinking";
+
+  function readThinkingSetting() {
+    try {
+      return localStorage.getItem(THINKING_KEY) !== "off";
+    } catch (error) {
+      /* 隐私模式下读不到，按默认开启 */
+      return true;
+    }
+  }
+
+  function saveThinkingSetting(enabled) {
+    try {
+      localStorage.setItem(THINKING_KEY, enabled ? "on" : "off");
+    } catch (error) {
+      /* 写不了就只在本页生效 */
+    }
+  }
+
+  function syncThinkingVisibility() {
+    const input = document.querySelector("[data-settings-thinking]");
+    const enabled = input ? input.checked : readThinkingSetting();
+    document.querySelectorAll(".message-thinking").forEach(function (node) {
+      node.hidden = !enabled;
+    });
   }
 
   function recommendationsEnabled() {
@@ -517,24 +630,61 @@
     if (chatTitleInput) chatTitleInput.value = "新建会话";
     if (chatTitleEdit) chatTitleEdit.hidden = true;
 
+    /* 切到智能体：先量下输入框此刻的位置，重建后把它钉回原处，前几步里纹丝不动。
+       只在「真的有一个首页被替换掉」时才有旧位置——详情页点使用落地（?agent=xxx）
+       时 thread 里还没有 .new-chat，不能按切换处理，否则输入框会被钉到静态页面
+       那个在角落里的 composer 位置上再飞回来 */
+    const previousChat = thread.querySelector(".new-chat");
+    const holdFrom =
+      animate && state.selectedAgent && previousChat
+        ? (composerWrap?.getBoundingClientRect().top ?? null)
+        : null;
+
     thread.querySelector(".new-chat")?.remove();
     const newChat = document.createElement("div");
     newChat.className = "new-chat";
     if (animate) newChat.dataset.agentTransition = "true";
-    const promptMarkup = config.prompts
+    /* is-agent =「当前正处在智能体态」；data-agent-transition =「这次是切过来的、要放入场动效」。
+       两者分开，取消智能体时才不会把推荐区也一起收掉 */
+    newChat.classList.toggle("is-agent", Boolean(state.selectedAgent));
+    const promptMarkup = (config.prompts || [])
       .map(
         (item) =>
           `<button type="button" data-prompt="${escapeHtml(item.prompt)}">${escapeHtml(item.label)}</button>`,
       )
       .join("");
+    /* 带 flow 的智能体（荆楚智研）用四步流程图替掉快捷提示词；
+       两者都没有（荆楚智审）就什么都不渲染，不留空壳占位 */
+    const bodyMarkup = config.flow
+      ? `<ol class="new-chat-flow">${config.flow
+          .map(
+            (step) =>
+              /* 说明文字按逗号、顿号折行，连接符本身不显示 */
+              `<li class="new-chat-flow__step"><strong>${escapeHtml(step.label)}</strong><small>${escapeHtml(step.desc).replace(/[，、]/g, "<br>")}</small></li>`,
+          )
+          .join("")}</ol>`
+      : promptMarkup
+        ? `<div class="new-chat-prompts">${promptMarkup}</div>`
+        : "";
     newChat.innerHTML = `
       <h2 data-new-chat-title></h2>
       <p>${escapeHtml(config.description)}</p>
-      <div class="new-chat-prompts">
-        ${promptMarkup}
-      </div>
+      ${bodyMarkup}
     `;
     if (composerWrap) newChat.append(composerWrap);
+    /* 智审：输入框下方的三条审查说明 */
+    if (config.guide) {
+      const guide = document.createElement("div");
+      guide.className = "new-chat-guide";
+      guide.innerHTML = config.guide
+        .map(
+          (item) =>
+            `<article><span data-icon="${escapeHtml(item.icon)}"></span><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.desc)}</p></div></article>`,
+        )
+        .join("");
+      newChat.append(guide);
+      window.SKIcons.hydrate(guide);
+    }
     const recommendations = document.createElement("div");
     recommendations.className = "new-chat-recommendations";
     recommendations.innerHTML = `
@@ -562,7 +712,14 @@
     thread.append(newChat);
     syncRecommendationsVisibility();
     window.SKIcons.hydrate(recommendations);
-    animateNewChatTitle(newChat.querySelector("[data-new-chat-title]"), config.title, animate);
+    /* 标题打完才放行后面几段（描述 / 推荐区让位 / 流程图 / 欢迎页的输入框），
+       靠 .is-revealed 驱动——它加上来的那一刻就是这一串动画的计时基准 */
+    animateNewChatTitle(
+      newChat.querySelector("[data-new-chat-title]"),
+      config.title,
+      animate,
+      () => newChat.classList.add("is-revealed"),
+    );
     syncAgentControls();
     renderQuestionHistory();
     bindPromptButtons(newChat);
@@ -573,6 +730,26 @@
     });
     if (focusComposer && textarea) textarea.focus();
     if (textarea) textarea.placeholder = config.placeholder;
+
+    /* 切换前的位置只用来起个头：重建后输入框的布局位置对不上了（流程图占了位、
+       推荐区又不占位），直接落在新位置会"啪"地跳过去。先拉回切换前的位置，
+       下一帧放行——420ms 滑到新位置，和标题打字的开头重叠着完成。
+       这样整条出场序列和详情页点使用进来的一致：标题 → 说明文字 → 流程图，
+       不再有"打完字输入框才动"的单独一步。
+       放在最末尾是必须的——图标注入、"智能体"开关的显隐都会改上面几块的高度，
+       早量会量在错的量上 */
+    if (holdFrom != null && composerWrap) {
+      const shift = Math.round(holdFrom - composerWrap.getBoundingClientRect().top);
+      if (shift) {
+        /* 先掐掉过渡，免得起手这一下自己先滑一段；下一帧放开走 420ms */
+        composerWrap.style.transition = "none";
+        composerWrap.style.transform = `translateY(${shift}px)`;
+        requestAnimationFrame(() => {
+          composerWrap.style.transition = "transform 420ms var(--ease-out)";
+          composerWrap.style.transform = "";
+        });
+      }
+    }
   }
   function showDemoConversation() {
     const { thread, composerWrap, textarea } = getElements();
@@ -616,48 +793,26 @@
     const menu = document.querySelector("[data-composer-add-menu]");
     const trigger = menu?.querySelector("[data-composer-add-trigger]");
     const list = menu?.querySelector("[data-composer-add-menu-list]");
-    const agentTrigger = menu?.querySelector("[data-composer-agent-trigger]");
-    const agentList = menu?.querySelector("[data-composer-agent-list]");
     if (!menu || !trigger || !list) return;
-
-    const setAgentOpen = (open) => {
-      if (!agentTrigger || !agentList) return;
-      agentList.hidden = !open;
-      agentTrigger.setAttribute("aria-expanded", String(open));
-    };
 
     const setOpen = (open) => {
       list.hidden = !open;
       trigger.setAttribute("aria-expanded", String(open));
-      if (!open) setAgentOpen(false);
     };
 
     trigger.addEventListener("click", () => {
       setOpen(list.hidden);
     });
 
-    if (agentTrigger && agentList) {
-      agentTrigger.addEventListener("click", (event) => {
-        event.stopPropagation();
-        setAgentOpen(agentList.hidden);
-      });
-    }
-
     const clearAgentButton = document.querySelector("[data-agent-clear]");
     clearAgentButton?.addEventListener("click", (event) => {
       event.preventDefault();
-      clearSelectedAgent(true);
+      /* 和 ESC 一样：直接摆好欢迎页，不放出场动效 */
+      clearSelectedAgent(false);
       getElements().textarea?.focus();
     });
 
     list.addEventListener("click", (event) => {
-      const agentOption = event.target.closest("[data-composer-agent-option]");
-      if (agentOption) {
-        setOpen(false);
-        selectAgent(agentOption.dataset.composerAgentOption, true);
-        return;
-      }
-
       const item = event.target.closest("[data-composer-add-item]");
       if (!item) return;
       if (item.dataset.composerAddItem === "文献" && !window.SKAuth?.getUser()) {
@@ -669,21 +824,438 @@
       if (item.dataset.composerAddItem === "我的知识") openDocPicker();
     });
 
+    /* 「智能体」「项目」两项都不展开内联子列表，点了直接开与 / 、# 同一套的快捷菜单。
+       必须掐断冒泡——不然这次点击继续传到 document 上，
+       会把刚打开的快捷菜单当成「点了外部」又关掉 */
+    const bindQuickMenuEntry = (selector, quickTrigger) => {
+      list.querySelector(selector)?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setOpen(false);
+        openQuickMenu(quickTrigger, QUICK_MENUS[quickTrigger]());
+      });
+    };
+    bindQuickMenuEntry("[data-composer-agent-trigger]", "/");
+    bindQuickMenuEntry("[data-composer-project-trigger]", "#");
+
     document.addEventListener("click", (event) => {
       if (!menu.contains(event.target)) setOpen(false);
     });
 
     document.addEventListener("keydown", (event) => {
       if (event.key !== "Escape") return;
-      if (agentList && !agentList.hidden) {
-        setAgentOpen(false);
-        return;
+      if (!list.hidden) {
+        /* 留个「已处理」的痕迹：ESC 分发链靠 defaultPrevented 判断还要不要往下走 */
+        event.preventDefault();
+        setOpen(false);
       }
-      if (!list.hidden) setOpen(false);
     });
 
     syncAgentControls();
   }
+
+  /* 输入框首字符打 /、@ 或 # 时调起快捷菜单：/ 选智能体，@ 加资料，# 加项目。
+     上下键选择、回车确认，执行的动作与「+」菜单里的同项一致。
+     键处理挂在 document 的捕获阶段——textarea 自己那个「回车发送」的监听是按注册顺序跑的，
+     挂同一个元素上压不住它 */
+  let quickMenuEl = null;
+  let quickMenuItems = [];
+  let quickMenuActive = 0;
+
+  const QUICK_MENU_TITLES = { "/": "智能体", "@": "添加资料", "#": "项目" };
+
+  const QUICK_MENUS = {
+    "/": () => [
+      { icon: "bot", label: "荆楚智研", desc: "聚焦选题梳理、政策分析与文献比较", run: () => selectAgent("research", true) },
+      { icon: "bot", label: "荆楚智审", desc: "围绕价值导向、事实依据与版权规范", run: () => selectAgent("review", true) },
+    ],
+    "@": () => {
+      const items = [
+        { icon: "upload", label: "上传文件或图片", run: () => getElements().fileInput?.click() },
+      ];
+      /* 「选择我的知识」与「+」菜单里的同名项一样，登录后才给；chevron 表示它开的是弹窗而非直接执行 */
+      if (window.SKAuth?.getUser()) {
+        items.push({ icon: "book-open", label: "选择我的知识", chevron: true, run: openDocPicker });
+      }
+      return items;
+    },
+    "#": () => {
+      /* 项目是登录后的功能（侧栏那份列表本身就是 data-auth-only），未登录不弹 */
+      if (!window.SKAuth?.getUser()) return [];
+      return [
+        { icon: "folder-plus", label: "新建项目", run: openProjectDialog },
+        ...existingProjectNames().map((name) => ({
+          icon: "folder",
+          label: name,
+          run: () => setProject(name),
+        })),
+      ];
+    },
+  };
+
+  function closeQuickMenu() {
+    if (quickMenuEl && !quickMenuEl.hidden) quickMenuEl.hidden = true;
+    quickMenuItems = [];
+  }
+
+  function syncQuickMenuActive() {
+    quickMenuEl.querySelectorAll(".composer-quick-item").forEach((button, index) => {
+      const active = index === quickMenuActive;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+      /* 上下键把高亮移出可视区时把菜单跟着滚一下。nearest = 已经在可见范围里就不动，
+         所以鼠标悬停触发的这次同步不会乱滚 */
+      if (active) button.scrollIntoView({ block: "nearest", behavior: "instant" });
+    });
+  }
+
+  function runQuickMenuItem(index) {
+    const item = quickMenuItems[index];
+    if (!item) return;
+    closeQuickMenu();
+    const { textarea } = getElements();
+    if (textarea) {
+      textarea.value = "";
+      autoGrowTextarea();
+    }
+    item.run();
+  }
+
+  function openQuickMenu(trigger, items) {
+    const shell = document.querySelector(".composer-shell");
+    if (!shell) return;
+    if (!quickMenuEl) {
+      quickMenuEl = document.createElement("div");
+      quickMenuEl.className = "composer-quick-menu";
+      quickMenuEl.setAttribute("role", "listbox");
+      quickMenuEl.hidden = true;
+      shell.append(quickMenuEl);
+    }
+
+    quickMenuItems = items;
+    quickMenuActive = 0;
+    quickMenuEl.replaceChildren();
+
+    const title = document.createElement("span");
+    title.className = "composer-quick-menu__title";
+    title.textContent = QUICK_MENU_TITLES[trigger] || "";
+    quickMenuEl.append(title);
+
+    items.forEach((item, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "composer-quick-item";
+      button.setAttribute("role", "option");
+      button.innerHTML = `<span data-icon="${item.icon}"></span>`;
+
+      const text = document.createElement("span");
+      text.className = "composer-quick-item__text";
+      const label = document.createElement("strong");
+      label.textContent = item.label;
+      text.append(label);
+      /* 描述可有可无：@ 菜单只给名称，/ 菜单才带说明 */
+      if (item.desc) {
+        const desc = document.createElement("small");
+        desc.textContent = item.desc;
+        text.append(desc);
+      }
+      button.append(text);
+
+      /* 右侧箭头：复用「+」菜单那套箭头样式，表示这一项会再开一层（弹窗） */
+      if (item.chevron) {
+        const chevron = document.createElement("span");
+        chevron.className = "composer-add-menu-chevron";
+        chevron.dataset.icon = "chevron-right";
+        button.append(chevron);
+      }
+
+      button.addEventListener("click", () => runQuickMenuItem(index));
+      button.addEventListener("mouseenter", () => {
+        quickMenuActive = index;
+        syncQuickMenuActive();
+      });
+      quickMenuEl.append(button);
+    });
+
+    window.SKIcons.hydrate(quickMenuEl);
+    quickMenuEl.hidden = false;
+    syncQuickMenuActive();
+
+    /* 下方装不下就翻到输入框上方。新建会话的欢迎页 composer 贴着视口底，
+       不翻的话整块菜单掉出屏幕 */
+    quickMenuEl.classList.toggle(
+      "is-up",
+      quickMenuEl.getBoundingClientRect().bottom > window.innerHeight,
+    );
+  }
+
+  function syncQuickMenuFromInput() {
+    const { textarea } = getElements();
+    if (!textarea) return;
+    const build = QUICK_MENUS[textarea.value];
+    /* 认的是 QUICK_MENUS 里注册过的那几个触发符，不再另写一份字符白名单 */
+    if (!build) {
+      closeQuickMenu();
+      return;
+    }
+    const items = build();
+    if (items.length) openQuickMenu(textarea.value, items);
+    else closeQuickMenu();
+  }
+
+  function initComposerQuickMenu() {
+    const { textarea } = getElements();
+    if (!textarea) return;
+
+    textarea.addEventListener("input", syncQuickMenuFromInput);
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (!quickMenuEl || quickMenuEl.hidden) return;
+        if (event.target !== textarea) return;
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          const step = event.key === "ArrowDown" ? 1 : -1;
+          quickMenuActive = (quickMenuActive + step + quickMenuItems.length) % quickMenuItems.length;
+          syncQuickMenuActive();
+        } else if (event.key === "Enter") {
+          runQuickMenuItem(quickMenuActive);
+        } else if (event.key === "Escape") {
+          closeQuickMenu();
+        } else {
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+      },
+      true,
+    );
+
+    document.addEventListener("click", (event) => {
+      if (!quickMenuEl || quickMenuEl.hidden) return;
+      if (event.target === textarea || event.target.closest(".composer-quick-menu")) return;
+      closeQuickMenu();
+    });
+  }
+
+  /* 当前加入的项目：输入框下沿一条信息行，带移除钮。只能挂一个，再选就替换。
+     项目名只活在本次页面会话里——侧栏那份项目列表是硬编码的，本页新建的项目
+     也不写回去，与 projects 页新建项目只进内存的行为一致 */
+  const localProjects = [];
+
+  function existingProjectNames() {
+    /* 只认 <a>：未登录占位行那个「新建项目」是 span，且它 hidden 了也照样能被选到 */
+    const sidebarNames = Array.from(document.querySelectorAll("a.workbench-project__title"))
+      .map((node) => node.textContent.trim())
+      .filter(Boolean);
+    return sidebarNames.concat(localProjects);
+  }
+
+  function setProject(name) {
+    state.project = name || null;
+    const row = document.querySelector("[data-composer-project]");
+    if (!row) return;
+    if (state.project) {
+      row.querySelector(".composer-project__name").textContent = state.project;
+    }
+    row.classList.toggle("is-on", Boolean(state.project));
+    /* 新建会话页是居中布局：输入框那块高 +Δ 会把整块往上顶 Δ/2，
+       用等量的 margin-top 抵回来，这样只有下方的「更多社科研究工具」往下让位 */
+    document.querySelector(".new-chat")?.classList.toggle("has-project", Boolean(state.project));
+  }
+
+  let projectDialogMask = null;
+  let projectDialogModal = null;
+
+  function createProjectDialog() {
+    if (projectDialogModal) return;
+
+    projectDialogMask = document.createElement("div");
+    projectDialogMask.className = "project-dialog-mask";
+    projectDialogMask.hidden = true;
+
+    projectDialogModal = document.createElement("section");
+    projectDialogModal.className = "project-dialog-modal";
+    projectDialogModal.setAttribute("role", "dialog");
+    projectDialogModal.setAttribute("aria-modal", "true");
+    projectDialogModal.setAttribute("aria-labelledby", "projectDialogTitle");
+    projectDialogModal.hidden = true;
+    projectDialogModal.innerHTML = `
+      <div class="project-dialog-head">
+        <div>
+          <h2 id="projectDialogTitle">创建项目</h2>
+          <p>输入项目名称，后续可在项目中持续归档相关对话。</p>
+        </div>
+        <button class="project-dialog-close" type="button" data-project-dialog-close aria-label="关闭">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <form class="project-dialog-form" data-project-dialog-form>
+        <label class="project-dialog-label" for="projectDialogInput">项目名称</label>
+        <input class="project-dialog-input" id="projectDialogInput" type="text" maxlength="30" placeholder="请输入项目名称，不超过30个字" autocomplete="off" data-project-dialog-input>
+      </form>
+      <div class="project-dialog-actions">
+        <button class="btn btn-outline" type="button" data-project-dialog-close>取消</button>
+        <button class="btn btn-primary" type="button" data-project-dialog-submit>创建</button>
+      </div>
+    `;
+    document.body.append(projectDialogMask, projectDialogModal);
+    window.SKIcons.hydrate(projectDialogModal);
+
+    const input = projectDialogModal.querySelector("[data-project-dialog-input]");
+    const submit = () => {
+      const name = input.value.trim();
+      if (!name) {
+        window.SKApp.showToast("请输入项目名称");
+        input.focus();
+        return;
+      }
+      if (existingProjectNames().includes(name)) {
+        window.SKApp.showToast("项目名称已存在");
+        input.focus();
+        return;
+      }
+      localProjects.push(name);
+      closeProjectDialog();
+      setProject(name);
+      window.SKApp.showToast(`已创建并加入项目：${name}`);
+    };
+
+    projectDialogModal.querySelector("[data-project-dialog-submit]").addEventListener("click", submit);
+    projectDialogModal.querySelector("[data-project-dialog-form]").addEventListener("submit", (event) => {
+      event.preventDefault();
+      submit();
+    });
+    projectDialogModal.querySelectorAll("[data-project-dialog-close]").forEach((button) => {
+      button.addEventListener("click", closeProjectDialog);
+    });
+    input.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      closeProjectDialog();
+    });
+  }
+
+  function openProjectDialog() {
+    createProjectDialog();
+    const input = projectDialogModal.querySelector("[data-project-dialog-input]");
+    input.value = "";
+    projectDialogMask.hidden = false;
+    projectDialogModal.hidden = false;
+    requestAnimationFrame(() => {
+      projectDialogMask.classList.add("is-open");
+      projectDialogModal.classList.add("is-open");
+    });
+    document.body.classList.add("is-locked");
+    window.setTimeout(() => input.focus(), 60);
+  }
+
+  function closeProjectDialog() {
+    if (!projectDialogModal || projectDialogModal.hidden) return;
+    projectDialogMask.classList.remove("is-open");
+    projectDialogModal.classList.remove("is-open");
+    document.body.classList.remove("is-locked");
+    window.setTimeout(() => {
+      projectDialogMask.hidden = true;
+      projectDialogModal.hidden = true;
+    }, 220);
+  }
+
+  /* 会话回复底部的「问题反馈」：针对单条回答的反馈（内容对齐 v4 审查页里的弹窗），
+     与壳层的全局反馈（用户反馈）分开，互不影响 */
+  let messageFeedbackMask;
+  let messageFeedbackModal;
+
+  function createMessageFeedbackModal() {
+    if (messageFeedbackModal) return;
+
+    messageFeedbackMask = document.createElement("div");
+    messageFeedbackMask.className = "message-feedback-mask";
+    messageFeedbackMask.hidden = true;
+
+    messageFeedbackModal = document.createElement("section");
+    messageFeedbackModal.className = "message-feedback-modal";
+    messageFeedbackModal.setAttribute("role", "dialog");
+    messageFeedbackModal.setAttribute("aria-modal", "true");
+    messageFeedbackModal.setAttribute("aria-labelledby", "messageFeedbackTitle");
+    messageFeedbackModal.hidden = true;
+    messageFeedbackModal.innerHTML = `
+      <div class="message-feedback-head">
+        <div>
+          <h2 id="messageFeedbackTitle">提交问题反馈</h2>
+          <p>请说明这条回答存在的问题，反馈将进入人工核查。</p>
+        </div>
+        <button class="message-feedback-close" type="button" data-message-feedback-close aria-label="关闭反馈">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <form class="message-feedback-form" data-message-feedback-form>
+        <div class="message-feedback-type-grid">
+          <label class="message-feedback-type"><input type="radio" name="message-feedback-type" value="内容不准确" checked>内容不准确</label>
+          <label class="message-feedback-type"><input type="radio" name="message-feedback-type" value="来源不足">来源不足</label>
+          <label class="message-feedback-type"><input type="radio" name="message-feedback-type" value="理解偏差">理解偏差</label>
+          <label class="message-feedback-type"><input type="radio" name="message-feedback-type" value="其他问题">其他问题</label>
+        </div>
+        <label class="message-feedback-field">
+          <span class="message-feedback-field-label">补充说明</span>
+          <textarea class="message-feedback-textarea" placeholder="请描述具体问题、希望调整的内容或建议补充的资料。" data-message-feedback-detail></textarea>
+        </label>
+        <div class="message-feedback-actions">
+          <button class="btn btn-outline" type="button" data-message-feedback-close>取消</button>
+          <button class="btn btn-primary" type="submit">提交反馈</button>
+        </div>
+      </form>
+    `;
+    document.body.append(messageFeedbackMask, messageFeedbackModal);
+    window.SKIcons.hydrate(messageFeedbackModal);
+
+    messageFeedbackModal.querySelector("[data-message-feedback-form]").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const detail = messageFeedbackModal.querySelector("[data-message-feedback-detail]");
+      if (detail.value.trim().length < 4) {
+        window.SKApp.showToast("请补充具体问题说明");
+        detail.focus();
+        return;
+      }
+      detail.value = "";
+      closeMessageFeedback();
+      window.SKApp.showToast("反馈已提交，感谢你的补充");
+    });
+    messageFeedbackModal.querySelectorAll("[data-message-feedback-close]").forEach((button) => {
+      button.addEventListener("click", closeMessageFeedback);
+    });
+  }
+
+  function openMessageFeedback() {
+    createMessageFeedbackModal();
+    messageFeedbackMask.hidden = false;
+    messageFeedbackModal.hidden = false;
+    requestAnimationFrame(() => {
+      messageFeedbackMask.classList.add("is-open");
+      messageFeedbackModal.classList.add("is-open");
+    });
+    document.body.classList.add("is-locked");
+    window.setTimeout(() => {
+      messageFeedbackModal.querySelector("[data-message-feedback-detail]")?.focus();
+    }, 60);
+  }
+
+  function closeMessageFeedback() {
+    if (!messageFeedbackModal || messageFeedbackModal.hidden) return;
+    messageFeedbackMask.classList.remove("is-open");
+    messageFeedbackModal.classList.remove("is-open");
+    document.body.classList.remove("is-locked");
+    window.setTimeout(() => {
+      messageFeedbackMask.hidden = true;
+      messageFeedbackModal.hidden = true;
+    }, 220);
+  }
+
+  function initComposerProject() {
+    document
+      .querySelector("[data-composer-project-remove]")
+      ?.addEventListener("click", () => setProject(null));
+  }
+
   function initComposer() {
     const { textarea, sendButton, stopButton, fileInput } = getElements();
     if (!textarea) return;
@@ -741,6 +1313,15 @@
   }
 
   function initPanels() {
+    /* 消息区往下滚了就把顶部栏的下边框带出来（滚回顶部再收掉） */
+    const chatScroll = document.querySelector(".chat-scroll");
+    const chatHead = document.querySelector("[data-chat-head]");
+    if (chatScroll && chatHead) {
+      const syncHeadEdge = () => chatHead.classList.toggle("is-scrolled", chatScroll.scrollTop > 0);
+      chatScroll.addEventListener("scroll", syncHeadEdge, { passive: true });
+      syncHeadEdge();
+    }
+
     document.querySelectorAll("[data-history-open]").forEach((button) => {
       button.addEventListener("click", () => setHistoryOpen(true));
     });
@@ -762,12 +1343,24 @@
       button.addEventListener("click", () => setSourceOpen(false));
     });
 
+    /* 来源 / 会话文件卡片：新窗口进阅读器，当前面板随之收起 */
+    document.querySelectorAll("[data-reader-open]").forEach((card) => {
+      card.addEventListener("click", () => {
+        window.open("./reader.html", "_blank", "noopener");
+        setSourceOpen(false);
+        setSessionFilesOpen(false);
+      });
+    });
+
     document.querySelectorAll("[data-question-history-open]").forEach((button) => {
       button.addEventListener("click", () => setQuestionHistoryOpen(true));
     });
     document.querySelectorAll("[data-question-history-close]").forEach((button) => {
       button.addEventListener("click", () => setQuestionHistoryOpen(false));
     });
+    document
+      .querySelector("[data-question-history-search]")
+      ?.addEventListener("input", applyQuestionSearchFilter);
 
     document.querySelectorAll("[data-session-files-open]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -1222,8 +1815,11 @@
     window.addEventListener("resize", closeHistoryItemMenu);
 
     document.querySelectorAll("[data-new-conversation]").forEach((button) => {
-      /* 真实点击才聚焦输入框：v4.js 初始化时会以程序化 click 触发本按钮 */
-      button.addEventListener("click", (event) => createNewConversation({ focus: event.isTrusted }));
+      /* 真实点击才聚焦输入框：v4.js 初始化时会以程序化 click 触发本按钮。
+         带 animate 是给「新建会话」这个入口也配上分段的入场动效 */
+      button.addEventListener("click", (event) =>
+        createNewConversation({ focus: event.isTrusted, animate: true }),
+      );
     });
 
     document.addEventListener("click", (event) => {
@@ -1355,7 +1951,9 @@
     const input = historySearchModal.querySelector("[data-history-search-input]");
     input.addEventListener("input", () => renderResults(input.value));
     input.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeHistorySearch();
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      closeHistorySearch();
     });
 
     document.addEventListener("click", (event) => {
@@ -1477,7 +2075,9 @@
 
     searchInput.addEventListener("input", render);
     searchInput.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeDocPicker();
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      closeDocPicker();
     });
 
     docPickerModal.querySelector("[data-doc-picker-close]").addEventListener("click", closeDocPicker);
@@ -1562,7 +2162,10 @@
         event.preventDefault();
         finishEditing(true);
       }
-      if (event.key === "Escape") finishEditing(false);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        finishEditing(false);
+      }
     });
     input.addEventListener("blur", () => finishEditing(true));
   }
@@ -1630,6 +2233,74 @@
     });
   }
 
+  /* 右上角：自动播报总开关 + 「更多」菜单（历史提问 / 会话文件等入口都收在里面）。
+     菜单在点非菜单区域、点菜单项、按 ESC 时都收起 */
+  function initChatHeadActions() {
+    const autoSpeakButton = document.querySelector("[data-auto-speak]");
+    autoSpeakButton?.addEventListener("click", () => {
+      state.autoSpeak = !state.autoSpeak;
+      autoSpeakButton.classList.toggle("is-on", state.autoSpeak);
+      autoSpeakButton.setAttribute("aria-pressed", String(state.autoSpeak));
+      /* 关闭态用带斜杠的图标，开启态是正常喇叭；不靠背景色表示状态 */
+      const iconSlot = autoSpeakButton.querySelector("[data-icon]");
+      if (iconSlot) {
+        iconSlot.replaceChildren(window.SKIcons.create(state.autoSpeak ? "volume-2" : "volume-off"));
+      }
+      autoSpeakButton.title = state.autoSpeak ? "关闭自动播报" : "开启自动播报";
+      window.SKApp.showToast(
+        state.autoSpeak ? "已开启自动播报，每段回复生成后自动朗读" : "已关闭自动播报",
+      );
+    });
+
+    const trigger = document.querySelector("[data-chat-more-trigger]");
+    const menu = document.querySelector("[data-chat-more-menu]");
+    if (!trigger || !menu) return;
+
+    const setOpen = (open) => {
+      menu.hidden = !open;
+      trigger.setAttribute("aria-expanded", String(open));
+    };
+
+    trigger.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setOpen(menu.hidden);
+    });
+
+    menu.addEventListener("click", (event) => {
+      const item = event.target.closest("button");
+      if (!item) return;
+      /* 归档 / 移动 / 删除复用壳层（workbench.js）那套弹窗——
+         与侧栏对话行三点菜单里的表现完全一致 */
+      const action = item.dataset.chatMoreAction;
+      if (action) {
+        const title = document.querySelector("[data-chat-title]")?.textContent.trim() || "当前对话";
+        const dialogs = window.SKWorkbenchDialogs;
+        if (action === "archive") {
+          dialogs?.archiveDialog(title, () => window.SKApp.showToast(`已归档“${title}”`));
+        } else if (action === "move") {
+          dialogs?.moveDialog(title, (project) => window.SKApp.showToast(`已移动至「${project.name}」`));
+        } else if (action === "delete") {
+          /* 删除确认后回到新对话欢迎页 */
+          dialogs?.deleteDialog(title, () => createNewConversation({ focus: false, animate: true }));
+        }
+      }
+      setOpen(false);
+    });
+
+    document.addEventListener("click", (event) => {
+      if (menu.hidden) return;
+      if (event.target.closest("[data-chat-more]")) return;
+      setOpen(false);
+    });
+
+    /* 先于 ESC 分发链注册：这里处理过（preventDefault）链就不再往下走 */
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || menu.hidden) return;
+      event.preventDefault();
+      setOpen(false);
+    });
+  }
+
   function initKeyboardShortcuts() {
     document.addEventListener("keydown", (event) => {
       if (
@@ -1661,6 +2332,37 @@
         closeHistorySearch();
         return;
       }
+
+      if (event.key !== "Escape") return;
+
+      /* 上面的浮层各自绑了 ESC，谁处理了谁留 defaultPrevented 的痕。
+         光看 hidden 状态判断是不可靠的——它们自己的监听先跑，到这儿状态早就翻回去了 */
+      if (event.defaultPrevented) return;
+
+      /* 焦点不在浮层里时它们收不到 ESC，这里兜底关掉，同样不再往下 */
+      if (projectDialogModal && !projectDialogModal.hidden) {
+        closeProjectDialog();
+        return;
+      }
+      if (docPickerModal && !docPickerModal.hidden) {
+        closeDocPicker();
+        return;
+      }
+      if (quickMenuEl && !quickMenuEl.hidden) {
+        closeQuickMenu();
+        return;
+      }
+      if (messageFeedbackModal && !messageFeedbackModal.hidden) {
+        closeMessageFeedback();
+        return;
+      }
+
+      /* 浮层都关着才轮到取消智能体：回到新建对话初始态。
+         这一步不放入场动效——退回来时直接把欢迎页摆好即可 */
+      if (state.selectedAgent) {
+        event.preventDefault();
+        clearSelectedAgent(false);
+      }
     });
   }
 
@@ -1671,9 +2373,35 @@
     if (agentParam && AGENT_CONFIGS[agentParam]) state.selectedAgent = agentParam;
     initComposerAddMenu();
     initComposer();
+    initComposerQuickMenu();
+    initComposerProject();
+    /* 从别的页面按 Ctrl+Alt+D 跳过来：落地即开始录音 */
+    if (params.get("voice")) document.querySelector("[data-voice-trigger]")?.click();
     initPanels();
     initHistoryAndActions();
     initMessageSpeech();
+    /* 先于 initKeyboardShortcuts：更多菜单的 ESC 要在分发链之前接手 */
+    initChatHeadActions();
+    /* 会话回复底部的问题反馈（与壳层的全局反馈分开）：入口可能在静态消息和动态生成的消息里，
+       统一用事件委托处理 */
+    document.addEventListener("click", (event) => {
+      if (event.target.closest("[data-message-feedback-open]")) openMessageFeedback();
+    });
+    /* 思考过程的步骤行：点一下在下方展开该步的补充说明 */
+    document.addEventListener("click", (event) => {
+      const head = event.target.closest(".message-thinking__step-head");
+      if (!head) return;
+      const step = head.closest(".message-thinking__step");
+      if (!step) return;
+      const open = !step.classList.contains("is-open");
+      step.classList.toggle("is-open", open);
+      head.setAttribute("aria-expanded", String(open));
+    });
+    /* 网页来源执行区只露 5 条，「查看全部」开右侧的「浏览页面」面板看完整记录 */
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest("[data-sources-more]")) return;
+      setSearchResultsOpen(true);
+    });
     initKeyboardShortcuts();
     const { thread } = getElements();
     if (thread) {
@@ -1684,11 +2412,31 @@
     /* 「推荐管理」：先按上次记下的选择回填开关，再建首页（推荐区据此显隐） */
     const recommendInput = document.querySelector("[data-settings-recommend]");
     if (recommendInput) recommendInput.checked = readRecommendSetting();
-    createNewConversation({ focus: false });
+    /* 首屏也走一遍分段入场（标题打字 → 描述 → 提示词 / 推荐区），与切换智能体时一致 */
+    createNewConversation({ focus: false, animate: true });
     /* 开关一动：写回本地，并让已经在屏幕上的首页推荐区跟着显隐 */
     recommendInput?.addEventListener("change", function () {
       saveRecommendSetting(this.checked);
       syncRecommendationsVisibility();
+    });
+    /* 「自动联网搜索」：开关开着时输入框里的联网搜索自动选上，关了同步取消 */
+    const autoWebInput = document.querySelector("[data-settings-auto-web]");
+    const webToggle = document.querySelector("[data-mode-web]");
+    if (autoWebInput) {
+      autoWebInput.checked = readAutoWebSetting();
+      webToggle?.classList.toggle("is-on", autoWebInput.checked);
+      autoWebInput.addEventListener("change", function () {
+        saveAutoWebSetting(this.checked);
+        webToggle?.classList.toggle("is-on", this.checked);
+      });
+    }
+    /* 「展示思考过程」：回填开关，会话里的思考过程块据此显隐 */
+    const thinkingInput = document.querySelector("[data-settings-thinking]");
+    if (thinkingInput) thinkingInput.checked = readThinkingSetting();
+    syncThinkingVisibility();
+    thinkingInput?.addEventListener("change", function () {
+      saveThinkingSetting(this.checked);
+      syncThinkingVisibility();
     });
     if (promptParam) {
       const { textarea } = getElements();

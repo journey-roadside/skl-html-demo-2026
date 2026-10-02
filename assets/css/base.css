@@ -145,6 +145,18 @@ ol {
   stroke-linejoin: round;
 }
 
+/* 图标里当「底色圆片」用的实心块（如文件夹右下角托住加号的那块）：
+   填充跟随所在容器背景，把压在下层的线条盖掉 */
+.icon-disc {
+  fill: var(--card);
+  stroke: none;
+}
+
+/* 比默认描边粗一档的笔触（加号这类小符号要顶得住，1.8 会显得发虚） */
+.icon-bold-stroke {
+  stroke-width: 2.3;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(18px);

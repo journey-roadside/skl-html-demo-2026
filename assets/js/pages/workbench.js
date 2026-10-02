@@ -1280,6 +1280,10 @@
             <span class="workbench-shortcuts__label">搜索会话（登录后有效）</span>
           </li>
           <li class="workbench-shortcuts__item">
+            <span class="workbench-shortcuts__keys"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>D</kbd></span>
+            <span class="workbench-shortcuts__label">语音输入</span>
+          </li>
+          <li class="workbench-shortcuts__item">
             <span class="workbench-shortcuts__keys"><kbd>Enter</kbd></span>
             <span class="workbench-shortcuts__label">发送消息</span>
           </li>
@@ -1330,18 +1334,15 @@
   /* 壳层随页面状态：导航高亮、项目新建入口 */
   const applyShellState = function () {
     const page = (window.location.pathname.split("/").pop() || "").toLowerCase();
-    /* 从其它页面点「设置」跳过来时带 from=来源页：设置是全局入口，
-       导航保持高亮来源页，而不是跳到哪页就显示哪页 */
-    const params = new URLSearchParams(window.location.search);
-    const navPage =
-      params.get("settings") === "1" && params.get("from") ? params.get("from").toLowerCase() : page;
+    /* 设置视图里侧栏不带任何选中：设置是全局入口，不属于任何菜单项 */
+    const inSettings = new URLSearchParams(window.location.search).get("settings") === "1";
 
     /* 导航项与 rail 上"跳到某页"的入口按当前页高亮；
        收起态的「新建对话」是动作入口（点了开新会话），不给选中态 */
     document
       .querySelectorAll('.workbench-nav__link, .workbench-rail-action[href]:not([href="research-assistant.html"])')
       .forEach(function (link) {
-        const isActive = (link.getAttribute("href") || "").replace("./", "") === navPage;
+        const isActive = !inSettings && (link.getAttribute("href") || "").replace("./", "") === page;
         link.classList.toggle("is-active", isActive);
         if (isActive) {
           link.setAttribute("aria-current", "page");
@@ -1368,12 +1369,12 @@
       if (summary) summary.setAttribute("aria-current", "page");
     }
 
-    /* 设置区块只在社科智研工作台存在（由 v4.js 渲染）：本页没有就跳转过去并由该页打开，
-       带上 from 让侧栏继续保持当前页的选中态 */
+    /* 设置区块只在社科智研工作台存在（由 v4.js 渲染）：本页没有就跳转过去并由该页打开。
+       不再带 from：设置视图下侧栏不带任何选中，不需要知道来源页 */
     if (!document.querySelector("[data-settings-view]")) {
       document.querySelectorAll("[data-settings-open]").forEach(function (button) {
         button.addEventListener("click", function () {
-          window.location.href = "./research-assistant.html?settings=1&from=" + encodeURIComponent(page);
+          window.location.href = "./research-assistant.html?settings=1";
         });
       });
     }
@@ -1740,7 +1741,9 @@
 
   if (userMenu) {
     userMenu.addEventListener("click", function (event) {
-      if (event.target.closest("button")) setUserMenuOpen(false, false);
+      /* 菜单项里有 button 也有链接（账号中心 / 官网），点完都收起菜单；
+         链接是新窗口打开，当前页不跳转，只把菜单关上 */
+      if (event.target.closest("button, a")) setUserMenuOpen(false, false);
     });
   }
 
@@ -1796,6 +1799,12 @@
     });
 
     messagePanel.addEventListener("click", function (event) {
+      /* 底部「查看全部」去账户中心的消息中心（新窗口），当前盒子跟着收起 */
+      if (event.target.closest(".workbench-message-center__foot a")) {
+        setMessageCenterOpen(false, false);
+        return;
+      }
+
       const readAll = event.target.closest("[data-message-read-all]");
       if (readAll) {
         const items = messagePanel.querySelectorAll(".workbench-message-center__item");
@@ -1934,7 +1943,7 @@
   const ROW_MENU_ITEMS = {
     project: [["rename", "重命名"], ["delete", "删除"]],
     child: [["rename", "重命名"], ["remove", "移出项目"], ["delete", "删除"]],
-    dialog: [["rename", "重命名"], ["move", "移入项目"], ["archive", "归档"], ["delete", "删除"]]
+    dialog: [["rename", "重命名"], ["move", "移动至项目"], ["archive", "归档"], ["delete", "删除"]]
   };
 
   const rowKind = function (button) {
@@ -2050,11 +2059,10 @@
   let pendingMove = null;
   let pickedProject = null;
 
-  const openMoveDialog = function (button) {
-    if (!dialogMove || typeof dialogMove.showModal !== "function") return;
-    const refs = rowRefs("dialog", button);
-    if (!refs || !refs.title) return;
-    const name = refs.title.textContent.trim();
+  /* 弹窗只认「要移动的会话名」和「选中项目后的回调」——
+     侧栏行的三点菜单和社科助手右上角「更多」都从这里走，不再各写一份 */
+  const openMoveDialogFor = function (name, onPick) {
+    if (!dialogMove || typeof dialogMove.showModal !== "function" || !name) return;
     const projects = Array.prototype.map.call(
       document.querySelectorAll(".workbench-project"),
       function (project) {
@@ -2071,7 +2079,7 @@
       ? "选择「" + name + "」要移入的项目，移入后将不再出现在对话列表中。"
       : "还没有可移入的项目。";
     dialogMoveList.textContent = "";
-    pendingMove = { row: refs.row, name: name };
+    pendingMove = { name: name, onPick: onPick || null };
     pickedProject = null;
     if (dialogMoveOk) dialogMoveOk.disabled = true;
 
@@ -2099,6 +2107,15 @@
     dialogMove.showModal();
   };
 
+  const openMoveDialog = function (button) {
+    const refs = rowRefs("dialog", button);
+    if (!refs || !refs.title) return;
+    const name = refs.title.textContent.trim();
+    openMoveDialogFor(name, function (project) {
+      moveRowIntoProject(refs.row, name, project.panel, project.name);
+    });
+  };
+
   document.querySelector("[data-dialog-move-cancel]")?.addEventListener("click", function () {
     dialogMove?.close();
     pendingMove = null;
@@ -2112,7 +2129,7 @@
     dialogMove?.close();
     pendingMove = null;
     pickedProject = null;
-    moveRowIntoProject(move.row, move.name, target.panel, target.name);
+    if (typeof move.onPick === "function") move.onPick(target);
   });
 
   const runRowAction = function (action, button) {
@@ -2187,6 +2204,31 @@
           window.SKApp?.showToast?.(archived ? "已取消归档“" + name + "”" : "已归档“" + name + "”");
           renderDialogView();
         }
+      });
+    }
+  };
+
+  /* 供页面脚本复用同一套弹窗：社科助手右上角「更多」的归档 / 移动 / 删除
+     都从这里走，跟侧栏行三点菜单的表现保持一致 */
+  window.SKWorkbenchDialogs = {
+    archiveDialog: function (name, onOk) {
+      askConfirm({
+        title: "归档",
+        okText: "归档",
+        variant: "primary",
+        desc: "确认归档“" + name + "”？",
+        onOk: onOk
+      });
+    },
+    moveDialog: function (name, onPick) {
+      openMoveDialogFor(name, onPick);
+    },
+    deleteDialog: function (name, onOk) {
+      askConfirm({
+        title: "删除",
+        okText: "删除",
+        desc: "确认删除“" + name + "”？删除后无法恢复。",
+        onOk: onOk
       });
     }
   };
@@ -2436,6 +2478,19 @@
         return;
       }
       document.querySelector("[data-dialog-search-open]")?.click();
+      return;
+    }
+
+    /* 录音转文字：只有社科智研页有录音按钮，其它页面跳过去再落地开始。
+       不加登录判断——那个按钮本身未登录也能点 */
+    if (key === "d") {
+      event.preventDefault();
+      const voiceButton = document.querySelector("[data-voice-trigger]");
+      if (voiceButton) {
+        voiceButton.click();
+        return;
+      }
+      window.location.href = "./research-assistant.html?voice=1";
     }
   });
 
