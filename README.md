@@ -131,8 +131,7 @@ html-demo/
 │  ├─ index.html
 │  ├─ pages/
 │  └─ assets/
-├─ cloudbaserc.json            # CloudBase 静态托管配置（env / 部署路径）
-└─ .github/                    # GitHub Actions：push main 自动部署到 CloudBase
+└─ .github/                    # GitHub Actions：push main 用 tcb hosting deploy 自动部署到 CloudBase /skl-2026（环境 ID 走仓库 Secrets，仓库内不含任何明文配置）
 ```
 
 页面样式按「tokens → base → components → 应用外壳 → 页面样式」顺序引入。页面级文件只保存该页独有规则。
