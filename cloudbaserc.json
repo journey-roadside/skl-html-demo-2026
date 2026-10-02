@@ -1,0 +1,12 @@
+{
+  "version": "2.0",
+  "envId": "test-dev-d5g9gnfm6eac2a433",
+  "app": {
+    "serviceName": "skl-2026",
+    "framework": "static",
+    "installCommand": "",
+    "buildCommand": "",
+    "outputDir": "dist",
+    "deployPath": "/skl-2026"
+  }
+}

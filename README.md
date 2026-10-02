@@ -131,7 +131,8 @@ html-demo/
 │  ├─ index.html
 │  ├─ pages/
 │  └─ assets/
-└─ .gitignore
+├─ cloudbaserc.json            # CloudBase 静态托管配置（env / 部署路径）
+└─ .github/                    # GitHub Actions：push main 自动部署到 CloudBase
 ```
 
 页面样式按「tokens → base → components → 应用外壳 → 页面样式」顺序引入。页面级文件只保存该页独有规则。
