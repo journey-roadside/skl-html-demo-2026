@@ -712,6 +712,13 @@
                     <path d="m21 21-4.3-4.3"></path>
                   </svg>
                 </button>
+                <button class="workbench-section__action" type="button" data-summary-action data-dialog-archive-view-toggle aria-label="查看已归档对话" aria-pressed="false" data-rail-tip="已归档" data-auth-only>
+                  <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect width="20" height="5" x="2" y="3" rx="1"></rect>
+                    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"></path>
+                    <path d="M10 12h4"></path>
+                  </svg>
+                </button>
                 <button class="workbench-section__action" type="button" data-summary-action data-dialog-manage-toggle aria-label="多选" data-rail-tip="多选" data-auth-only>
                   <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="m3 17 2 2 4-4"></path>
@@ -946,7 +953,7 @@
                 </svg>
               </button>
             </div>
-            <div class="workbench-dialog-row">
+            <div class="workbench-dialog-row" data-status="archived">
               <button class="workbench-dialog__title" type="button">社科成果评价体系优化</button>
               <button class="workbench-row-action" type="button" aria-label="更多操作：社科成果评价体系优化">
                 <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
@@ -956,7 +963,7 @@
                 </svg>
               </button>
             </div>
-            <div class="workbench-dialog-row">
+            <div class="workbench-dialog-row" data-status="archived">
               <button class="workbench-dialog__title" type="button">湖北非遗数字化保护</button>
               <button class="workbench-row-action" type="button" aria-label="更多操作：湖北非遗数字化保护">
                 <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
@@ -966,6 +973,7 @@
                 </svg>
               </button>
             </div>
+            <p class="workbench-dialogs__empty" data-dialog-empty hidden>暂无已归档对话</p>
             </div>
             <button class="workbench-dialog__title workbench-dialog__title--guest" type="button" data-guest-only data-auth-open>
               <span class="workbench-dialog__icon" aria-hidden="true">
@@ -1839,6 +1847,8 @@
   const dialogManageToggle = document.querySelector("[data-dialog-manage-toggle]");
   const dialogManageDelete = document.querySelector("[data-dialog-manage-delete]");
   const dialogManageArchive = document.querySelector("[data-dialog-manage-archive]");
+  const dialogArchiveToggle = document.querySelector("[data-dialog-archive-view-toggle]");
+  const dialogEmpty = document.querySelector("[data-dialog-empty]");
   const dialogConfirm = document.querySelector("[data-dialog-confirm]");
   const dialogConfirmTitle = document.querySelector("[data-dialog-confirm-title]");
   const dialogConfirmDesc = document.querySelector("[data-dialog-confirm-desc]");
@@ -1958,11 +1968,15 @@
     if (!rowMenu) return;
     const kind = rowKind(button);
     if (!kind) return;
+    const refs = rowRefs(kind, button);
+    /* 已归档会话的「归档」项改为「取消归档」 */
+    const archived = kind === "dialog" && refs && refs.row.dataset.status === "archived";
     rowMenu.innerHTML = ROW_MENU_ITEMS[kind]
       .map(function (item) {
+        const label = item[0] === "archive" && archived ? "取消归档" : item[1];
         return (
           '<button class="workbench-row-menu__item" type="button" role="menuitem" data-row-action="' +
-          item[0] + '">' + item[1] + "</button>"
+          item[0] + '">' + label + "</button>"
         );
       })
       .join("");
@@ -2161,14 +2175,17 @@
     }
 
     if (action === "archive") {
+      const archived = refs.row.dataset.status === "archived";
       askConfirm({
-        title: "归档",
-        okText: "归档",
+        title: archived ? "取消归档" : "归档",
+        okText: archived ? "取消归档" : "归档",
         variant: "primary",
-        desc: "确认归档“" + name + "”？",
+        desc: (archived ? "确认取消归档“" : "确认归档“") + name + "”？",
         onOk: function () {
-          refs.row.remove();
-          window.SKApp?.showToast?.("已归档“" + name + "”");
+          if (archived) delete refs.row.dataset.status;
+          else refs.row.dataset.status = "archived";
+          window.SKApp?.showToast?.(archived ? "已取消归档“" + name + "”" : "已归档“" + name + "”");
+          renderDialogView();
         }
       });
     }
@@ -2199,7 +2216,8 @@
     /* 计数显示在「删除」文字旁边；未选中时不显示数字 */
     if (dialogManageCount) dialogManageCount.textContent = count ? String(count) : "";
     if (dialogManageDelete) dialogManageDelete.disabled = count === 0;
-    if (dialogManageArchive) dialogManageArchive.disabled = count === 0;
+    /* 归档视图里整列都是已归档项，批量归档没有意义 */
+    if (dialogManageArchive) dialogManageArchive.disabled = count === 0 || dialogIsArchivedView();
   };
 
   const setDialogManageMode = function (open) {
@@ -2213,6 +2231,37 @@
     syncDialogManage();
   };
 
+  /* 对话列表视图：默认只显示未归档，点区块头部的归档按钮切到已归档视图 */
+  const dialogIsArchivedView = function () {
+    return Boolean(dialogList && dialogList.classList.contains("is-archived-view"));
+  };
+
+  const renderDialogView = function () {
+    if (!dialogList) return;
+    const archivedView = dialogIsArchivedView();
+    if (dialogArchiveToggle) dialogArchiveToggle.setAttribute("aria-pressed", String(archivedView));
+    if (dialogEmpty) {
+      const count = dialogList.querySelectorAll(
+        archivedView
+          ? '.workbench-dialog-row[data-status="archived"]'
+          : '.workbench-dialog-row:not([data-status="archived"])'
+      ).length;
+      dialogEmpty.textContent = archivedView ? "暂无已归档对话" : "暂无对话";
+      dialogEmpty.hidden = count !== 0;
+    }
+  };
+
+  const setDialogArchiveView = function (open) {
+    if (!dialogList || dialogIsArchivedView() === open) return;
+    dialogList.classList.toggle("is-archived-view", open);
+    setDialogManageMode(false);
+    renderDialogView();
+  };
+
+  dialogArchiveToggle?.addEventListener("click", function () {
+    setDialogArchiveView(!dialogIsArchivedView());
+  });
+
   const runBatchDialogAction = function (action) {
     const rows = selectedDialogs();
     if (!rows.length) return;
@@ -2224,12 +2273,14 @@
       desc: (isArchive ? "确认归档选中的 " : "确认删除选中的 ") + rows.length + " 个对话？" + (isArchive ? "" : "删除后无法恢复。"),
       onOk: function () {
         rows.forEach(function (row) {
-          row.remove();
+          if (isArchive) row.dataset.status = "archived";
+          else row.remove();
         });
         window.SKApp?.showToast?.(
           (isArchive ? "已归档 " : "已删除 ") + rows.length + " 个对话"
         );
         setDialogManageMode(false);
+        renderDialogView();
       }
     });
   };

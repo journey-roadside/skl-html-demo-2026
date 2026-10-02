@@ -295,6 +295,12 @@
   stroke-width: 1.5;
 }
 
+/* 归档视图按钮的激活态（悬停时保持，见下方 hover 块） */
+.workbench-section__action[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent-active);
+}
+
 .workbench-section__details[open] .workbench-section__chevron {
   transform: rotate(90deg);
 }
@@ -537,6 +543,19 @@
   min-width: 0;
 }
 
+/* 对话列表视图切换：默认只显示未归档行，归档视图只显示已归档行 */
+.workbench-dialogs:not(.is-archived-view) .workbench-dialog-row[data-status="archived"],
+.workbench-dialogs.is-archived-view .workbench-dialog-row:not([data-status="archived"]) {
+  display: none;
+}
+
+.workbench-dialogs__empty {
+  margin: 0;
+  padding: 12px 4px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+
 /* 未登录时对话列表的占位行（登录入口）：左侧带图标。
    padding-left 归零是为了让图标与「新建项目」行的文件夹图标对齐（同在 x=14）；
    基础规则的 4px 横向内边距跟着没了，图标与文字的间距要用 gap 补回来，
@@ -725,6 +744,12 @@
   .workbench-section__action:hover {
     background: var(--surface-hover);
     color: var(--foreground);
+  }
+
+  /* 归档视图开启时，悬停不移除强调色 */
+  .workbench-section__action[aria-pressed="true"]:hover {
+    background: var(--accent-soft);
+    color: var(--accent-active);
   }
 
   .workbench-project__toggle:hover {

@@ -26,6 +26,9 @@
   const conversationSearch = document.querySelector("[data-project-conversation-search]");
   const conversationEmpty = document.querySelector("[data-project-conversation-empty]");
   const conversationEmptyText = conversationEmpty ? conversationEmpty.querySelector("p") : null;
+  const conversationFilterTrigger = document.querySelector("[data-conversation-filter-trigger]");
+  const conversationFilterMenu = document.querySelector("[data-conversation-filter-menu]");
+  const conversationFilterOptions = Array.from(document.querySelectorAll("[data-conversation-filter]"));
   const resourceFilterTrigger = document.querySelector("[data-project-resource-filter-trigger]");
   const resourceFilterMenu = document.querySelector("[data-project-resource-filter-menu]");
   const resourceFilterOptions = Array.from(document.querySelectorAll("[data-resource-filter-value]"));
@@ -55,12 +58,13 @@
   let pendingResource = null;
   let pendingAction = "";
   let menuId = 0;
+  let conversationStatusFilter = "all";
   const selectedResourceTypes = new Set();
 
   const conversationTemplates = [
     { name: "明曜AI系统先进性评估", date: "09-18" },
     { name: "中国量子计算发展近况", date: "09-18" },
-    { name: "研究框架与核心问题梳理", date: "09-16" },
+    { name: "研究框架与核心问题梳理", date: "09-16", archived: true },
     { name: "相关资料与案例对比", date: "09-14" },
     { name: "阶段性结论整理", date: "09-12" },
     { name: "数据与来源核查", date: "09-10" },
@@ -297,6 +301,10 @@
     emptyState.hidden = visibleCount !== 0;
   };
 
+  const conversationIsArchived = function (item) {
+    return item.dataset.status === "archived";
+  };
+
   const renderConversations = function () {
     if (!conversationList || !conversationEmpty) return;
 
@@ -304,17 +312,40 @@
     const items = Array.from(conversationList.querySelectorAll(".project-detail__conversation-item"));
     let visibleCount = 0;
 
+    /* 未归档在前、已归档在后；组内保持原顺序（appendChild 移动已有节点是稳定操作） */
+    items
+      .filter(function (item) {
+        return !conversationIsArchived(item);
+      })
+      .concat(items.filter(conversationIsArchived))
+      .forEach(function (item) {
+        conversationList.appendChild(item);
+      });
+
     items.forEach(function (item) {
+      const archived = conversationIsArchived(item);
       const nameNode = item.querySelector(".project-detail__conversation-name");
+      const badge = item.querySelector(".project-detail__conversation-badge");
+      const archiveAction = item.querySelector('[data-conversation-action="archive"]');
       const name = (nameNode ? nameNode.textContent : "").toLocaleLowerCase("zh-CN");
-      item.hidden = Boolean(keyword) && !name.includes(keyword);
+      const matchesStatus =
+        conversationStatusFilter === "all" || (conversationStatusFilter === "archived") === archived;
+
+      item.hidden = !matchesStatus || (Boolean(keyword) && !name.includes(keyword));
       if (!item.hidden) visibleCount += 1;
+      if (badge) badge.hidden = !archived;
+      if (archiveAction) archiveAction.textContent = archived ? "取消归档" : "归档";
     });
 
     conversationList.hidden = visibleCount === 0;
     conversationEmpty.hidden = visibleCount !== 0;
     if (conversationEmptyText) {
-      conversationEmptyText.textContent = keyword ? "没有找到符合条件的对话" : "暂无对话";
+      if (keyword) {
+        conversationEmptyText.textContent = "没有找到符合条件的对话";
+      } else {
+        conversationEmptyText.textContent =
+          conversationStatusFilter === "archived" ? "暂无已归档对话" : "暂无对话";
+      }
     }
   };
 
@@ -322,6 +353,18 @@
     if (!resourceFilterTrigger || !resourceFilterMenu) return;
     resourceFilterMenu.hidden = !open;
     resourceFilterTrigger.setAttribute("aria-expanded", String(open));
+  };
+
+  const setConversationFilterMenuOpen = function (open) {
+    if (!conversationFilterTrigger || !conversationFilterMenu) return;
+    conversationFilterMenu.hidden = !open;
+    conversationFilterTrigger.setAttribute("aria-expanded", String(open));
+  };
+
+  const syncConversationFilterMenu = function () {
+    conversationFilterOptions.forEach(function (option) {
+      option.setAttribute("aria-checked", String(option.dataset.conversationFilter === conversationStatusFilter));
+    });
   };
 
   const closeConversationMenu = function (item) {
@@ -340,29 +383,63 @@
   };
 
   // ponytail: 静态原型没有会话池，“移出项目”与“删除”都只把对话从本项目移除，仅确认文案不同
+  const CONVERSATION_ACTION_COPY = {
+    remove: {
+      title: "移出项目",
+      confirm: "移出",
+      message: function (name) {
+        return "确定要将“" + name + "”移出该项目吗？";
+      }
+    },
+    archive: {
+      title: "归档",
+      confirm: "归档",
+      message: function (name) {
+        return "确定要归档“" + name + "”吗？";
+      }
+    },
+    unarchive: {
+      title: "取消归档",
+      confirm: "取消归档",
+      message: function (name) {
+        return "确定要取消归档“" + name + "”吗？";
+      }
+    },
+    delete: {
+      title: "删除对话",
+      confirm: "删除",
+      danger: true,
+      message: function (name) {
+        return "确定要删除“" + name + "”吗？删除后无法恢复。";
+      }
+    }
+  };
+
   const openConversationActionDialog = function (item, action) {
     if (!actionDialog || !actionForm || !item) return;
 
+    /* 菜单项「归档」在两个状态下共用同一个 action 名，按行当前状态解析成实际动作 */
+    const resolved = action === "archive" && conversationIsArchived(item) ? "unarchive" : action;
+    const copy = CONVERSATION_ACTION_COPY[resolved];
+    if (!copy) return;
+
     const nameNode = item.querySelector(".project-detail__conversation-name");
     const name = nameNode ? nameNode.textContent : "该对话";
-    const isDelete = action === "delete";
 
     pendingCard = null;
     pendingConversation = item;
     pendingResource = null;
-    pendingAction = isDelete ? "conversation-delete" : "conversation-remove";
+    pendingAction = "conversation-" + resolved;
 
-    actionTitle.textContent = isDelete ? "删除对话" : "移出项目";
-    actionMessage.textContent = isDelete
-      ? "确定要删除“" + name + "”吗？删除后无法恢复。"
-      : "确定要将“" + name + "”移出该项目吗？";
+    actionTitle.textContent = copy.title;
+    actionMessage.textContent = copy.message(name);
     actionField.hidden = true;
     actionInput.hidden = true;
     actionInput.required = false;
     actionInput.value = "";
-    actionConfirm.textContent = isDelete ? "删除" : "移出";
-    actionConfirm.classList.toggle("projects-dialog__button--primary", !isDelete);
-    actionConfirm.classList.toggle("projects-dialog__button--danger", isDelete);
+    actionConfirm.textContent = copy.confirm;
+    actionConfirm.classList.toggle("projects-dialog__button--primary", !copy.danger);
+    actionConfirm.classList.toggle("projects-dialog__button--danger", Boolean(copy.danger));
     actionDialog.showModal();
     actionConfirm.focus();
   };
@@ -421,9 +498,10 @@
     }
   };
 
-  const createConversationItem = function (name, dateText) {
+  const createConversationItem = function (name, dateText, archived) {
     const item = document.createElement("li");
     item.className = "project-detail__conversation-item";
+    if (archived) item.dataset.status = "archived";
 
     const button = document.createElement("button");
     button.className = "project-detail__conversation-open";
@@ -445,15 +523,25 @@
     svg.appendChild(path);
     icon.appendChild(svg);
 
+    const title = document.createElement("span");
+    title.className = "project-detail__conversation-title";
+
     const label = document.createElement("span");
     label.className = "project-detail__conversation-name";
     label.textContent = name;
+
+    const badge = document.createElement("span");
+    badge.className = "project-detail__conversation-badge";
+    badge.textContent = "已归档";
+    badge.hidden = !archived;
+
+    title.append(label, badge);
 
     const date = document.createElement("span");
     date.className = "project-detail__conversation-date";
     date.textContent = dateText || "刚刚";
 
-    button.append(icon, label, date);
+    button.append(icon, title, date);
 
     const more = document.createElement("button");
     more.className = "project-detail__conversation-more";
@@ -487,6 +575,7 @@
     panel.hidden = true;
     [
       ["移出项目", "remove", false],
+      ["归档", "archive", false],
       ["删除", "delete", true]
     ].forEach(function (action) {
       const actionButton = document.createElement("button");
@@ -508,9 +597,12 @@
     const count = Math.max(0, Number(card.dataset.chatCount) || 0);
     conversationList.replaceChildren();
     conversationTemplates.slice(0, count).forEach(function (item) {
-      conversationList.appendChild(createConversationItem(item.name, item.date));
+      conversationList.appendChild(createConversationItem(item.name, item.date, item.archived));
     });
     conversationSearch.value = "";
+    conversationStatusFilter = "all";
+    syncConversationFilterMenu();
+    setConversationFilterMenuOpen(false);
     selectedResourceTypes.clear();
     setResourceFilterMenuOpen(false);
     renderResources();
@@ -587,6 +679,22 @@
         if (selectedResourceTypes.has(type)) selectedResourceTypes.delete(type);
         else selectedResourceTypes.add(type);
         renderResources();
+      });
+    });
+  }
+
+  if (conversationFilterTrigger && conversationFilterMenu) {
+    conversationFilterTrigger.addEventListener("click", function (event) {
+      event.stopPropagation();
+      setConversationFilterMenuOpen(conversationFilterMenu.hidden);
+    });
+
+    conversationFilterOptions.forEach(function (option) {
+      option.addEventListener("click", function () {
+        conversationStatusFilter = option.dataset.conversationFilter;
+        syncConversationFilterMenu();
+        setConversationFilterMenuOpen(false);
+        renderConversations();
       });
     });
   }
@@ -901,10 +1009,19 @@
 
       if (pendingConversation) {
         const item = pendingConversation;
+        const conversationAction = pendingAction;
         pendingConversation = null;
         pendingAction = "";
         actionDialog.close();
-        removeConversation(item);
+        if (conversationAction === "conversation-archive") {
+          item.dataset.status = "archived";
+          renderConversations();
+        } else if (conversationAction === "conversation-unarchive") {
+          delete item.dataset.status;
+          renderConversations();
+        } else {
+          removeConversation(item);
+        }
         return;
       }
 
@@ -959,6 +1076,9 @@
     if (!event.target.closest("[data-project-resource-filter-menu]") && !event.target.closest("[data-project-resource-filter-trigger]")) {
       setResourceFilterMenuOpen(false);
     }
+    if (!event.target.closest("[data-conversation-filter-menu]") && !event.target.closest("[data-conversation-filter-trigger]")) {
+      setConversationFilterMenuOpen(false);
+    }
     closeAllConversationMenus();
     if (event.target.closest("[data-project-menu-panel]") || event.target.closest(".projects-card__menu")) return;
     closeAllProjectMenus();
@@ -969,6 +1089,7 @@
       closeAllProjectMenus();
       closeAllConversationMenus();
       setResourceFilterMenuOpen(false);
+      setConversationFilterMenuOpen(false);
     }
   });
 

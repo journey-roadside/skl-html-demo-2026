@@ -437,14 +437,29 @@
                 <section class="project-detail__conversations" aria-labelledby="projectConversationTitle">
                   <header class="project-detail__conversations-header">
                     <h3 id="projectConversationTitle">对话</h3>
-                    <label class="project-detail__search">
-                      <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.3-4.3"></path>
-                      </svg>
-                      <span class="visually-hidden">搜索对话</span>
-                      <input type="search" placeholder="搜索对话..." autocomplete="off" data-project-conversation-search>
-                    </label>
+                    <div class="project-detail__conversation-tools">
+                      <label class="project-detail__search">
+                        <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <path d="m21 21-4.3-4.3"></path>
+                        </svg>
+                        <span class="visually-hidden">搜索对话</span>
+                        <input type="search" placeholder="搜索对话..." autocomplete="off" data-project-conversation-search>
+                      </label>
+                      <div class="project-detail__conversation-filter">
+                        <button class="project-detail__mode project-detail__conversation-filter-trigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="按状态筛选对话" data-conversation-filter-trigger>
+                          <span>状态</span>
+                          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m6 9 6 6 6-6"></path>
+                          </svg>
+                        </button>
+                        <div class="project-detail__resource-filter-menu" role="menu" aria-label="对话状态筛选" data-conversation-filter-menu hidden>
+                          <button class="project-detail__resource-filter-option project-detail__resource-filter-option--all" type="button" role="menuitemradio" aria-checked="true" data-conversation-filter="all">全部</button>
+                          <button class="project-detail__resource-filter-option project-detail__resource-filter-option--all" type="button" role="menuitemradio" aria-checked="false" data-conversation-filter="active">未归档</button>
+                          <button class="project-detail__resource-filter-option project-detail__resource-filter-option--all" type="button" role="menuitemradio" aria-checked="false" data-conversation-filter="archived">已归档</button>
+                        </div>
+                      </div>
+                    </div>
                   </header>
                   <ul class="project-detail__conversation-list" data-project-conversation-list>
                     <li class="project-detail__conversation-item">
@@ -454,7 +469,10 @@
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                           </svg>
                         </span>
-                        <span class="project-detail__conversation-name">明曜AI系统先进性评估</span>
+                        <span class="project-detail__conversation-title">
+                          <span class="project-detail__conversation-name">明曜AI系统先进性评估</span>
+                          <span class="project-detail__conversation-badge" hidden>已归档</span>
+                        </span>
                         <span class="project-detail__conversation-date">09-18</span>
                       </button>
                       <button class="project-detail__conversation-more" type="button" aria-label="明曜AI系统先进性评估对话操作" aria-haspopup="menu" aria-expanded="false">
@@ -466,6 +484,7 @@
                       </button>
                       <div class="projects-card__menu-panel project-detail__conversation-menu" role="menu" aria-label="明曜AI系统先进性评估对话操作" data-conversation-menu hidden>
                         <button class="projects-card__menu-item" type="button" role="menuitem" data-conversation-action="remove">移出项目</button>
+                        <button class="projects-card__menu-item" type="button" role="menuitem" data-conversation-action="archive">归档</button>
                         <button class="projects-card__menu-item projects-card__menu-item--danger" type="button" role="menuitem" data-conversation-action="delete">删除</button>
                       </div>
                     </li>
@@ -476,7 +495,10 @@
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                           </svg>
                         </span>
-                        <span class="project-detail__conversation-name">中国量子计算发展近况</span>
+                        <span class="project-detail__conversation-title">
+                          <span class="project-detail__conversation-name">中国量子计算发展近况</span>
+                          <span class="project-detail__conversation-badge" hidden>已归档</span>
+                        </span>
                         <span class="project-detail__conversation-date">09-18</span>
                       </button>
                       <button class="project-detail__conversation-more" type="button" aria-label="中国量子计算发展近况对话操作" aria-haspopup="menu" aria-expanded="false">
@@ -488,6 +510,7 @@
                       </button>
                       <div class="projects-card__menu-panel project-detail__conversation-menu" role="menu" aria-label="中国量子计算发展近况对话操作" data-conversation-menu hidden>
                         <button class="projects-card__menu-item" type="button" role="menuitem" data-conversation-action="remove">移出项目</button>
+                        <button class="projects-card__menu-item" type="button" role="menuitem" data-conversation-action="archive">归档</button>
                         <button class="projects-card__menu-item projects-card__menu-item--danger" type="button" role="menuitem" data-conversation-action="delete">删除</button>
                       </div>
                     </li>

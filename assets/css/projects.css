@@ -1003,6 +1003,34 @@
   font-weight: var(--font-weight-semibold);
 }
 
+.project-detail__conversation-tools {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-2);
+}
+
+.project-detail__conversation-filter {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+/* 复刻 .project-detail__mode 的视觉（共用类名），高度对齐搜索框 */
+.project-detail__conversation-filter-trigger {
+  min-height: 2.5rem;
+}
+
+/* 箭头展开时翻转，与 .project-detail__side-button 行为一致 */
+.project-detail__conversation-filter-trigger .workbench-icon {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.project-detail__conversation-filter-trigger[aria-expanded="true"] .workbench-icon {
+  transform: rotate(180deg);
+}
+
 .project-detail__search {
   display: flex;
   width: min(100%, 17rem);
@@ -1123,10 +1151,33 @@
   height: 0.875rem;
 }
 
+.project-detail__conversation-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
 .project-detail__conversation-name {
   overflow: hidden;
+  min-width: 0;
   font-size: var(--font-size-sm);
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 「已归档」标签：配色复刻 .project-detail__mode.is-on，圆角改为全圆角 */
+.project-detail__conversation-badge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 0 var(--spacing-2);
+  border: 1px solid color-mix(in srgb, var(--accent-strong) 40%, transparent);
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  color: var(--accent-active);
+  font-size: var(--font-size-xxs);
+  line-height: 1.25rem;
   white-space: nowrap;
 }
 
