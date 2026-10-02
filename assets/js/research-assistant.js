@@ -879,8 +879,11 @@
       return items;
     },
     "#": () => {
-      /* 项目是登录后的功能（侧栏那份列表本身就是 data-auth-only），未登录不弹 */
-      if (!window.SKAuth?.getUser()) return [];
+      /* 未登录：只给「新建项目」这一项，点它（或回车）弹登录 / 注册框；
+         已有项目列表要登录后才有（侧栏那份列表本身就是 data-auth-only） */
+      if (!window.SKAuth?.getUser()) {
+        return [{ icon: "folder-plus", label: "新建项目", run: () => window.SKAuth?.open?.() }];
+      }
       return [
         { icon: "folder-plus", label: "新建项目", run: openProjectDialog },
         ...existingProjectNames().map((name) => ({
