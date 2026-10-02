@@ -131,8 +131,7 @@ html-demo/
 │  ├─ index.html
 │  ├─ pages/
 │  └─ assets/
-├─ cloudbaserc.json
-└─ .github/
+└─ .gitignore
 ```
 
 页面样式按「tokens → base → components → 应用外壳 → 页面样式」顺序引入。页面级文件只保存该页独有规则。
