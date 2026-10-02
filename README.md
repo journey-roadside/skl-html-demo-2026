@@ -135,47 +135,6 @@ html-demo/
 
 页面样式按「tokens → base → components → 应用外壳 → 页面样式」顺序引入。页面级文件只保存该页独有规则。
 
-## 交互与状态
-
-- 页面切换、筛选、排序、分页、弹窗、Toast 和划词工具均为前端静态交互，数据使用页面内模拟数据。
-- 登录态：`localStorage["sheke-demo-user"]`，由 `assets/js/auth.js` 管理。
-- 侧边栏折叠态：`localStorage["sheke-sidebar-collapsed"]`，由 `assets/js/pages/workbench.js` 管理。
-- 账户中心菜单：`localStorage["sheke-account-tab"]`，刷新后仍停在上次那一项；从工作台深链带的 `?tab=` 只在当次生效、不写入记忆，页内换过菜单后地址栏参数会被摘掉。
-- 消息中心：`localStorage["sheke-message-read"]`，由 `assets/js/messages.js` 统一管理，账户中心消息中心与工作台铃铛共用同一份已读状态；退出登录会清掉这份记录，重新登录后又回到初始的「前三条未读」（便于演示）。
-- 「我的文件」名单：`localStorage["sheke-my-files"]`，由 `assets/js/my-files.js` 管理，我的知识与知识联盟共享弹窗共用。
-- 工作台签到窗口：侧栏用户区上方，登录后才出现；点关闭或签到后收起，本次会话内不再出现（`sessionStorage["sheke-checkin-hidden"]`），重新登录重置显隐与签到键；未登录、隐私模式存不了标记时只按登录态显隐。未登录时同一位置显示注册引导票券（`data-guest-only` + `data-auth-open`，点击开登录框），与签到窗口按登录态互斥。
-- 壳层注入：`workbench.js` 先注入侧栏与用户区，再按 `location.pathname` 推导激活导航和 `data-project-create-trigger`，页面无需声明自身状态。
-- 收起侧栏的快捷入口：项目列表（→ `projects.html`）与对话（→ `research-assistant.html`）在 5 个页面均为可跳转链接，行为一致。
-- 用户菜单：开合、点击外部关闭与 `Esc` 关闭统一由 `assets/js/pages/workbench.js` 绑定，5 个页面行为一致（`main.js` 不再重复绑定）。
-- 对话列表管理：点「对话」区块的管理按钮进入管理模式，可单选/多选后删除或归档（底部操作条「归档 | 删除」同行，删除旁边显示已选数量）；顶部同行提供「取消」退出管理模式。逻辑同样在 `workbench.js`，5 个页面通用。
-- 对话归档视图：「对话」区块搜索按钮右侧的归档图标在「未归档（默认）/ 已归档」两个视图间切换，归档只给行打 `data-status="archived"` 标记（不再删行，刷新还原），已归档会话的三点菜单显示「取消归档」；归档视图下批量归档按钮禁用，列表为空时显示空态文案。
-- 列表行三点菜单：项目（一级）含重命名 / 删除，项目内会话（二级）含重命名 / 删除 / 移出项目，会话列表含重命名 / 删除 / 归档（已归档会话为取消归档）；重命名、删除、归档、移出均弹二次确认，重命名弹窗预填当前名称。
-- 对话搜索：点「对话」区块的搜索按钮弹出搜索框，按会话标题实时过滤当前列表；结果默认露出 5 条，超出可滚动查看。
-- 共享收藏：`localStorage["sheke-v4-community-favorites"]`，由共享社区和我的知识共享。
-- 项目资料上传：仅记录文件名、大小和类型并保留在当前会话内存中，刷新后不保留；文件不落盘、不上传服务端。
-- 设置视图：社科智研页的通用设置不属于任何菜单项，打开时侧栏所有选中临时摘掉，地址栏带 `?settings=1`（刷新仍停在设置，直接带该参数落地也不会高亮侧栏）。开关写入 `localStorage["sheke-settings-recommend"]`（推荐工具推荐位）、`localStorage["sheke-settings-auto-web"]`（自动联网搜索）、`localStorage["sheke-settings-thinking"]`（展示思考过程，关闭后会话里的思考过程整块隐藏）；后两项登录后才出现。
-- 自动联网搜索联动：社科助手设置里开启后，社科助手与项目详情页的联网搜索按钮默认选中（两页读同一份 localStorage）。
-- 社科助手会话过程：思考过程默认收起，展开后是一级「已完成 +（耗时）」+ 二级执行步骤时间线，点某一步展开该步的补充说明（内容超 100px 出细滚动条）；引用资料与生成文件为同款浅底卡片，点击新窗口打开 `reader.html`；按钮行上方「查看资料引用（n）」「查看所有产物（n）」分别打开右侧的引用来源面板与文件面板。
-- 社科助手右上角：自动播报默认关闭（图标带斜杠），开启后新回复生成即自动朗读；「更多」菜单含历史提问 / 文件 / 归档对话 / 移动至项目 / 删除，后三项复用侧栏那套二次确认弹窗（`window.SKWorkbenchDialogs`），删除后回到新会话欢迎页。
-- 会话滚动：消息区向下滚动时顶栏出现下边框，回到顶部即消失。
-- 全站快捷键（5 个页面通用，由 `workbench.js` 绑定）：`Ctrl+Alt+B` 收起 / 展开侧栏、`Ctrl+Alt+K` 新建会话、`Ctrl+Alt+J` 会话搜索、`Ctrl+Alt+D` 语音输入（社科智研页输入框的语音按钮；在其它页面按下会跳到社科智研页并落地开始录音）；社科智研页另有 `Ctrl+J` 搜索历史记录。
-- 工作台与页面间通过统一外壳（workbench-shell / workbench.js）切换，不显示独立标签页。
-- 未接入的真实功能统一使用 Toast 提示，避免误跳转。
-
-## 开发约定
-
-- **前端样式一律以 `../原型设计/design-system` 的设计标准为准**（`DESIGN.md` 规范正文 + `globals.css` 令牌实现）；`assets/css/tokens.css` 是其落地实现，取值冲突时以 `design-system` 为准并同步修正 `tokens.css`。详见 `AGENTS.md`。
-- 根 `index.html` 为「湖北社科数据信息联盟」官网首页，产品门户、工作台与智能体统一放在 `pages/`。
-- `pages/` 页面引用资源使用 `../assets/`，返回官网首页使用 `../index.html`。
-- 社科智研工作台入口为 `pages/research-assistant.html`，业务页面中的"新建会话"和"设置"均指向该文件。
-- 颜色、圆角、阴影、动效和风险状态优先使用 `tokens.css` 变量，不直接写重复魔法值。
-- 弹窗统一由 `tokens.css` 的 `--modal-*` 令牌驱动：表面色 `--modal-surface`、遮罩 `--modal-backdrop`、层级 `--modal-z-mask` / `--modal-z-box`、头/体/尾内边距 `--modal-pad-head` / `--modal-pad-body` / `--modal-pad-actions`（单层内容区用 `--modal-pad`）、标题字号 `--modal-title-size`、头部间距 `--modal-head-gap`；圆角与阴影复用 `--radius-modal` / `--shadow-modal`。新增弹窗不要写死 `#fff`，也不要自造遮罩色或层级，否则深色模式会失效。
-- 图标通过 `data-icon="name"` 声明，由 `icons.js` 注入，不在页面内联 SVG。
-- 页面级样式和脚本使用 `assets/css/<page>.css`、`assets/js/<page>.js`，公共逻辑不要复制到页面脚本。
-- 侧栏与用户区结构只在 `assets/js/pages/workbench.js` 的 `SHELL_SIDEBAR` / `SHELL_USER` 模板中维护，页面里不要复制这段结构；页面间的壳层差异由 `applyShellState()` 按路径推导，不要写回页面。
-- 壳层模板用 JS 模板字符串内联，不使用 `fetch` 或 iframe 加载片段，以保证 `file://` 直接双击打开仍可用。
-- 中文文案、`aria-*`、键盘操作和 `prefers-reduced-motion` 按现有页面规范维护。
-
 ## 已知限制
 
 - 纯前端演示：无后端接口、无真实鉴权和无持久化业务数据；刷新后仅保留浏览器本地状态。
