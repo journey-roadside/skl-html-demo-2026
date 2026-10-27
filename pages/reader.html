@@ -24,8 +24,8 @@
       <h1 class="reader-bar__name" data-file-name>基层公共文化服务数字化研究.pdf</h1>
     </div>
     <div class="reader-bar__actions">
-      <!-- 重命名 / 收藏已接真实行为（见 reader.js），下载暂用占位提示机制。
-           前两个登录后才出现；未登录时点下载会转成登录引导（reader.js） -->
+      <!-- 重命名 / 收藏 / 下载已接真实行为（见 reader.js）；
+           前两个登录后才出现；未登录时点下载会转成登录引导 -->
       <button class="reader-action" type="button" aria-label="重命名" data-reader-rename data-auth-only>
         <span data-icon="pencil"></span>
       </button>
@@ -128,6 +128,25 @@
         <button class="reader-dialog__button reader-dialog__button--primary" type="submit">保存</button>
       </div>
     </form>
+  </dialog>
+
+  <!-- 下载确认：登录后点击顶栏下载按钮打开，确认后执行正式下载 -->
+  <dialog class="reader-dialog reader-download-dialog" data-reader-download-dialog aria-labelledby="readerDownloadTitle">
+    <div class="reader-dialog__form">
+      <button class="reader-download-close" type="button" data-reader-download-close aria-label="关闭">
+        <span data-icon="x"></span>
+      </button>
+      <h2 class="reader-dialog__title" id="readerDownloadTitle">下载文件</h2>
+      <p class="reader-dialog__description" data-reader-download-name></p>
+      <div class="reader-download-cost">
+        <span>当前文档所需积分</span>
+        <strong data-reader-download-cost>10 积分</strong>
+      </div>
+      <p class="reader-download-note" data-reader-download-note>下载后将从积分余额中扣除 10 积分。</p>
+      <div class="reader-dialog__actions">
+        <button class="reader-dialog__button reader-dialog__button--primary reader-download-submit" type="button" data-reader-download-confirm>下载</button>
+      </div>
+    </div>
   </dialog>
 
   <script src="../assets/js/icons.js" defer></script>

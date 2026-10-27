@@ -532,20 +532,20 @@
   const POINTS_TREND_MODES = {
     spend: {
       caption: "消耗合计",
-      labels: ["基础会话", "项目会话", "联网搜索", "智能体", "文档下载"],
+      labels: ["Agent 对话", "文档下载"],
       series: {
-        "近 7 天": { total: 84, max: 60, values: [30, 18, 12, 10, 14] },
-        "近 30 天": { total: 312, max: 120, values: [98, 64, 42, 56, 52] },
-        本月: { total: 119, max: 60, values: [46, 22, 16, 19, 16] },
+        "近 7 天": { total: 510, max: 450, values: [420, 90] },
+        "近 30 天": { total: 1240, max: 1000, values: [960, 280] },
+        本月: { total: 320, max: 300, values: [260, 60] },
       },
     },
     gain: {
       caption: "获取合计",
-      labels: ["任务", "知识共享", "用户下载", "用户收藏"],
+      labels: ["任务", "知识共享", "用户下载"],
       series: {
-        "近 7 天": { total: 162, max: 100, values: [80, 45, 25, 12] },
-        "近 30 天": { total: 660, max: 400, values: [320, 180, 120, 40] },
-        本月: { total: 256, max: 150, values: [120, 70, 50, 16] },
+        "近 7 天": { total: 340, max: 200, values: [180, 100, 60] },
+        "近 30 天": { total: 1280, max: 700, values: [620, 420, 240] },
+        本月: { total: 260, max: 150, values: [120, 100, 40] },
       },
     },
   };
@@ -599,8 +599,10 @@
           return span;
         }),
       );
-      /* 获取侧只有三列，按数量铺，别留空列 */
-      pointsTrendTicks.style.gridTemplateColumns = "repeat(" + mode.labels.length + ", minmax(0, 1fr))";
+      /* 获取侧只有三列，按数量铺，别留空列；柱子与刻度同一套列，标签正好落在柱下 */
+      const columns = "repeat(" + mode.labels.length + ", minmax(0, 1fr))";
+      pointsTrendTicks.style.gridTemplateColumns = columns;
+      pointsTrendBars.style.gridTemplateColumns = columns;
     }
     if (pointsTrendTotal) pointsTrendTotal.textContent = String(series.total);
     if (pointsTrendCaption) pointsTrendCaption.textContent = mode.caption;
@@ -637,23 +639,18 @@
      时间为「几天前 + 具体时刻」，日期按当天倒推算出，免得写死的日期跟「本月」筛选对不上；
      amount 带符号，balance 是这笔之后的余额，从最新一笔的 4268 往前逐笔回推，链条自洽 */
   const POINTS_RECORDS = [
-    { daysAgo: 0, clock: "09:12", item: "社科助手对话 15 轮", type: "基础会话", amount: -30, balance: 4268 },
-    { daysAgo: 1, clock: "16:40", item: "联网搜索 12 次", type: "联网搜索", amount: -12, balance: 4298 },
-    { daysAgo: 1, clock: "10:12", item: "每日签到", type: "任务", amount: 5, balance: 4310 },
-    { daysAgo: 2, clock: "16:40", item: "共享资料被下载 6 次", type: "用户下载", amount: 6, balance: 4305 },
-    { daysAgo: 3, clock: "10:05", item: "项目内对话 4 轮", type: "项目会话", amount: -8, balance: 4299 },
-    { daysAgo: 4, clock: "15:22", item: "下载联盟文档 4 份", type: "文档下载", amount: -16, balance: 4307 },
-    { daysAgo: 4, clock: "09:20", item: "资料被成员收藏 16 次", type: "用户收藏", amount: 8, balance: 4323 },
-    { daysAgo: 5, clock: "11:48", item: "荆楚智研 3 次", type: "智能体", amount: -30, balance: 4315 },
-    { daysAgo: 6, clock: "16:48", item: "共享资料通过审核", type: "知识共享", amount: 50, balance: 4345 },
-    { daysAgo: 7, clock: "09:31", item: "社科助手对话 20 轮", type: "基础会话", amount: -40, balance: 4295 },
-    { daysAgo: 8, clock: "14:10", item: "联网搜索 8 次", type: "联网搜索", amount: -8, balance: 4335 },
-    { daysAgo: 8, clock: "11:20", item: "每日签到", type: "任务", amount: 5, balance: 4343 },
-    { daysAgo: 9, clock: "17:55", item: "项目内对话 15 轮", type: "项目会话", amount: -30, balance: 4338 },
-    { daysAgo: 10, clock: "10:26", item: "下载联盟文档 3 份", type: "文档下载", amount: -12, balance: 4368 },
-    { daysAgo: 11, clock: "16:12", item: "荆楚智审 2 次", type: "智能体", amount: -16, balance: 4380 },
-    { daysAgo: 12, clock: "09:40", item: "联网搜索 5 次", type: "联网搜索", amount: -5, balance: 4396 },
-    { daysAgo: 14, clock: "15:03", item: "社科助手对话 15 轮", type: "基础会话", amount: -30, balance: 4401 },
+    { daysAgo: 0, clock: "09:12", item: "社科助手对话 12 轮", type: "Agent 对话", amount: -240, balance: 4268 },
+    { daysAgo: 1, clock: "10:12", item: "每日签到", type: "任务", amount: 10, balance: 4508 },
+    { daysAgo: 2, clock: "16:40", item: "共享资料被下载 8 次", type: "用户下载", amount: 40, balance: 4498 },
+    { daysAgo: 3, clock: "10:05", item: "项目内对话 3 轮", type: "Agent 对话", amount: -60, balance: 4458 },
+    { daysAgo: 4, clock: "15:22", item: "下载联盟文档 2 份", type: "文档下载", amount: -20, balance: 4518 },
+    { daysAgo: 5, clock: "11:48", item: "荆楚智研 2 次", type: "Agent 对话", amount: -40, balance: 4538 },
+    { daysAgo: 6, clock: "16:48", item: "共享资料通过审核", type: "知识共享", amount: 50, balance: 4578 },
+    { daysAgo: 7, clock: "09:31", item: "每日签到", type: "任务", amount: 10, balance: 4528 },
+    { daysAgo: 8, clock: "14:10", item: "共享资料被下载 6 次", type: "用户下载", amount: 30, balance: 4518 },
+    { daysAgo: 9, clock: "17:55", item: "项目内对话 2 轮", type: "Agent 对话", amount: -40, balance: 4488 },
+    { daysAgo: 10, clock: "10:26", item: "下载联盟文档 1 份", type: "文档下载", amount: -10, balance: 4528 },
+    { daysAgo: 11, clock: "16:12", item: "荆楚智审 1 次", type: "Agent 对话", amount: -20, balance: 4538 },
   ];
   const POINTS_RECORD_PAGE_SIZE = 10;
 
@@ -775,17 +772,16 @@
     taskCheckinButton.disabled = true;
     taskCheckinButton.textContent = "今日已签到";
     if (taskCheckinDays) taskCheckinDays.textContent = String(Number(taskCheckinDays.textContent) + 1);
-    window.SKApp.showToast("签到成功，+5 成长积分");
+    window.SKApp.showToast("签到成功，+10 成长积分");
   });
 
   /* ---------- 任务中心：当前任务列表 ---------- */
   /* 任务条目与积分规则弹窗里的「获取积分」逐条对应，数值同源 */
   const TASKS = [
-    { icon: "check", title: "每日签到", desc: "签到得 5 成长积分，连续 7 天当日额外 +20", reward: 5, action: { label: "去签到", type: "checkin" } },
+    { icon: "check", title: "每日签到", desc: "签到得 10 成长积分，每个自然日 1 次", reward: 10, action: { label: "去签到", type: "checkin" } },
     { icon: "upload", title: "共享 1 份资料", desc: "上传资料并通过审核，每份资料只计一次", reward: 50, action: { label: "去共享", type: "link", href: "./knowledge-alliance.html" } },
     { icon: "sparkles", title: "完成 1 次深度研究", desc: "在社科助手里发起一次深度研究", reward: 30, action: { label: "去研究", type: "link", href: "./research-assistant.html" } },
-    { icon: "star", title: "资料被成员收藏", desc: "每 2 次收藏 +1 积分，本月 12/30，单份每月上限 30", reward: 1, action: { label: "进行中 12/30", type: "disabled" } },
-    { icon: "download", title: "资料被成员下载", desc: "每次下载 +1 积分，本月 18/60，同一成员不重复计", reward: 1, action: { label: "进行中 18/60", type: "disabled" } },
+    { icon: "download", title: "资料被成员下载", desc: "每次下载 +5 积分，每日上限 10 次", reward: 5, action: { label: "进行中 18 次", type: "disabled" } },
   ];
 
   const taskList = document.querySelector("[data-task-list]");

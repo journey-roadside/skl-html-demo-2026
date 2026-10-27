@@ -492,6 +492,70 @@
   }
 }
 
+/* 下载确认：突出积分消耗与正式下载操作 */
+.reader-download-dialog .reader-dialog__form {
+  position: relative;
+}
+
+.reader-download-close {
+  position: absolute;
+  top: var(--modal-pad);
+  right: var(--modal-pad);
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+.reader-download-close .icon {
+  width: 18px;
+  height: 18px;
+}
+
+@media (hover: hover) {
+  .reader-download-close:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+}
+
+.reader-download-cost {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-5);
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.reader-download-cost span {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.reader-download-cost strong {
+  color: var(--accent-active);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.reader-download-note {
+  margin-top: var(--spacing-3);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: 1.7;
+}
+
+.reader-download-submit {
+  width: 100%;
+}
+
 /* 收藏态：星标填色 + 主色调（与知识联盟的「已收藏」同一语义） */
 .reader-action.is-favorite {
   color: var(--accent-active);

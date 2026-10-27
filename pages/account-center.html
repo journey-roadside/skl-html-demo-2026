@@ -106,21 +106,6 @@
               <div class="account-contribution__filters">
                 <div class="account-filter" data-filter>
                   <button class="account-filter__trigger" type="button" data-filter-trigger aria-haspopup="listbox" aria-expanded="false">
-                    <span class="account-filter__label">类型</span>
-                    <span class="account-filter__divider" aria-hidden="true"></span>
-                    <span class="account-filter__value" data-filter-value>全部</span>
-                    <span data-icon="chevron-down"></span>
-                  </button>
-                  <div class="account-filter__menu" role="listbox" aria-label="知识类型" data-filter-menu hidden>
-                    <button class="account-filter__option is-selected" type="button" role="option" aria-selected="true" data-filter-option="全部">全部<span data-icon="check"></span></button>
-                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="产出">产出<span data-icon="check"></span></button>
-                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="共享">共享<span data-icon="check"></span></button>
-                    <button class="account-filter__option" type="button" role="option" aria-selected="false" data-filter-option="收藏">收藏<span data-icon="check"></span></button>
-                  </div>
-                </div>
-
-                <div class="account-filter" data-filter>
-                  <button class="account-filter__trigger" type="button" data-filter-trigger aria-haspopup="listbox" aria-expanded="false">
                     <span class="account-filter__label">时间维度</span>
                     <span class="account-filter__divider" aria-hidden="true"></span>
                     <span class="account-filter__value" data-filter-value>近 30 天</span>
@@ -303,8 +288,9 @@
               <div class="account-bar-chart__plot">
                 <div class="account-bar-chart__axis" data-points-trend-axis aria-hidden="true"><span>120</span><span>60</span><span>0</span></div>
                 <div class="account-bar-chart__bars" data-points-trend-bars role="img" aria-label="按分项统计的积分柱状图"></div>
+                <!-- 刻度放在 plot 第 2 列第 2 行，和柱子同宽，标签才对得准 -->
+                <div class="account-bar-chart__ticks" data-points-trend-ticks aria-hidden="true"></div>
               </div>
-              <div class="account-bar-chart__ticks" data-points-trend-ticks aria-hidden="true"></div>
             </div>
           </section>
 
@@ -347,43 +333,35 @@
             </div>
             <div class="account-info-card">
               <div class="account-info-row">
+                <span class="account-info-row__label">注册赠送</span>
+                <span class="account-info-row__value">+500 成长积分（一次性）</span>
+              </div>
+              <div class="account-info-row">
                 <span class="account-info-row__label">每日签到</span>
-                <span class="account-info-row__value">+5 成长积分</span>
+                <span class="account-info-row__value">+10 成长积分 / 日</span>
               </div>
               <div class="account-info-row">
                 <span class="account-info-row__label">共享通过审核</span>
-                <span class="account-info-row__value">+50 成长积分</span>
-              </div>
-              <div class="account-info-row">
-                <span class="account-info-row__label">内容被成员收藏</span>
-                <span class="account-info-row__value">每 2 次 +1 成长积分</span>
+                <span class="account-info-row__value">+50 成长积分 / 篇</span>
               </div>
               <div class="account-info-row">
                 <span class="account-info-row__label">内容被下载</span>
-                <span class="account-info-row__value">每次 +1 成长积分</span>
+                <span class="account-info-row__value">+5 成长积分 / 次</span>
               </div>
               <div class="account-info-row">
-                <span class="account-info-row__label">基础会话</span>
-                <span class="account-info-row__value">每轮 -2 积分</span>
-              </div>
-              <div class="account-info-row">
-                <span class="account-info-row__label">项目会话</span>
-                <span class="account-info-row__value">每轮 -2 积分</span>
-              </div>
-              <div class="account-info-row">
-                <span class="account-info-row__label">联网搜索</span>
-                <span class="account-info-row__value">每次 -1 积分</span>
-              </div>
-              <div class="account-info-row">
-                <span class="account-info-row__label">智能体</span>
-                <span class="account-info-row__value">每次 -8 ~ -10 积分</span>
+                <span class="account-info-row__label">完成任务</span>
+                <span class="account-info-row__value">以后台配置为准，每日上限 100</span>
               </div>
               <div class="account-info-row">
                 <span class="account-info-row__label">文档下载</span>
-                <span class="account-info-row__value">每份 -4 积分</span>
+                <span class="account-info-row__value">-10 积分 / 篇</span>
+              </div>
+              <div class="account-info-row">
+                <span class="account-info-row__label">Agent 对话</span>
+                <span class="account-info-row__value">-20 积分 / 次回复</span>
               </div>
             </div>
-            <p class="account-points-note">完整规则（含上限与结算时间）在「查看规则」里。</p>
+            <p class="account-points-note">各奖励与频次上限以后台配置为准，完整规则在「查看规则」里。</p>
           </section>
 
           <!-- 订阅账单：--ruled 让上下各出一条横线，与积分规则、常见问题隔开 -->
@@ -416,7 +394,7 @@
               </details>
               <details class="account-faq__item">
                 <summary>订阅积分和成长积分有什么区别？</summary>
-                <p>订阅积分来自订阅权益，每期定额（4000），优先用于联网搜索、智能体与文档下载；成长积分来自签到、共享与任务，长期累积，可用于兑换数据服务额度。</p>
+                <p>订阅积分来自订阅权益，每期定额（4000），优先用于文档下载与 Agent 对话；成长积分来自签到、共享与任务，长期累积，可用于兑换数据服务额度。</p>
               </details>
               <details class="account-faq__item">
                 <summary>消耗时先扣哪一种积分？</summary>
@@ -442,7 +420,7 @@
           <section class="account-task-checkin" data-task-checkin>
             <div class="account-task-checkin__copy">
               <strong>连续签到 <span data-task-checkin-days>7</span> 天</strong>
-              <small>今日签到可得 5 成长积分，连续 7 天额外 +20</small>
+              <small>今日签到可得 10 成长积分，每个自然日 1 次</small>
             </div>
             <button class="btn btn-primary btn-sm" type="button" data-task-checkin-button>立即签到</button>
           </section>
@@ -579,19 +557,18 @@
       </div>
       <ul class="account-rules">
         <li class="account-rules__group">获取积分</li>
-        <li><strong>每日签到</strong>：+5 成长积分；连续签到满 7 天，当日额外 +20。</li>
-        <li><strong>共享通过审核</strong>：+50 成长积分，每份资料只计一次。</li>
-        <li><strong>内容被成员收藏</strong>：每 2 次收藏 +1 积分，单份资料每月上限 30。</li>
-        <li><strong>内容被下载</strong>：每 1 次下载 +1 积分，同一成员不重复计，单份资料每月上限 60。</li>
+        <li><strong>注册赠送</strong>：+500 成长积分，同一手机号或身份证仅一次。</li>
+        <li><strong>每日签到</strong>：+10 成长积分，每个自然日 1 次，全站统一签到状态。</li>
+        <li><strong>共享通过审核</strong>：+50 成长积分/篇；共享资料 5 篇/日、私有资料 2 篇/日，独立计数。</li>
+        <li><strong>内容被下载</strong>：+5 成长积分/次，仅共享资料产生，10 次/日上限。</li>
+        <li><strong>完成任务</strong>：分值以后台配置为准，任务奖励合计不超过 100 分/日。</li>
         <li><strong>订阅积分</strong>：随订阅权益按月刷新，每期 4000，未使用部分不结转。</li>
         <li class="account-rules__group">消耗积分</li>
-        <li><strong>基础会话</strong>：每轮 -2 积分；订阅积分优先抵扣，不足部分从成长积分扣。</li>
-        <li><strong>项目会话</strong>：每轮 -2 积分，项目内对话与项目资料问答同价。</li>
-        <li><strong>联网搜索</strong>：每次 -1 积分，按实际发起的检索次数计。</li>
-        <li><strong>智能体</strong>：每次 -8 ~ -10 积分，按调用的智能体与执行步骤档位计。</li>
-        <li><strong>文档下载</strong>：每份 -4 积分，同一文件重复下载不重复计费。</li>
+        <li><strong>文档下载</strong>：-10 积分/篇，重复下载每次同样计费；官方运营精选免费。</li>
+        <li><strong>Agent 对话</strong>：-20 积分/次回复，按 Agent 回复次数计费，跨会话累计。</li>
+        <li><strong>余额与抵扣</strong>：余额不足时拒绝扣减并提示获取或购买；有订阅积分时先扣订阅积分，不足部分从成长积分扣。</li>
       </ul>
-      <p class="account-rules__note">积分于次日 09:00 前结算；对抵扣有疑问可在消息中心提交反馈，审核通过后原路返还。</p>
+      <p class="account-rules__note">对抵扣有疑问可在消息中心提交反馈，审核通过后原路返还。</p>
     </div>
   </dialog>
 
@@ -616,7 +593,7 @@
       <ul class="account-rules">
         <li><strong>生效时间</strong>：支付确认后即时开通，当期订阅积分同步到账。</li>
         <li><strong>积分配额</strong>：每期 4000 订阅积分，按月刷新，未使用部分不结转。</li>
-        <li><strong>抵扣顺序</strong>：联网搜索、智能体与文档下载优先扣订阅积分，不足部分从成长积分扣。</li>
+        <li><strong>抵扣顺序</strong>：文档下载与 Agent 对话优先扣订阅积分，不足部分从成长积分扣。</li>
         <li><strong>发票</strong>：由湖北省社会科学界联合会统一开具，抬头与税号可在顾问处登记。</li>
         <li><strong>变更与退订</strong>：当期结束前联系顾问即可调整档位或退订，已使用的积分不退回。</li>
         <li><strong>试用</strong>：首次开通可申请 7 天试用额度，试用期内随时取消。</li>

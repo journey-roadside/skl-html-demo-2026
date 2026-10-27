@@ -1022,7 +1022,7 @@
           </svg>
         </button>
         <strong class="workbench-task-slot__title">每日签到</strong>
-        <p class="workbench-task-slot__desc">签到得 5 成长积分，可兑换数据服务与深度研究额度。</p>
+        <p class="workbench-task-slot__desc">签到得 10 成长积分，可兑换数据服务与深度研究额度。</p>
         <button class="btn btn-primary btn-sm workbench-task-slot__action" type="button" data-task-slot-checkin>立即签到</button>
       </section>
       <!-- 未登录广告位：注册引导票券，与上面的签到窗口按登录态互斥；点主体开登录框，
@@ -1436,12 +1436,12 @@
 
     taskSlot.querySelector("[data-task-slot-close]")?.addEventListener("click", dismissTaskSlot);
 
-    /* 签到：与账户中心任务中心同一条规则（+5 成长积分）；签完即收起窗口 */
+    /* 签到：与账户中心任务中心同一条规则（+10 成长积分）；签完即收起窗口 */
     taskSlotCheckin?.addEventListener("click", function () {
       if (taskSlotCheckin.disabled) return;
       taskSlotCheckin.disabled = true;
       taskSlotCheckin.textContent = "今日已签到";
-      window.SKApp?.showToast?.("签到成功，+5 成长积分");
+      window.SKApp?.showToast?.("签到成功，+10 成长积分");
       dismissTaskSlot();
     });
 

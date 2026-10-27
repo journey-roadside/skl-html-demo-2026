@@ -56,6 +56,11 @@
   gap: var(--spacing-5);
 }
 
+.auth-heading {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .auth-title {
   font-size: var(--modal-title-size);
   font-weight: var(--font-weight-semibold);
@@ -86,6 +91,36 @@
   background: var(--surface-hover);
   color: var(--foreground);
 }}
+
+.auth-back {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+.auth-back svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.auth-back[hidden],
+.auth-close[hidden],
+.auth-tabs[hidden],
+.auth-agreement-row[hidden],
+.field[hidden] {
+  display: none;
+}
+
+@media (hover: hover) {
+  .auth-back:hover {
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+}
 
 .auth-tabs {
   display: grid;
@@ -133,6 +168,31 @@
   color: var(--text-secondary);
   font-size: var(--font-size-xs);
   font-weight: 600;
+}
+
+.auth-inline-link {
+  flex: 0 0 auto;
+  padding: 0;
+  color: var(--foreground);
+  font: inherit;
+  line-height: inherit;
+  white-space: nowrap;
+}
+
+.auth-inline-link[hidden] {
+  display: none;
+}
+
+.auth-inline-link:focus-visible {
+  border-radius: var(--radius-xs);
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .auth-inline-link:hover {
+    color: var(--accent-active);
+  }
 }
 
 .field-input-wrap {
@@ -228,6 +288,18 @@
 }
 
 /* 勾选框与右侧文字垂直居中（原来靠顶部对齐 + 4px 上边距微调） */
+.auth-agreement-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-xxs);
+}
+
+.auth-agreement-row .auth-checkbox {
+  min-width: 0;
+}
+
 .auth-checkbox {
   display: flex;
   align-items: center;

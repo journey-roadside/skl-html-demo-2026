@@ -462,7 +462,17 @@
   justify-content: space-between;
   color: var(--muted-foreground);
   font-size: var(--font-size-xxs);
+  line-height: 1;
   text-align: right;
+}
+
+/* 首尾刻度各外推半个字高，让文字中线压在顶线与 0 线上；中间刻度自然落在中线 */
+.account-bar-chart__axis > span:first-child {
+  margin-top: calc(var(--font-size-xxs) / -2);
+}
+
+.account-bar-chart__axis > span:last-child {
+  margin-bottom: calc(var(--font-size-xxs) / -2);
 }
 
 .account-bar-chart__bars {
@@ -500,13 +510,30 @@
   font-size: var(--font-size-xxs);
 }
 
-/* 积分趋势：刻度是分项名，要一列一个、居中在各自柱子下（不是首尾对齐）；
-   列数由 JS 按当前分项数量写 inline（消耗 5 列、获取 3 列） */
+/* 积分趋势只有 2~3 个分项：柱子与下方刻度共用同一套网格列（列数由 JS 写 inline），
+   一列一根、居中限宽，别被 flex:1 拉成整屏色的色块 */
+.account-bar-chart__bars[data-points-trend-bars] {
+  display: grid;
+  align-items: end;
+  gap: var(--spacing-1);
+}
+
+.account-bar-chart__bars[data-points-trend-bars] .account-chart-bar {
+  width: 100%;
+  max-width: 120px;
+  justify-self: center;
+}
+
+/* 积分趋势：刻度是分项名，一列一个、居中在各自柱子下（不是首尾对齐）；
+   刻度与柱子同处 plot 网格的第 2 列，列数由 JS 按当前分项数量写 inline（消耗 2 列、获取 3 列） */
 .account-bar-chart__ticks[data-points-trend-ticks] {
+  grid-column: 2;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--spacing-1);
-  padding-left: var(--spacing-6);
+  /* 通用刻度为了避开纵轴有 24px 左内边距，这里已经在 plot 第 2 列，再留就会把标签整体推右 */
+  padding-left: 0;
+  margin-top: var(--spacing-2);
   text-align: center;
 }
 

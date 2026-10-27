@@ -15,6 +15,8 @@
   let pendingTarget = null;
   let countdownTimer = 0;
   let logoutRedirect = "";
+  /* 忘记密码返回时恢复进入前的登录 / 注册状态与表单值 */
+  let resetReturnState = null;
 
   function readUser() {
     try {
@@ -47,7 +49,12 @@
     modal.hidden = true;
     modal.innerHTML = `
       <div class="auth-head">
-        <div>
+        <button class="auth-back" type="button" data-auth-back aria-label="返回" hidden>
+          <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m15 18-6-6 6-6"></path>
+          </svg>
+        </button>
+        <div class="auth-heading">
           <h2 class="auth-title" id="authTitle">登录</h2>
           <p class="auth-subtitle">使用手机号登录后进入工作台</p>
         </div>
@@ -74,10 +81,28 @@
             <button class="code-button" type="button" data-auth-code>获取验证码</button>
           </span>
         </label>
-        <label class="field">
-          <span class="field-label">密码</span>
+        <div class="field">
+          <label class="field-label" for="authPassword">密码</label>
           <span class="field-password">
-            <input type="password" autocomplete="current-password" placeholder="请输入密码" data-auth-password>
+            <input id="authPassword" type="password" autocomplete="current-password" placeholder="请输入密码" data-auth-password>
+            <button class="password-toggle" type="button" data-password-toggle aria-label="显示密码" aria-pressed="false">
+              <svg class="password-toggle__eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg class="password-toggle__eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"></path>
+                <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path>
+                <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"></path>
+                <path d="m2 2 20 20"></path>
+              </svg>
+            </button>
+          </span>
+        </div>
+        <label class="field" data-auth-password-confirm-field hidden>
+          <span class="field-label">再次输入密码</span>
+          <span class="field-password">
+            <input type="password" autocomplete="new-password" placeholder="请再次输入新密码" data-auth-password-confirm>
             <button class="password-toggle" type="button" data-password-toggle aria-label="显示密码" aria-pressed="false">
               <svg class="password-toggle__eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
@@ -92,10 +117,13 @@
             </button>
           </span>
         </label>
-        <label class="auth-checkbox">
-          <input type="checkbox" data-auth-agreement>
-          <span>我已阅读并同意<button class="auth-legal-link" type="button" data-auth-legal-toast="用户协议链接后续接入">用户协议</button>和<button class="auth-legal-link" type="button" data-auth-legal-toast="隐私政策链接后续接入">隐私政策</button></span>
-        </label>
+        <div class="auth-agreement-row">
+          <label class="auth-checkbox">
+            <input type="checkbox" data-auth-agreement>
+            <span>我已阅读并同意<button class="auth-legal-link" type="button" data-auth-legal-toast="用户协议链接后续接入">用户协议</button>和<button class="auth-legal-link" type="button" data-auth-legal-toast="隐私政策链接后续接入">隐私政策</button></span>
+          </label>
+          <button class="auth-inline-link" type="button" data-auth-forgot>忘记密码</button>
+        </div>
         <button class="btn btn-primary auth-submit" type="submit">登录</button>
         <p class="auth-hint">演示环境：任意 11 位手机号，密码 123 即可登录</p>
       </form>
@@ -120,34 +148,112 @@
   }
 
   /* 密码明文 / 隐藏切换：图标、无障碍语义与 input.type 一处改 */
-  function setPasswordVisible(show) {
-    const input = modal.querySelector("[data-auth-password]");
-    const toggle = modal.querySelector("[data-password-toggle]");
+  function setPasswordVisible(input, show) {
+    const toggle = input?.closest(".field-password")?.querySelector("[data-password-toggle]");
+    if (!input || !toggle) return;
     input.type = show ? "text" : "password";
     toggle.classList.toggle("is-on", show);
     toggle.setAttribute("aria-label", show ? "隐藏密码" : "显示密码");
     toggle.setAttribute("aria-pressed", String(show));
   }
 
+  function clearResetFields() {
+    const password = modal.querySelector("[data-auth-password]");
+    const confirm = modal.querySelector("[data-auth-password-confirm]");
+    const code = modal.querySelector("[data-auth-code-field] input");
+    if (password) {
+      password.value = "";
+      setPasswordVisible(password, false);
+    }
+    if (confirm) {
+      confirm.value = "";
+      setPasswordVisible(confirm, false);
+    }
+    if (code) code.value = "";
+  }
+
   function setMode(mode) {
-    modal.dataset.mode = mode;
+    const nextMode = mode === "register" || mode === "reset" ? mode : "login";
+    const isLogin = nextMode === "login";
+    const isRegister = nextMode === "register";
+    const isReset = nextMode === "reset";
+    modal.dataset.mode = nextMode;
     modal.querySelectorAll("[data-auth-mode]").forEach((button) => {
-      const active = button.dataset.authMode === mode;
+      const active = button.dataset.authMode === nextMode;
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-selected", String(active));
     });
 
-    const isRegister = mode === "register";
-    modal.querySelector("[data-auth-code-field]").hidden = !isRegister;
     const passwordField = modal.querySelector("[data-auth-password]");
-    passwordField.autocomplete = isRegister ? "new-password" : "current-password";
-    passwordField.placeholder = isRegister ? "输入3-20位字母、数字、符号组成密码" : "请输入密码";
-    setPasswordVisible(false);
-    modal.querySelector(".auth-title").textContent = isRegister ? "注册账号" : "登录";
-    modal.querySelector(".auth-subtitle").textContent = isRegister
-      ? "完成手机号验证后即可创建账号"
-      : "使用手机号登录后进入工作台";
-    modal.querySelector(".auth-submit").textContent = isRegister ? "创建账号并登录" : "登录";
+    const passwordConfirmField = modal.querySelector("[data-auth-password-confirm]");
+    modal.querySelector(".auth-tabs").hidden = isReset;
+    modal.querySelector("[data-auth-close]").hidden = isReset;
+    modal.querySelector("[data-auth-back]").hidden = !isReset;
+    modal.querySelector("[data-auth-code-field]").hidden = !(isRegister || isReset);
+    modal.querySelector("[data-auth-password-confirm-field]").hidden = !isReset;
+    modal.querySelector(".auth-agreement-row").hidden = isReset;
+    modal.querySelector("[data-auth-forgot]").hidden = isRegister;
+    passwordField.autocomplete = isLogin ? "current-password" : "new-password";
+    passwordField.placeholder = isReset
+      ? "请输入新密码"
+      : isRegister
+        ? "输入3-20位字母、数字、符号组成密码"
+        : "请输入密码";
+    if (passwordConfirmField) {
+      passwordConfirmField.autocomplete = "new-password";
+      passwordConfirmField.placeholder = "请再次输入新密码";
+    }
+    setPasswordVisible(passwordField, false);
+    if (passwordConfirmField) setPasswordVisible(passwordConfirmField, false);
+    modal.querySelector('label[for="authPassword"]').textContent = isReset ? "新密码" : "密码";
+    modal.querySelector(".auth-title").textContent = isReset ? "忘记密码" : isRegister ? "注册账号" : "登录";
+    modal.querySelector(".auth-subtitle").textContent = isReset
+      ? "验证手机号后设置新密码"
+      : isRegister
+        ? "完成手机号验证后即可创建账号"
+        : "使用手机号登录后进入工作台";
+    modal.querySelector(".auth-submit").textContent = isReset ? "重置密码" : isRegister ? "创建账号并登录" : "登录";
+    modal.querySelector(".auth-hint").textContent = isReset
+      ? "演示环境：任意 6 位验证码，新密码需为 3-20 位字母、数字或符号"
+      : "演示环境：任意 11 位手机号，密码 123 即可登录";
+  }
+
+  function openReset() {
+    const phoneInput = modal.querySelector("[data-auth-phone]");
+    const codeInput = modal.querySelector("[data-auth-code-field] input");
+    const passwordInput = modal.querySelector("[data-auth-password]");
+    const confirmInput = modal.querySelector("[data-auth-password-confirm]");
+    resetReturnState = {
+      mode: modal.dataset.mode === "register" ? "register" : "login",
+      phone: phoneInput.value,
+      code: codeInput.value,
+      password: passwordInput.value,
+      passwordVisible: passwordInput.type === "text",
+      agreement: modal.querySelector("[data-auth-agreement]").checked,
+    };
+    clearResetFields();
+    setMode("reset");
+    phoneInput.focus({ preventScroll: true });
+  }
+
+  function returnFromReset() {
+    const state = resetReturnState;
+    const phoneInput = modal.querySelector("[data-auth-phone]");
+    const codeInput = modal.querySelector("[data-auth-code-field] input");
+    const passwordInput = modal.querySelector("[data-auth-password]");
+    clearResetFields();
+    resetReturnState = null;
+
+    if (state) {
+      phoneInput.value = state.phone;
+      codeInput.value = state.code;
+      passwordInput.value = state.password;
+      modal.querySelector("[data-auth-agreement]").checked = state.agreement;
+      setMode(state.mode);
+      setPasswordVisible(passwordInput, state.passwordVisible);
+    } else {
+      setMode("login");
+    }
   }
 
   /* mode 为 "register" 时直接落在注册页签（默认登录）；调用方不传则行为不变 */
@@ -155,6 +261,8 @@
     if (window.SKApp && typeof window.SKApp.closeDrawer === "function") {
       window.SKApp.closeDrawer();
     }
+    resetReturnState = null;
+    if (modal.dataset.mode === "reset") clearResetFields();
     pendingTarget =
       target && typeof target === "object"
         ? target
@@ -283,6 +391,48 @@
     } else {
       notifySuccess("登录成功");
     }
+  }
+
+  function completePasswordReset() {
+    const phoneInput = modal.querySelector("[data-auth-phone]");
+    const codeInput = modal.querySelector("[data-auth-code-field] input");
+    const passwordInput = modal.querySelector("[data-auth-password]");
+    const confirmInput = modal.querySelector("[data-auth-password-confirm]");
+    const phone = phoneInput.value.replace(/\D/g, "");
+    const code = codeInput.value.replace(/\D/g, "");
+
+    if (phone.length !== 11) {
+      window.SKApp.showToast("请输入 11 位手机号");
+      phoneInput.focus();
+      return;
+    }
+
+    if (!/^\d{6}$/.test(code)) {
+      window.SKApp.showToast("验证码输入错误");
+      codeInput.focus();
+      return;
+    }
+
+    if (!PASSWORD_PATTERN.test(passwordInput.value)) {
+      window.SKApp.showToast("密码不合规");
+      passwordInput.focus();
+      return;
+    }
+
+    if (passwordInput.value !== confirmInput.value) {
+      window.SKApp.showToast("两次输入的密码不一致");
+      confirmInput.focus();
+      return;
+    }
+
+    /* 先提示，再切换回登录态，避免状态切换把成功反馈盖掉 */
+    window.SKApp.showToast("密码重置成功");
+    window.setTimeout(() => {
+      clearResetFields();
+      resetReturnState = null;
+      phoneInput.value = phone;
+      setMode("login");
+    }, 160);
   }
 
   /* 事后成功类提示：页面可以通过 SKApp.silentSuccess 关掉（官网首页就不要这类） */
@@ -498,6 +648,11 @@
       }
 
       /* 只认关闭按钮：点遮罩不关（全站统一） */
+      if (event.target.closest("[data-auth-back]")) {
+        returnFromReset();
+        return;
+      }
+
       if (event.target.closest("[data-auth-close]")) {
         closeModal();
         return;
@@ -505,9 +660,17 @@
 
       const passwordToggle = event.target.closest("[data-password-toggle]");
       if (passwordToggle) {
-        const input = modal.querySelector("[data-auth-password]");
-        setPasswordVisible(input.type === "password");
-        input.focus();
+        const input = passwordToggle.closest(".field-password")?.querySelector("input");
+        if (input) {
+          setPasswordVisible(input, input.type === "password");
+          input.focus();
+        }
+        return;
+      }
+
+      const forgotPassword = event.target.closest("[data-auth-forgot]");
+      if (forgotPassword) {
+        openReset();
         return;
       }
 
@@ -586,13 +749,21 @@
       }
       if (modal && !modal.hidden) {
         event.preventDefault();
-        closeModal();
+        if (modal.dataset.mode === "reset") {
+          returnFromReset();
+        } else {
+          closeModal();
+        }
       }
     });
 
     modal.querySelector("[data-auth-form]").addEventListener("submit", (event) => {
       event.preventDefault();
-      completeLogin(pendingTarget);
+      if (modal.dataset.mode === "reset") {
+        completePasswordReset();
+      } else {
+        completeLogin(pendingTarget);
+      }
     });
   });
 })();

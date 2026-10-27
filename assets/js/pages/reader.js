@@ -10,6 +10,8 @@
 
   const DEFAULT_FILE = "基层公共文化服务数字化研究.pdf";
   const DEFAULT_OWNER = "社科研究员";
+  /* 文档下载规则：每份 -10 积分（与积分规则一致） */
+  const DOWNLOAD_COST = 10;
 
   /* 更新时间在列表里是相对文案（今天 09:18 / 昨天 16:40 / 09-14 / 刚刚），
      顶栏统一显示 YYYY-MM-DD，所以折算放在本页——调用方只管把列表上那句原文传过来。
@@ -276,9 +278,13 @@
   syncGate();
   document.addEventListener("sk:auth-changed", syncGate);
 
-  /* ---------- 下载：未登录先登录；登录后导出正文 ----------
+  /* ---------- 下载：未登录先登录；登录后先确认积分，再导出正文 ----------
      演示环境没有真实文件流，把当前文档的正文拼成 txt 下载（文件名沿用当前名字） */
-  const exportDocument = function () {
+  let downloadUrl = "";
+  let downloadFileName = "";
+
+  const createDownloadUrl = function () {
+    if (downloadUrl) return downloadUrl;
     const blocks = [];
     pages.forEach(function (sheet, index) {
       if (index > 0) blocks.push("");
@@ -292,27 +298,64 @@
     const blob = new Blob(["\ufeff" + blocks.join("\n\n") + "\n"], {
       type: "text/plain;charset=utf-8",
     });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = baseNameOf(fileName) + ".txt";
-    document.body.append(link);
-    link.click();
-    link.remove();
+    downloadUrl = URL.createObjectURL(blob);
+    downloadFileName = baseNameOf(fileName) + ".txt";
+    return downloadUrl;
+  };
+
+  const releaseDownloadUrl = function () {
+    if (!downloadUrl) return;
+    const url = downloadUrl;
+    downloadUrl = "";
+    downloadFileName = "";
     /* 立刻 revoke 会让部分浏览器中断下载，延后一点再释放 */
     window.setTimeout(function () {
       URL.revokeObjectURL(url);
     }, 1000);
+  };
+
+  const exportDocument = function () {
+    const url = createDownloadUrl();
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = downloadFileName;
+    document.body.append(link);
+    link.click();
+    link.remove();
     window.SKApp?.showToast?.("已开始下载");
   };
 
-  document.querySelector("[data-reader-download]")?.addEventListener("click", function () {
+  const downloadDialog = document.querySelector("[data-reader-download-dialog]");
+  const downloadNameNode = document.querySelector("[data-reader-download-name]");
+  const downloadCostNode = document.querySelector("[data-reader-download-cost]");
+  const downloadNoteNode = document.querySelector("[data-reader-download-note]");
+
+  const openDownloadDialog = function () {
     if (isGuest()) {
       window.SKAuth?.open?.();
       return;
     }
+    if (downloadNameNode) downloadNameNode.textContent = fileName;
+    if (downloadCostNode) downloadCostNode.textContent = DOWNLOAD_COST + " 积分";
+    if (downloadNoteNode) {
+      downloadNoteNode.textContent = "下载后将从积分余额中扣除 " + DOWNLOAD_COST + " 积分。";
+    }
+    if (downloadDialog?.showModal) {
+      downloadDialog.showModal();
+    } else {
+      downloadDialog?.setAttribute("open", "");
+    }
+  };
+
+  document.querySelector("[data-reader-download]")?.addEventListener("click", openDownloadDialog);
+  document.querySelector("[data-reader-download-confirm]")?.addEventListener("click", function () {
     exportDocument();
+    downloadDialog?.close();
   });
+  document.querySelector("[data-reader-download-close]")?.addEventListener("click", function () {
+    downloadDialog?.close();
+  });
+  downloadDialog?.addEventListener("close", releaseDownloadUrl);
 
   /* ---------- 收藏：与知识联盟、我的知识共用同一份收藏数据 ---------- */
   const FAVORITES_KEY = "sheke-v4-community-favorites";
