@@ -1527,6 +1527,11 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 20px); }
   .header-actions .btn { padding: 0 12px; font-size: 13px; }
 }
 
+/* 英文品牌名加长后（Hubei Social Sciences Data Alliance），900-959 区间隐藏英文名，避免挤压导航折行 */
+@media (min-width: 900px) and (max-width: 959.98px) {
+  .brand-en { display: none; }
+}
+
 /* Homepage section background rhythm */
 .section.news {
   background: var(--background);

@@ -121,9 +121,10 @@
   overflow: hidden;
   color: var(--muted-foreground);
   font-family: var(--font-mono);
-  font-size: 9px;
+  /* 全称较长（Hubei Social Sciences Data Alliance），字号与字距收紧以保证 240px 侧栏内单行完整显示 */
+  font-size: 8px;
   font-weight: 400;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.06em;
   line-height: 1.15;
   text-overflow: ellipsis;
   white-space: nowrap;

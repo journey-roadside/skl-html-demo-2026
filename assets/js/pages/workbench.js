@@ -120,7 +120,7 @@
         </label>
         <div class="workbench-brand__home">
           <span class="workbench-brand__name">湖北社科数据信息联盟</span>
-          <span class="workbench-brand__en">SOCIAL SCIENCE UNION</span>
+          <span class="workbench-brand__en">Hubei Social Sciences Data Alliance</span>
         </div>
         <label class="workbench-sidebar__toggle" for="workbench-sidebar-state" aria-label="收起侧边栏" data-rail-tip="收起侧边栏（Ctrl+Alt+B）">
           <svg class="workbench-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
