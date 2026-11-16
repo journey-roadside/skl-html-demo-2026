@@ -1149,7 +1149,6 @@ a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
 h1, h2, h3, h4, p { margin: 0; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .container { max-width: var(--content); margin-inline: auto; padding-inline: 28px; }
 section[id] { scroll-margin-top: calc(var(--nav-h) + 20px); }
@@ -1323,12 +1322,22 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 20px); }
   padding: 22px; box-shadow: var(--shadow-card);
   transition: transform var(--dur-mid) var(--ease-out), box-shadow var(--dur-mid) var(--ease-out), border-color var(--dur-mid) var(--ease-out);
 }
-.news-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--border-strong); }
+/* .reveal 的 transition 会整段覆盖上面 .news-card 那条（同为 0,1,0、源序更晚），
+   这里用 0,2,0 合并回来：入场仍走 600ms，阴影 / 描边按 --dur-mid 过渡，悬停不瞬变 */
+.news-card.reveal {
+  transition: opacity .6s var(--ease-out), transform .6s var(--ease-out),
+              box-shadow var(--dur-mid) var(--ease-out), border-color var(--dur-mid) var(--ease-out);
+}
+/* 整卡是链接：悬停选择器带 .news-strip 提升优先级，避免被后面的 .reveal.in { transform: none } 盖掉上浮 */
+.news-strip .news-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--border-strong); }
+/* 焦点环对齐项目卡 / 智能体卡的 --ring 处理，标题悬停变色与资讯列表页一致 */
+.news-card:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .tag {
   display: inline-flex; align-self: flex-start; padding: 3px 10px; border-radius: 999px;
   font-size: 12px; font-weight: 500; color: var(--accent-active); background: var(--accent-soft);
 }
-.news-title { font-size: 17px; font-weight: 600; line-height: 1.45; }
+.news-title { font-size: 17px; font-weight: 600; line-height: 1.45; transition: color var(--dur-mid) var(--ease-out); }
+@media (hover: hover) { .news-card:hover .news-title { color: var(--accent-active); } }
 .news-excerpt { font-size: 14px; color: var(--text-2); flex: 1; }
 .news-time { font-family: var(--mono); font-size: 12px; color: var(--muted); }
 
