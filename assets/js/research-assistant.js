@@ -1426,6 +1426,81 @@
     });
   }
 
+  /* 会话里的引用资料 / 生成文件：一键保存到「我的文件」（SKMyFiles 持久化）。
+     保存后换成对勾书签并禁用；同名文件在消息卡和会话文件面板里一起切成已保存 */
+  function initFileSaveActions() {
+    const saveButtons = Array.from(document.querySelectorAll("[data-file-save]"));
+    if (!saveButtons.length || !window.SKMyFiles) return;
+
+    const savedNames = () => new Set(window.SKMyFiles.uploads().map((file) => file.name));
+    const cardOf = (button) => button.closest("[data-file-card]");
+    /* 未登录时点保存：先弹登录框，登录成功后把这次保存接着做完（与输入框的 pendingSubmit 同理） */
+    let pendingSaveName = "";
+
+    function paint(button, saved, name) {
+      button.disabled = saved;
+      button.classList.toggle("is-saved", saved);
+      button.title = saved ? "已保存到我的文件" : "保存到我的文件";
+      button.setAttribute("aria-label", `${saved ? "已保存到我的文件" : "保存到我的文件"}：${name}`);
+      button.replaceChildren(window.SKIcons.create(saved ? "bookmark-check" : "bookmark-plus"));
+    }
+
+    function syncAll() {
+      const names = savedNames();
+      saveButtons.forEach((button) => {
+        const name = cardOf(button)?.dataset.fileName || "";
+        if (name) paint(button, names.has(name), name);
+      });
+    }
+
+    function saveCard(card, name) {
+      if (!savedNames().has(name)) {
+        window.SKMyFiles.add([{
+          name,
+          type: card.dataset.fileType || "文件",
+          size: card.dataset.fileSize || "0 KB",
+        }]);
+      }
+      const saved = savedNames().has(name);
+      syncAll();
+      window.SKApp?.showToast?.(saved ? "已保存到我的文件" : "保存失败，请稍后重试");
+    }
+
+    saveButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        /* 保存按钮与「打开文件」按钮是兄弟节点；这里再拦一层，避免冒泡触发面板的全局收起逻辑 */
+        event.preventDefault();
+        event.stopPropagation();
+        if (button.disabled) return;
+
+        const card = cardOf(button);
+        const name = card?.dataset.fileName || "";
+        if (!name) return;
+
+        if (!window.SKAuth?.getUser()) {
+          pendingSaveName = name;
+          window.SKAuth?.open?.();
+          return;
+        }
+
+        saveCard(card, name);
+      });
+    });
+
+    syncAll();
+    /* 其他标签页里「我的知识」增删文件后，回到本页时按钮状态跟着更新 */
+    window.addEventListener("storage", (event) => {
+      if (event.key === "sheke-my-files") syncAll();
+    });
+    document.addEventListener("sk:auth-changed", (event) => {
+      if (!event.detail || !pendingSaveName) return;
+      const name = pendingSaveName;
+      pendingSaveName = "";
+      const card = saveButtons.map(cardOf).find((item) => item && item.dataset.fileName === name);
+      if (card) saveCard(card, name);
+    });
+  }
+
   function updateHistorySelectionState() {
     const selected = document.querySelectorAll(".history-item.is-selected");
     const count = selected.length;
@@ -2381,6 +2456,7 @@
     /* 从别的页面按 Ctrl+Alt+D 跳过来：落地即开始录音 */
     if (params.get("voice")) document.querySelector("[data-voice-trigger]")?.click();
     initPanels();
+    initFileSaveActions();
     initHistoryAndActions();
     initMessageSpeech();
     /* 先于 initKeyboardShortcuts：更多菜单的 ESC 要在分发链之前接手 */

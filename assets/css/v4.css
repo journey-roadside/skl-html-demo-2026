@@ -1357,6 +1357,7 @@
    左侧实色图标块，文件名 + 副标题两行，右侧操作区（对齐参考稿样式） */
 .message-output-file {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: var(--spacing-3);
   margin-top: 10px;
@@ -1492,7 +1493,8 @@
 
 .session-file-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: var(--spacing-3);
   padding: var(--spacing-4);
   border: 1px solid var(--border);

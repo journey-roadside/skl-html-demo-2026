@@ -31,7 +31,17 @@
   function readUploads() {
     try {
       const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      return Array.isArray(list) ? list : [];
+      if (!Array.isArray(list)) return [];
+      /* 早期会话保存把「引用资料」写成了类型；我的知识只展示格式标签，
+         这里统一迁移为 PDF（会话里的引用资料都是 PDF 文档）并写回 */
+      let migrated = false;
+      const normalized = list.map(function (file) {
+        if (!file || file.type !== "引用资料") return file;
+        migrated = true;
+        return { ...file, type: "PDF" };
+      });
+      if (migrated) saveUploads(normalized);
+      return normalized;
     } catch {
       return [];
     }
